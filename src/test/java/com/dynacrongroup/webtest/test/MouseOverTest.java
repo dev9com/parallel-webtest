@@ -2,6 +2,7 @@ package com.dynacrongroup.webtest.test;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -35,6 +36,7 @@ public class MouseOverTest {
 			.getLogger(MouseOverTest.class);
 
 	@Test
+	@Ignore("Does not work on CI")
 	public void iexploreTest() throws Exception {
 
 		if (System.getProperty("mrj.version") != null) {
@@ -60,6 +62,7 @@ public class MouseOverTest {
 	 * default. You need to install and configure the chromedriver yourself.
 	 */
 	@Test
+	@Ignore("Does not work on CI")
 	public void chromeTest() throws Exception {
 
 		if (System.getProperty("mrj.version") != null) {
@@ -82,6 +85,7 @@ public class MouseOverTest {
 	}
 
 	@Test
+	@Ignore("Does not work on CI")
 	public void firefoxTestAlt() throws Exception {
 
 		FirefoxProfile profile = new FirefoxProfile();
@@ -102,6 +106,7 @@ public class MouseOverTest {
 	}
 
 	@Test
+	@Ignore("Does not work on CI")
 	public void firefoxTest() throws Exception {
 		WebDriver driver = new FirefoxDriver();
 		driver.get("http://www.google.com");
