@@ -32,9 +32,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:git@github.com:dynacron-group/parallel-webtest.git</connection>
-		<developerConnection>scm:git@github.com:dynacron-group/parallel-webtest.git</developerConnection>
-		<url>scm:git@github.com:dynacron-group/parallel-webtest.git</url>
+		<connection>scm:git:git@github.com:dynacron-group/parallel-webtest.git</connection>
+		<developerConnection>scm:git:git@github.com:dynacron-group/parallel-webtest.git</developerConnection>
+		<url>scm:git:git@github.com:dynacron-group/parallel-webtest.git</url>
 	</scm>
 
 	<developers>
