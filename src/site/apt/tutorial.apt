@@ -1,0 +1,29 @@
+This project is a test library for use with your Maven projects to make it
+easier to run Selenium projects using SauceLabs.  In particular, you can
+write your tests once and have them automatically run in parallel on
+supported browser/OS combinations.
+
+There are two main usage scenarios for this library:
+
+- During your test execution (mvn test)
+- During your integration-test execution (mvn integration-test)
+
+test phase
+
+The test phase is part of the default Maven lifecycle.  Tests that run during
+this phase typically end in Test (as in, SampleTest.java) by the Surefire
+plugin.  This is built in to Maven, so a very simple POM is needed.  This is
+fine if you are writing tests that are intended to target a known,
+well-defined server running somewhere other than the build agent or your
+local server.
+
+At this point in the process (assuming your final goal is to build
+a WAR), the WAR does not actually exist.  For that, you''ll have to wait for
+the integration-test phase.
+
+integration-test phase
+
+Standard alternative local drivers
+
+org.openqa.selenium.htmlunit.HtmlUnitDriver
+org.openqa.selenium.firefox.FirefoxDriver

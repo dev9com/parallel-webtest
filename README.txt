@@ -1,1 +1,7 @@
-Second commit.
+
+Environment values you MUST set:
+
+WEBTEST_HOSTNAME
+SAUCELABS_USER
+SAUCELABS_KEY
+

@@ -1,0 +1,202 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>dynacrongroup</groupId>
+	<artifactId>parallel-webtest</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>parallel-webtest</name>
+
+	<properties>
+		<!-- Dependency configuration -->
+		<hamcrest.version>1.3.RC2</hamcrest.version>
+		<joda-time.version>2.0</joda-time.version>
+		<junit.version>4.8.2</junit.version>
+		<logback.version>0.9.24</logback.version>
+
+		<!-- JUnit parallel run configuration -->
+		<parallelrun>classes</parallelrun>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<threadcount>5</threadcount>
+
+		<!-- Target WebDriver configuration -->
+		<target-webdriver>org.openqa.selenium.htmlunit.HtmlUnitDriver</target-webdriver>
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>central</id>
+			<name>Maven Repository</name>
+			<url>http://repository:8081/artifactory/libs-releases-local</url>
+		</repository>
+		<site>
+			<id>doc-site</id>
+			<url>scp://docrepository/var/apache2/htdocs/site/${project.artifactId}</url>
+		</site>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:svn:https://svn/webdev/shared/parallel-webdriver/trunk</connection>
+		<developerConnection>scm:svn:https://svn/webdev/shared/parallel-webdriver/trunk</developerConnection>
+		<url>https://svn/webdev/shared/parallel-webdriver/</url>
+	</scm>
+
+	<developers>
+		<developer>
+			<name>Will Iverson</name>
+			<email>will DOT iverson AT dynacrongroup DOT com</email>
+			<organization>Dynacron Group</organization>
+			<roles>
+				<role>Architect</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>David Drake</name>
+			<email>david DOT drake AT dynacrongroup DOT com</email>
+			<organization>Dynacron Group</organization>
+			<roles>
+				<role>SDET</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<dependencies>
+		<!-- No, really. We are bringing in JUnit as a dependency, not a test dependency. 
+			This is a test framework - you will bring this library in as a test dependency 
+			in your project. -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit-dep</artifactId>
+			<version>${junit.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrest.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>r09</version>
+		</dependency>
+
+		<!-- Selenium dependency. Note the use of the hack - this is required due 
+			to the lack of proxy support in Selenium 2. A bug has been filed with Selenium 
+			2 at http://code.google.com/p/selenium/issues/detail?id=2211 When that bug 
+			has been fixed the hack will go away. -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.9</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>2.9</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-descriptor</id>
+						<goals>
+							<goal>attach-descriptor</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<!-- This sets up the default run to be the full SauceLabs suite -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<parallel>${parallelrun}</parallel>
+					<threadCount>${threadcount}</threadCount>
+					<perCoreThreadCount>false</perCoreThreadCount>
+					<systemPropertyVariables>
+						<http.proxyHost>${http.proxyHost}</http.proxyHost>
+						<http.proxyPort>${http.proxyPort}</http.proxyPort>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>1.2</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-updates-report</report>
+							<report>plugin-updates-report</report>
+							<report>property-updates-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<!-- This is an example of launching a Firefox instance for local testing 
+		(i.e. not on the CI system) -->
+	<profiles>
+		<profile>
+			<id>local-firefox</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<target-webdriver>org.openqa.selenium.firefox.FirefoxDriver</target-webdriver>
+			</properties>
+		</profile>
+	</profiles>
+	<ciManagement>
+		<system>CloudBees</system>
+		<url>tbd</url>
+	</ciManagement>
+	<url>http://www.dynacrongroup.com/parallel-webtest/</url>
+	<description>Parallel execution and numerous other utilities intended for web testing support.</description>
+</project>
