@@ -25,20 +25,16 @@
 
 	<distributionManagement>
 		<repository>
-			<id>central</id>
-			<name>Maven Repository</name>
-			<url>http://repository:8081/artifactory/libs-releases-local</url>
+			<id>release-repository</id>
+			<name>CloudBees Repository</name>
+			<url>https://repository-dynacrongroup.forge.cloudbees.com/release/</url>
 		</repository>
-		<site>
-			<id>doc-site</id>
-			<url>scp://docrepository/var/apache2/htdocs/site/${project.artifactId}</url>
-		</site>
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:svn:https://svn/webdev/shared/parallel-webdriver/trunk</connection>
-		<developerConnection>scm:svn:https://svn/webdev/shared/parallel-webdriver/trunk</developerConnection>
-		<url>https://svn/webdev/shared/parallel-webdriver/</url>
+		<connection>scm:git@github.com:dynacron-group/parallel-webtest.git</connection>
+		<developerConnection>scm:git@github.com:dynacron-group/parallel-webtest.git</developerConnection>
+		<url>scm:git@github.com:dynacron-group/parallel-webtest.git</url>
 	</scm>
 
 	<developers>
