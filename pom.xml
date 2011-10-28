@@ -24,9 +24,9 @@
 
 	<distributionManagement>
 		<repository>
-			<id>release-repository</id>
+			<id>cloudbees-private-release-repository</id>
 			<name>CloudBees Repository</name>
-			<url>https://repository-dynacrongroup.forge.cloudbees.com/release/</url>
+			<url>dav:https://repository-dynacrongroup.forge.cloudbees.com/release/</url>
 		</repository>
 	</distributionManagement>
 
