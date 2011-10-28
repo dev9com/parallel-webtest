@@ -3,7 +3,7 @@
 
 	<groupId>com.dynacrongroup</groupId>
 	<artifactId>parallel-webtest</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8-SNAPSHOT</version>
 	<name>parallel-webtest</name>
 
 	<properties>
