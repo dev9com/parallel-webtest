@@ -122,7 +122,7 @@ public class WebDriverUtilities {
 	 *            Locator to search within.
 	 * @param text
 	 *            Text to search for. Case sensitive, and white-space sensitive
-	 * @return True if the text is contained in the body tag as text; otherwise
+	 * @return True if the text is contained in the given locator as text; otherwise
 	 *         false.
 	 */
 	public static Boolean isTextPresentInElement(WebDriver driver, By locator,
@@ -132,8 +132,8 @@ public class WebDriverUtilities {
 
 		try {
 			if (isElementPresent(driver, locator)) {
-				String bodyText = driver.findElement(locator).getText();
-				success = bodyText.contains(text);
+                WebElement webElement = driver.findElement(locator);
+                success = isTextPresentInElement(webElement, text);
 			} else {
 				LOG.warn("Element [{}] not found; text [{}] not searched for",
 						locator.toString(), text);
@@ -145,4 +145,20 @@ public class WebDriverUtilities {
 
 		return success;
 	}
+
+    /**
+     * Verifies that text is present in the given element.  Case sensitive.
+     * @param webElement
+     *          element to search through
+     * @param text
+     *          Text to search for.  Case sensitive, and white-space
+     *          sensitive
+     * @return True if the text is contained in the element as text; otherwise
+     * false.
+     */
+    public static Boolean isTextPresentInElement(WebElement webElement,
+            String text) {
+
+        return webElement.getText().contains(text);
+    }
 }
