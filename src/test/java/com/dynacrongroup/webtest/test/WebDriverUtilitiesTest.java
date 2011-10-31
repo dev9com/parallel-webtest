@@ -38,12 +38,11 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 	public void waitForElementTest() throws Exception {
 		driver.get(p._("/"));
 		driver.findElement(By.cssSelector("div#logo")).click();
-		// TODO: For some reason this id is not being found...?
-		// WebDriverUtilities.waitForElement(driver, By.id("#top"));
+		WebDriverUtilities.waitForElement(driver, By.id("righttopcolumn"));
 	}
 
 	@Test
-	@Ignore("timeout problem...?")
+//	@Ignore("timeout problem...?") //Didn't happen for me... suggest retesting in cloudbees...
 	public void isTextPresentTest() throws Exception {
 		driver.get(p._("/"));
 		assertTrue(WebDriverUtilities.isTextPresent(driver, "Dynacron Group"));
