@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.dynacrongroup.webtest.util.ConfigurationValue.getConfigurationValue;
 import static org.junit.Assert.fail;
 import static java.lang.String.format;
 
@@ -18,7 +19,7 @@ public class WebDriverUtilities {
 	/**
 	 * Maximum number of seconds to wait when using waitForElement()
 	 */
-	public static Integer MAX_WAIT_SECONDS = 5;
+	public final static Integer MAX_WAIT_SECONDS = Integer.valueOf(getConfigurationValue("MAX_WAIT_SECONDS", "5"));
 	private final static Logger LOG = LoggerFactory
 			.getLogger(WebDriverUtilities.class);
 
@@ -32,6 +33,7 @@ public class WebDriverUtilities {
 	 * Fails if element is invisible.
 	 * 
 	 * @param driver
+     *            WebDriver used to execute commands.
 	 * @param locator
 	 *            Element to search for. If multiple elements for this locator
 	 *            exist, this method will still return true.
@@ -54,6 +56,7 @@ public class WebDriverUtilities {
 	 * if the element does not appear.
 	 * 
 	 * @param driver
+     *            WebDriver used to execute commands.
 	 * @param locator
 	 *            Element to wait for.
 	 */
@@ -105,6 +108,7 @@ public class WebDriverUtilities {
 	 * Verifies that text is present in the body of a page. Case sensitive.
 	 * 
 	 * @param driver
+     *            WebDriver used to execute commands.
 	 * @param text
 	 *            Text to search for. Case sensitive, and white-space sensitive
 	 * @return True if the text is contained in the body tag as text; otherwise
@@ -118,6 +122,7 @@ public class WebDriverUtilities {
 	 * Verifies that text is present in the given locator. Case sensitive.
 	 * 
 	 * @param driver
+     *            WebDriver used to execute commands.
 	 * @param locator
 	 *            Locator to search within.
 	 * @param text
