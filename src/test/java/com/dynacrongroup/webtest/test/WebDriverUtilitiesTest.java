@@ -42,7 +42,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 	}
 
 	@Test
-//	@Ignore("timeout problem...?") //Didn't happen for me... suggest retesting in cloudbees...
+	@Ignore("timeout problem...?")
 	public void isTextPresentTest() throws Exception {
 		driver.get(p._("/"));
 		assertTrue(WebDriverUtilities.isTextPresent(driver, "Dynacron Group"));
