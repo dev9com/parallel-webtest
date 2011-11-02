@@ -118,9 +118,10 @@ public class Path {
 
 	/**
 	 * Reports the SauceLabs configuration string expected by this Path
-	 * configuration object.
+	 * configuration object, for Sauce Connect v1
 	 * 
 	 * @return command-line configuration string
+     * @deprecated Sauce connect v3 does not require or use specific ports, hosts
 	 */
 	public String getExpectedSauceConnectString() {
 		String[] args = new String[] { "sauce_connect", "-u",
@@ -138,6 +139,7 @@ public class Path {
 		return result.toString();
 	}
 
+    //TODO: update this method for use with sauce connect 3
 	public void checkSauce() {
 		if (!sauceConnectWarnings.contains(getExpectedSauceConnectString())) {
 			sauceConnectWarnings.add(getExpectedSauceConnectString());
@@ -150,6 +152,15 @@ public class Path {
 			log.info("*** " + getExpectedSauceConnectString());
 		}
 	}
+
+    public  Boolean isLocal() {
+        Boolean local = null;
+        if (server != null) {
+            local =  SystemName.getSystemName().equalsIgnoreCase(server);
+        }
+        return local;
+    }
+
 
 	private void init() {
 		if (server == null) {
