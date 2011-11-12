@@ -190,4 +190,9 @@ public class Path {
 					WEBDRIVER_CONTEXT, "");
 		}
 	}
+
+    @Override
+    public String toString() {
+        return translate("");
+    }
 }
