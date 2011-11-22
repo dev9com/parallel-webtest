@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -170,7 +171,8 @@ public class WebDriverBase {
      * This method counts the number of test methods. This counter is used to
      * help shut down the browsers when the test is complete.
      */
-    static private int countTestMethods(
+    @VisibleForTesting
+    static int countTestMethods(
 	    @SuppressWarnings("rawtypes") Class clazz) {
 	int count = 0;
 	@SuppressWarnings("rawtypes")
