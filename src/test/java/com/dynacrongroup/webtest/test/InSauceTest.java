@@ -6,6 +6,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
+import com.dynacrongroup.webtest.SauceLabsCredentials;
+import com.dynacrongroup.webtest.util.ConfigurationValue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -25,19 +27,7 @@ public class InSauceTest {
 			.getLogger(InSauceTest.class);
 
 	@Test
-	@Ignore("Need to be updated now that we don't hard-code sauce config")
 	public void testsaucelabsfirefox() throws Exception {
-
-		ProxySelector aDefault = ProxySelector.getDefault();
-		
-		//TODO: Refactor based on standard config values
-		List<Proxy> select = aDefault
-				.select(new URI("<to do add sauce config>"));
-
-		for (Proxy proxy : select) {
-			log.info("proxy [{}]: [{}]", proxy.toString(), proxy.address());
-			proxy.toString();
-		}
 
 		DesiredCapabilities capabillities = new DesiredCapabilities("iexplore",
 				"7", Platform.WINDOWS);
@@ -47,12 +37,10 @@ public class InSauceTest {
 
 		log.info("capabilities: "
 				+ new BeanToJsonConverter().convert(capabillities));
-		//TODO: Refactor based on standard config values
-		WebDriver driver = new RemoteWebDriver(new URL(
-				"<to do add sauce config>"), capabillities);
+ 		WebDriver driver = new RemoteWebDriver(SauceLabsCredentials.getConnectionString(), capabillities);
 		try {
 			String jobId = ((RemoteWebDriver) driver).getSessionId().toString();
-			log.info(jobId);
+			log.info("Job ID: [{}]", jobId);
 			driver.get("http://www.google.com");
 			WebElement search = driver.findElement(By.name("q"));
 			Actions builder = new Actions(driver);
