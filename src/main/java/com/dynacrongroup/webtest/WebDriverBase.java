@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory;
  * Selenium recorder and/or by hand.
  */
 public class WebDriverBase {
-    /** Allows reuse of a browser throughout a single class run. */
+    /**
+     * Allows reuse of a browser throughout a single class run.
+     */
     private static ThreadLocal<WebDriver> storedWebDriver = new ThreadLocal<WebDriver>();
 
     /**
@@ -32,14 +34,20 @@ public class WebDriverBase {
      */
     private static ThreadLocal<Integer> methodsRemaining = new ThreadLocal<Integer>();
 
-    /** The main WebDriver interface. */
+    /**
+     * The main WebDriver interface.
+     */
     public WebDriver driver = null;
 
-    /** This is a special bit of JUnit magic to get the name of the test */
+    /**
+     * This is a special bit of JUnit magic to get the name of the test
+     */
     @Rule
     public TestName name = new TestName();
 
-    /** The logger associated with this specific browser test execution */
+    /**
+     * The logger associated with this specific browser test execution
+     */
     private final Logger browserTestLog;
 
     /**
@@ -51,7 +59,9 @@ public class WebDriverBase {
 
     private String jobUrl = null;
 
-    /** Used to track the timing for output to webdriver-timings.csv */
+    /**
+     * Used to track the timing for output to webdriver-timings.csv
+     */
     private Timing timer;
 
     /**
@@ -59,24 +69,24 @@ public class WebDriverBase {
      * configuration options.
      */
     public WebDriverBase(String browser, String version) {
-	this.targetWebBrowser = new TargetWebBrowser(browser, version);
-	browserTestLog = LoggerFactory.getLogger(this.getClass()
-		.getSimpleName() + "-" + this.targetWebBrowser.humanReadable());
+        this.targetWebBrowser = new TargetWebBrowser(browser, version);
+        browserTestLog = LoggerFactory.getLogger(this.getClass()
+                .getSimpleName() + "-" + this.targetWebBrowser.humanReadable());
 
-	if (methodsRemaining.get() == null) {
-	    methodsRemaining.set(countTestMethods(this.getClass()));
-	}
+        if (methodsRemaining.get() == null) {
+            methodsRemaining.set(countTestMethods(this.getClass()));
+        }
     }
 
     /**
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
-     * 
+     *
      * @see WebDriverFactory
      */
     @Parameters
     public static List<String[]> configureWebDriverTargets() throws IOException {
-	return new WebDriverFactory().getDriverTargets();
+        return new WebDriverFactory().getDriverTargets();
     }
 
     /**
@@ -85,77 +95,81 @@ public class WebDriverBase {
      */
     @Before
     public void startWebDriver() {
-	if (timer == null) {
-	    timer = new Timing(targetWebBrowser, this.getClass()
-		    .getSimpleName() + "," + name.getMethodName());
-	}
+        if (timer == null) {
+            timer = new Timing(targetWebBrowser, this.getClass()
+                    .getSimpleName() + "," + name.getMethodName());
+        }
 
-	// Assume that we have a current WebDriver instance to grab
-	timer.start();
+        // Assume that we have a current WebDriver instance to grab
+        timer.start();
 
-	// Grabs existing WebDriver
-	if (driver != null) {
-	    return;
-	}
+        // Grabs existing WebDriver
+        if (driver != null) {
+            return;
+        }
 
-	// Grabs existing WebDriver bound to this thread
-	if (storedWebDriver.get() != null) {
-	    driver = storedWebDriver.get();
-	    return;
-	}
+        // Grabs existing WebDriver bound to this thread
+        if (storedWebDriver.get() != null) {
+            driver = storedWebDriver.get();
+            return;
+        }
 
-	// Launches new WebDriver instance
-	WebDriverLauncher launcher = new WebDriverLauncher();
-	driver = launcher.getNewWebDriverInstance(this.getJobName(),
-		this.browserTestLog, targetWebBrowser);
-	this.jobUrl = launcher.getJobUrl();
+        // Launches new WebDriver instance
+        WebDriverLauncher launcher = new WebDriverLauncher();
+        driver = launcher.getNewWebDriverInstance(this.getJobName(),
+                this.browserTestLog, targetWebBrowser);
+        this.jobUrl = launcher.getJobUrl();
 
-	browserTestLog.debug("WebDriver ready.");
-	if (jobUrl.length() > 1) {
-	    browserTestLog.info("View on SauceLabs at " + jobUrl);
-	}
-	storedWebDriver.set(driver);
-	WebDriverLeakCheck.add(this.getClass(), driver);
+        browserTestLog.debug("WebDriver ready.");
+        if (jobUrl.length() > 1) {
+            browserTestLog.info("View on SauceLabs at " + jobUrl);
+        }
+        storedWebDriver.set(driver);
+        WebDriverLeakCheck.add(this.getClass(), driver);
 
-	// Looks like we didn't use the existing driver instance, so
-	// reset start time to now.
-	timer.start();
+        // Looks like we didn't use the existing driver instance, so
+        // reset start time to now.
+        timer.start();
     }
 
     @After
     public void noLongerUsingWebDriver() {
 
-	timer.stop();
-        
+        timer.stop();
+
         reduceToOneWindow();
 
-	methodsRemaining.set(methodsRemaining.get() - 1);
+        methodsRemaining.set(methodsRemaining.get() - 1);
 
-	browserTestLog.trace("Methods left: " + methodsRemaining.get());
+        browserTestLog.trace("Methods left: " + methodsRemaining.get());
 
-	if (methodsRemaining.get() == 0 && driver != null) {
-	    WebDriverLeakCheck.remove(driver);
-	    driver = null;
-	    storedWebDriver.set(null);
-	}
+        if (methodsRemaining.get() == 0 && driver != null) {
+            WebDriverLeakCheck.remove(driver);
+            driver = null;
+            storedWebDriver.set(null);
+        }
     }
 
-    /** Simple utility method - sleeps for the specified number of milliseconds. */
+    /**
+     * Simple utility method - sleeps for the specified number of milliseconds.
+     */
     public void pause(int millisecs) {
-	try {
-	    Thread.sleep(millisecs);
-	} catch (InterruptedException e) {
-	    browserTestLog.debug("Thread sleep interrupted", e);
-	}
+        try {
+            Thread.sleep(millisecs);
+        } catch (InterruptedException e) {
+            browserTestLog.debug("Thread sleep interrupted", e);
+        }
     }
 
     public final TargetWebBrowser getTargetWebBrowser() {
-	return targetWebBrowser;
+        return targetWebBrowser;
     }
 
-    /** Returns the SauceLabs job URL (if there is one). */
+    /**
+     * Returns the SauceLabs job URL (if there is one).
+     */
     public final String getJobURL() {
-	return jobUrl;
+        return jobUrl;
     }
 
     /**
@@ -163,30 +177,25 @@ public class WebDriverBase {
      * the name of the class.
      */
     public final String getJobName() {
-	return SystemName.getSystemName() + "-"
-		+ this.getClass().getSimpleName();
-    }   
-    
+        return SystemName.getSystemName() + "-"
+                + this.getClass().getSimpleName();
+    }
+
     /**
      * This method counts the number of test methods. This counter is used to
      * help shut down the browsers when the test is complete.
      */
     @VisibleForTesting
     static int countTestMethods(
-	    @SuppressWarnings("rawtypes") Class clazz) {
-	int count = 0;
-	@SuppressWarnings("rawtypes")
-	Class current = clazz;
-	while (current != null) {
-	    for (Method m : current.getMethods()) {
-		if ((m.getAnnotation(Test.class) != null)
-			&& (m.getAnnotation(Ignore.class) == null)) {
-		    count++;
-		}
-	    }
-	    current = current.getSuperclass();
-	}
-	return count;
+            @SuppressWarnings("rawtypes") Class clazz) {
+        int count = 0;
+        for (Method m : clazz.getMethods()) {
+            if ((m.getAnnotation(Test.class) != null)
+                    && (m.getAnnotation(Ignore.class) == null)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -195,19 +204,19 @@ public class WebDriverBase {
      * local logger, all of the parallel executions will get intermixed.
      */
     public Logger getLogger() {
-	return browserTestLog;
+        return browserTestLog;
     }
 
     private void reduceToOneWindow() {
         if (driver.getWindowHandles().size() > 1) {
             String firstHandle = (String) driver.getWindowHandles().toArray()[0];
-            for (String handle : driver.getWindowHandles() ) {
-                if (! handle.equals(firstHandle)) {
+            for (String handle : driver.getWindowHandles()) {
+                if (!handle.equals(firstHandle)) {
                     driver.switchTo().window(handle);
                     driver.close();
                 }
             }
             driver.switchTo().window(firstHandle);
-        }  
+        }
     }
 }

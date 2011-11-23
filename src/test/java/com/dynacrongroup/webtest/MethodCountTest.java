@@ -1,8 +1,5 @@
 package com.dynacrongroup.webtest;
 
-import com.dynacrongroup.webtest.WebDriverBase;
-import com.dynacrongroup.webtest.test.SystemNameTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,16 +14,59 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class MethodCountTest {
 
-    class Sub extends SystemNameTest {
+    class Parent {
+        @Test
+        public void innerTest() {
+             //Test should never be executed
+        }
+
+        @Test
+        public void anotherInnerTest() {
+             //Test should never be executed
+        }
+    }
+
+    class Sub1 extends Parent {
         //Do not add test methods here.
     }
 
-    @Test
-    @Ignore("Issue 3 on github")
-    public void verifySubclassCount() {
-        assertThat("Subclass with no test methods should have the same number of methods as superclass",
-                WebDriverBase.countTestMethods(Sub.class), equalTo(WebDriverBase.countTestMethods(SystemNameTest.class)));
+    class Sub2 extends Sub1 {
+        //Do not add test methods here.
     }
 
+    class Sub3 extends Parent {
+        @Test
+        public void innerTest2 () {
+             //Test should never be executed
+        }
+    }
+
+    @Test
+    public void verifyParentclassCount() {
+        assertThat("Subclass with no test methods should have the same number of methods as superclass",
+                WebDriverBase.countTestMethods(Parent.class),
+                equalTo(2));
+    }
+
+    @Test
+    public void verifySubclassCount() {
+        assertThat("Subclass with no test methods should have the same number of methods as superclass",
+                WebDriverBase.countTestMethods(Sub1.class),
+                equalTo(WebDriverBase.countTestMethods(Parent.class)));
+    }
+
+    @Test
+    public void verifySubSubclassCount() {
+        assertThat("SubSubclass with no test methods should have the same number of methods as superclass",
+                WebDriverBase.countTestMethods(Sub2.class),
+                equalTo(WebDriverBase.countTestMethods(Parent.class)));
+    }
+
+    @Test
+    public void verifySubclassWithNewMethodCount() {
+        assertThat("Subclass with one test method should have one more test method than superclass",
+                WebDriverBase.countTestMethods(Sub3.class),
+                equalTo(WebDriverBase.countTestMethods(Parent.class) + 1));
+    }
 
 }
