@@ -9,3 +9,9 @@
 #Maven files
 target/**/*
 target/*
+
+
+#Idea files
+*.iws
+*.ipr
+*.iml
