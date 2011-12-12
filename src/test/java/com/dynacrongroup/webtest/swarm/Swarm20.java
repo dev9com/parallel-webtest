@@ -18,7 +18,7 @@ public class Swarm20 extends WebDriverBase {
 
 
 
-    Path p = new Path("www.dynacrongroup.com", 80);
+    Path p = new Path("www.google.com", 80);
 
     public Swarm20(String browser, String browserVersion) {
         super(browser, browserVersion);
@@ -27,14 +27,16 @@ public class Swarm20 extends WebDriverBase {
                    @Test
                    public void doSomething() {
                        driver.get( p._(""));
-                       assertThat(driver.findElement(By.tagName("body")).getText(), containsString("Dynacron"));
+                       pause(20000);
+        assertThat(driver.findElement(By.tagName("body")).getText(), containsString("Maps"));
 
                    }
 
                    @Test
     public void doAnything() {
         driver.get(p._(""));
-        assertThat(driver.findElement(By.tagName("body")).getText(), containsString("Welcome"));
+        pause(20000);
+        assertThat(driver.findElement(By.tagName("body")).getText(), containsString("Google"));
     }
 
 }
