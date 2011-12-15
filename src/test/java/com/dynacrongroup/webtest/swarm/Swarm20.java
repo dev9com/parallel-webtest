@@ -28,7 +28,7 @@ public class Swarm20 extends WebDriverBase {
                    public void doSomething() {
                        driver.get( p._(""));
                        pause(20000);
-        assertThat(driver.findElement(By.tagName("body")).getText(), containsString("Maps"));
+        assertThat(driver.findElement(By.tagName("body")).getText(), containsString("Google"));
 
                    }
 

@@ -60,25 +60,29 @@ public class WebDriverLauncher {
         boolean validWebDriver = false;
         
         for (int attempt = 0; attempt < MAX_RETRIES && !validWebDriver; attempt++) {
-            testLog.debug("Temp log: attempt [{}]" + attempt +1 );
-            if (attempt > 0) {
-                testLog.error("IT FAILED!");
-            }
-            // TODO: remove overdrammatic debug logging.
+            testLog.debug("WebDriver provisioning attempt [{}]" + attempt +1 );
 
             if (target.isClassLoaded()) {
                 testLog.debug("Initializing WebDriver by specified class: "
                         + jobName);
                 try {
                     driver = (WebDriver) Class.forName(target.version).newInstance();
-                } catch (InstantiationException e) {
-                    testLog.error("Unable to load target WebDriver class.", e);
-                } catch (IllegalAccessException e) {
-                    testLog.error("Unable to load target WebDriver class.", e);
-                } catch (ClassNotFoundException e) {
-                    testLog.error("Unable to load target WebDriver class.", e);
                 } catch (WebDriverException e) {
                     testLog.error("Unable to load target WebDriver class.", e);     //Sometimes caused by port locking in FF
+                    if (e.getMessage().contains("Unable to bind to locking port")) {
+                        testLog.error("Locking port error may be caused by ephemereal port exhaustion.  Try reducing the number of threads.");
+                    }
+                }
+                // If this is not a WebDriverException caused by ephemereal port locking, it's a programmatic error that shouldn't be retried.
+                catch (InstantiationException e) {
+                    testLog.error("Unable to load target WebDriver class.", e);
+                    break;
+                } catch (IllegalAccessException e) {
+                    testLog.error("Unable to load target WebDriver class.", e);
+                    break;
+                } catch (ClassNotFoundException e) {
+                    testLog.error("Unable to load target WebDriver class.", e);
+                    break;
                 }
 
                 validWebDriver = driver != null;
