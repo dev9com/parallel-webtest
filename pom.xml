@@ -16,7 +16,7 @@
 		<!-- JUnit parallel run configuration -->
 		<parallelrun>classes</parallelrun>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<threadcount>10</threadcount>
+		<threadcount>5</threadcount>
 
 		<!-- Target WebDriver configuration -->
 		<target-webdriver>org.openqa.selenium.htmlunit.HtmlUnitDriver</target-webdriver>
