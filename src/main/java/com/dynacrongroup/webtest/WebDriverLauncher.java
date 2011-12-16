@@ -1,15 +1,15 @@
 package com.dynacrongroup.webtest;
 
-import java.util.UUID;
-
+import com.dynacrongroup.webtest.util.ConnectionValidator;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 
-import com.dynacrongroup.webtest.util.ConnectionValidator;
+import java.util.UUID;
 
 /**
  * This class is responsible for launching single WebDriver instances. Note that
