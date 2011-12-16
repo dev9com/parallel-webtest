@@ -3,10 +3,36 @@
 
 	<groupId>com.dynacrongroup</groupId>
 	<artifactId>parallel-webtest</artifactId>
+    <packaging>jar</packaging>
+    <name>parallel-webtest</name>
 	<version>1.0.13-SNAPSHOT</version>
-	<name>parallel-webtest</name>
-    <url>http://www.dynacrongroup.com/parallel-webtest/</url>
     <description>Parallel execution and numerous other utilities intended for web testing support.</description>
+    <url>https://github.com/dynacron-group/parallel-webtest</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Will Iverson</name>
+            <email>will DOT iverson AT dynacrongroup DOT com</email>
+            <organization>Dynacron Group</organization>
+            <roles>
+                <role>Architect</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>David Drake</name>
+            <email>david DOT drake AT dynacrongroup DOT com</email>
+            <organization>Dynacron Group</organization>
+            <roles>
+                <role>SDET</role>
+            </roles>
+        </developer>
+    </developers>
 
 	<properties>
 		<!-- Dependency configuration -->
@@ -37,25 +63,6 @@
 		<developerConnection>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</developerConnection>
 		<url>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</url>
 	</scm>
-
-	<developers>
-		<developer>
-			<name>Will Iverson</name>
-			<email>will DOT iverson AT dynacrongroup DOT com</email>
-			<organization>Dynacron Group</organization>
-			<roles>
-				<role>Architect</role>
-			</roles>
-		</developer>
-		<developer>
-			<name>David Drake</name>
-			<email>david DOT drake AT dynacrongroup DOT com</email>
-			<organization>Dynacron Group</organization>
-			<roles>
-				<role>SDET</role>
-			</roles>
-		</developer>
-	</developers>
 
 	<dependencies>
 		<!-- No, really. We are bringing in JUnit as a dependency, not a test dependency. 
