@@ -9,3 +9,9 @@
 #Maven files
 target/**/*
 target/*
+
+parallel-webtest.iml
+
+parallel-webtest.ipr
+
+parallel-webtest.iws
