@@ -5,6 +5,8 @@
 	<artifactId>parallel-webtest</artifactId>
 	<version>1.0.13-SNAPSHOT</version>
 	<name>parallel-webtest</name>
+    <url>http://www.dynacrongroup.com/parallel-webtest/</url>
+    <description>Parallel execution and numerous other utilities intended for web testing support.</description>
 
 	<properties>
 		<!-- Dependency configuration -->
@@ -199,6 +201,4 @@
 		<system>CloudBees</system>
 		<url>tbd</url>
 	</ciManagement>
-	<url>http://www.dynacrongroup.com/parallel-webtest/</url>
-	<description>Parallel execution and numerous other utilities intended for web testing support.</description>
 </project>
