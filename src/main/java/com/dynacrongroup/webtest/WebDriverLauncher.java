@@ -59,7 +59,7 @@ public class WebDriverLauncher {
         boolean validWebDriver = false;
         
         for (int attempt = 0; attempt < MAX_RETRIES && !validWebDriver; attempt++) {
-            testLog.debug("WebDriver provisioning attempt [{}]" + attempt +1 );
+            testLog.debug("WebDriver provisioning attempt [{}]",  attempt +1 );
 
             if (target.isClassLoaded()) {
                 testLog.debug("Initializing WebDriver by specified class: "

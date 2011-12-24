@@ -1,20 +1,16 @@
 package com.dynacrongroup.webtest;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import com.google.common.annotations.VisibleForTesting;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runners.Parameterized.Parameters;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * This is the base class for interfacing with WebDriver. It handles the
@@ -71,7 +67,7 @@ public class WebDriverBase {
     public WebDriverBase(String browser, String version) {
         this.targetWebBrowser = new TargetWebBrowser(browser, version);
         browserTestLog = LoggerFactory.getLogger(this.getClass()
-                .getSimpleName() + "-" + this.targetWebBrowser.humanReadable());
+                .getName() + "-" + this.targetWebBrowser.humanReadable());
 
         if (methodsRemaining.get() == null) {
             methodsRemaining.set(countTestMethods(this.getClass()));
