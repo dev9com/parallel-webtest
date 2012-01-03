@@ -11,7 +11,7 @@
 		</links>
 
 		<menu name="Documentation">
-			<!--<item name="Xdoc Example" href="xdoc.html"/> -->
+			<item name="Tutorial" href="tutorial.html"/>
 		</menu>
 		<menu ref="reports" />
 	</body>

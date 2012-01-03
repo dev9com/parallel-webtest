@@ -34,6 +34,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 	@Test
 	public void isElementPresentTest() throws Exception {
         getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("JobUrl is [{}]", getJobURL());
 		assertTrue(WebDriverUtilities.isElementPresent(driver,
 				By.cssSelector(".menu-container")));
 		assertFalse(WebDriverUtilities.isElementPresent(driver,
@@ -44,6 +45,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 //    @Ignore("getting connection refused from one browser; investigating")
 	public void waitForElementTest() throws Exception {
         getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("JobUrl is [{}]", getJobURL());
 		driver.findElement(By.cssSelector("div#logo")).click();
 		WebDriverUtilities.waitForElement(driver, By.id("righttopcolumn"));
 	}
@@ -52,6 +54,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 //	@Ignore("timeout problem...?")
 	public void isTextPresentTest() throws Exception {
         getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("JobUrl is [{}]", getJobURL());
 		assertTrue(WebDriverUtilities.isTextPresent(driver, "Dynacron Group"));
 		assertFalse(WebDriverUtilities.isTextPresent(driver,
 				"ponies in a field"));

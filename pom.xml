@@ -6,7 +6,8 @@
     <packaging>jar</packaging>
     <name>parallel-webtest</name>
 	<version>1.0.14-SNAPSHOT</version>
-    <description>Parallel execution and numerous other utilities intended for web testing support.</description>
+    <description>Parallel execution and numerous other utilities intended for web testing support.  For basic
+        information on usage, see the tutorial listed in the site's documentation</description>
     <url>https://github.com/dynacron-group/parallel-webtest</url>
     <licenses>
         <license>
@@ -39,7 +40,7 @@
 		<hamcrest.version>1.3.RC2</hamcrest.version>
 		<joda-time.version>2.0</joda-time.version>
 		<junit.version>4.10</junit.version>
-		<logback.version>0.9.24</logback.version>
+		<logback.version>1.0.0</logback.version>
 
 		<!-- JUnit parallel run configuration -->
 		<parallelrun>classes</parallelrun>
@@ -188,6 +189,12 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8</version>
+            </plugin>
 		</plugins>
 	</reporting>
 
