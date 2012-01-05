@@ -5,7 +5,7 @@
 	<artifactId>parallel-webtest</artifactId>
     <packaging>jar</packaging>
     <name>parallel-webtest</name>
-	<version>1.0.14</version>
+	<version>1.0.15-SNAPSHOT</version>
     <description>Parallel execution and numerous other utilities intended for web testing support.  For basic
         information on usage, see the tutorial listed in the site's documentation</description>
     <url>https://github.com/dynacron-group/parallel-webtest</url>
