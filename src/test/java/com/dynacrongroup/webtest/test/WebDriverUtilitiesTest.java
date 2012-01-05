@@ -36,7 +36,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
         getLogger().info("Starting test [{}]", name.getMethodName());
         getLogger().info("JobUrl is [{}]", getJobURL());
 		assertTrue(WebDriverUtilities.isElementPresent(driver,
-				By.cssSelector(".menu-container")));
+				By.id("site-title")));
 		assertFalse(WebDriverUtilities.isElementPresent(driver,
 				By.id("magic-dragons")));
 	}
@@ -46,8 +46,8 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 	public void waitForElementTest() throws Exception {
         getLogger().info("Starting test [{}]", name.getMethodName());
         getLogger().info("JobUrl is [{}]", getJobURL());
-		driver.findElement(By.cssSelector("div#logo")).click();
-		WebDriverUtilities.waitForElement(driver, By.id("righttopcolumn"));
+		driver.findElement(By.id("site-title")).click();
+		WebDriverUtilities.waitForElement(driver, By.id("site-title"));
 	}
 
 	@Test
