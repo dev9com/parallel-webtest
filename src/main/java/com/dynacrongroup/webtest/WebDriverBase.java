@@ -31,6 +31,11 @@ public class WebDriverBase {
     private static ThreadLocal<Integer> methodsRemaining = new ThreadLocal<Integer>();
 
     /**
+     * Tracks the jobUrl, if specified, for the job in Sauce Labs.
+     */
+    private static ThreadLocal<String> jobUrl = new ThreadLocal<String>();
+
+    /**
      * The main WebDriver interface.
      */
     public WebDriver driver = null;
@@ -53,8 +58,6 @@ public class WebDriverBase {
      */
     private final TargetWebBrowser targetWebBrowser;
 
-    private String jobUrl = null;
-
     /**
      * Used to track the timing for output to webdriver-timings.csv
      */
@@ -72,6 +75,10 @@ public class WebDriverBase {
         if (methodsRemaining.get() == null) {
             methodsRemaining.set(countTestMethods(this.getClass()));
         }
+
+        if (getJobURL() == null) {
+            setJobUrl("");
+        }
     }
 
     /**
@@ -80,7 +87,7 @@ public class WebDriverBase {
      *
      * @see WebDriverFactory
      */
-    @Parameters
+    @DescriptivelyParameterized.Parameters
     public static List<String[]> configureWebDriverTargets() throws IOException {
         return new WebDriverFactory().getDriverTargets();
     }
@@ -114,11 +121,11 @@ public class WebDriverBase {
         WebDriverLauncher launcher = new WebDriverLauncher();
         driver = launcher.getNewWebDriverInstance(this.getJobName(),
                 this.browserTestLog, targetWebBrowser);
-        this.jobUrl = launcher.getJobUrl();
+        setJobUrl(launcher.getJobUrl());
 
         browserTestLog.debug("WebDriver ready.");
-        if (jobUrl.length() > 1) {
-            browserTestLog.info("View on SauceLabs at " + jobUrl);
+        if (getJobURL().length() > 1) {
+            browserTestLog.info("View on SauceLabs at " + getJobURL());
         }
         storedWebDriver.set(driver);
         WebDriverLeakCheck.add(this.getClass(), driver);
@@ -161,11 +168,15 @@ public class WebDriverBase {
         return targetWebBrowser;
     }
 
+    private final void setJobUrl(String url) {
+        jobUrl.set(url);
+    }
+    
     /**
-     * Returns the SauceLabs job URL (if there is one).
+     * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
      */
     public final String getJobURL() {
-        return jobUrl;
+        return jobUrl.get();
     }
 
     /**

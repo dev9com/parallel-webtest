@@ -112,9 +112,7 @@ public class WebDriverLauncher {
                     if (driver.getWindowHandle() != null) {
                         validWebDriver = true;
                         testLog.debug("Successfully launched SauceLabs WebDriver connection.");
-                        jobUrl = "https://saucelabs.com/jobs/"
-                                + ((RemoteWebDriver) driver).getSessionId()
-                                .toString();
+                        jobUrl = constructJobUrl(driver);
                         testLog.trace("Job url set to: " + jobUrl);
                     } else {
                         testLog.warn("Unable to establish communication with SauceLabs on attempt "
@@ -132,5 +130,11 @@ public class WebDriverLauncher {
                     "Unable to initialize valid WebDriver.");
         }
         return driver;
+    }
+    
+    private static String constructJobUrl(WebDriver driver) {
+        return "https://saucelabs.com/jobs/"
+                + ((RemoteWebDriver) driver).getSessionId()
+                .toString();
     }
 }
