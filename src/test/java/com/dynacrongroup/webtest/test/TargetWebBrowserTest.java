@@ -1,6 +1,8 @@
 package com.dynacrongroup.webtest.test;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -38,10 +40,11 @@ public class TargetWebBrowserTest {
     
     @Test
     public void testHtmlDriver() {
-        TargetWebBrowser tar = new TargetWebBrowser("byclass","org.openqa.selenium.htmlunit.HtmlunitDriver" );
+        TargetWebBrowser tar = new TargetWebBrowser("byclass","org.openqa.selenium.htmlunit.HtmlUnitDriver" );
         assertTrue(tar.isHtmlUnit());
         assertFalse(tar.isInternetExplorer());
         assertTrue(tar.isClassLoaded());
+        assertThat(tar.humanReadable(), equalTo("byclass:HtmlUnitDriver"));
     }
     
     @Test
@@ -54,10 +57,11 @@ public class TargetWebBrowserTest {
     
     @Test
     public void testSauceFF() {
-        TargetWebBrowser tar = new TargetWebBrowser("firefox","7" );
+        TargetWebBrowser tar = new TargetWebBrowser("firefox","3.6" );
         assertTrue(tar.isFirefox());
         assertFalse(tar.isChrome());
         assertFalse(tar.isClassLoaded());
+        assertThat(tar.humanReadable(), equalTo("firefox:3.6"));
     }
     
     @Test
@@ -66,6 +70,7 @@ public class TargetWebBrowserTest {
         assertTrue(tar.isChrome());
         assertFalse(tar.isFirefox());
         assertFalse(tar.isClassLoaded());
+        assertThat(tar.humanReadable(), equalTo("chrome:"));
     }
     
     @Test

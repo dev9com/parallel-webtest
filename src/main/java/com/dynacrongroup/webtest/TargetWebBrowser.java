@@ -4,6 +4,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
+import java.util.Arrays;
+
 /**
  * Represents a target browser/browser version combination. With
  * parallel-webtest, the browser may either be specified by a name (e.g.
@@ -58,7 +60,22 @@ public class TargetWebBrowser {
 				.contains("htmlunit"));
 	}
 
+    /**
+     * Returns version:browser in string form.  Removes package name from
+     * class-loaded drivers.
+     * @return  A human-readable string representing the parameters used for test
+     */
 	public String humanReadable() {
-		return this.browser + ":" + this.version;
+        String readable = browser + ":";
+        
+        if (isClassLoaded()) {
+            String[] splitVersion = this.version.split("\\.");
+            readable += splitVersion[splitVersion.length -1];
+        }
+        else {
+            readable += version;
+        }
+
+        return readable;
 	}
 }
