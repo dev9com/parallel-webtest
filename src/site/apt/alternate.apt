@@ -1,0 +1,31 @@
+ ------
+ Alternate Configurations
+ ------
+ David Drake
+ ------
+ 1/18/2012
+ ------
+
+Overview
+
+ parallel_webtest was originally designed to parallelize tests sent to Sauce
+ Labs, but it can be used to send tests to any Selenium server.
+
+Running tests against an alternate remote server
+
+ The following settings will need to be changed to send tests to a selenium
+ server other than Sauce Labs.
+
+ * [SAUCELABS_SERVER]: this should be set to the address of the server.  For
+ example: <server-name>:4444/wd/hub
+
+ * [WEBDRIVER_DRIVER]: this should be set to null.
+
+ * [SINGLE_SAUCE]: this should be set to the connection string for the browser
+ the server will use.  For example: "iexplore:8" or "chrome:*".
+
+Limitations
+
+ The library was designed for use with Sauce Labs, so the logging displayed
+ may still contain references to Sauce Labs.  In addition, the "getJobUrl"
+ function of WebDriverBase will return an invalid value.

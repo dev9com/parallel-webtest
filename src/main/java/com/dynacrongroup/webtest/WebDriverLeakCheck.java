@@ -18,63 +18,63 @@ import org.slf4j.LoggerFactory;
 public class WebDriverLeakCheck {
 
     private final static Logger log = LoggerFactory
-	    .getLogger(WebDriverLeakCheck.class);
+            .getLogger(WebDriverLeakCheck.class);
     private static Map<WebDriver, Tracker> trackedWebDriver = Collections
-	    .synchronizedMap(new HashMap<WebDriver, Tracker>());
+            .synchronizedMap(new HashMap<WebDriver, Tracker>());
     private static int totalOpened = 0;
     private static int totalClosed = 0;
 
     private WebDriverLeakCheck() {
-	// Utility class (Checkstyle)
+        // Utility class (Checkstyle)
     }
 
     static class Tracker {
 
-	WebDriver webdriver;
-	Throwable owner;
-	@SuppressWarnings("rawtypes")
-	Class clazz;
+        WebDriver webdriver;
+        Throwable owner;
+        @SuppressWarnings("rawtypes")
+        Class clazz;
     }
 
     public static int open() {
-	return trackedWebDriver.size();
+        return trackedWebDriver.size();
     }
 
     public static void add(@SuppressWarnings("rawtypes") Class clazz,
-	    WebDriver wd) {
-	Tracker t = new Tracker();
-	t.webdriver = wd;
-	t.clazz = clazz;
-	t.owner = new Throwable();
-	t.owner.fillInStackTrace();
+                           WebDriver wd) {
+        Tracker t = new Tracker();
+        t.webdriver = wd;
+        t.clazz = clazz;
+        t.owner = new Throwable();
+        t.owner.fillInStackTrace();
 
-	trackedWebDriver.put(wd, t);
-	totalOpened++;
-	log.trace("New WebDriver started, now " + trackedWebDriver.size()
-		+ " running.");
+        trackedWebDriver.put(wd, t);
+        totalOpened++;
+        log.trace("New WebDriver started, now " + trackedWebDriver.size()
+                + " running.");
     }
 
     public static void remove(WebDriver s) {
-	s.quit();
-	trackedWebDriver.remove(s);
-	log.trace("WebDriver shut down. " + WebDriverLeakCheck.open()
-		+ " still running.");
-	totalClosed++;
+        s.quit();
+        trackedWebDriver.remove(s);
+        log.trace("WebDriver shut down. " + WebDriverLeakCheck.open()
+                + " still running.");
+        totalClosed++;
     }
 
     public static void report() {
-	log.trace("WebDriver instances open = " + trackedWebDriver.size());
-	log.trace("Total sessions opened during run " + totalOpened);
-	log.trace("Total sessions closed during run " + totalClosed);
-	if (trackedWebDriver.isEmpty()) {
-	    return;
-	}
+        log.trace("WebDriver instances open = " + trackedWebDriver.size());
+        log.trace("Total sessions opened during run " + totalOpened);
+        log.trace("Total sessions closed during run " + totalClosed);
+        if (trackedWebDriver.isEmpty()) {
+            return;
+        }
 
-	Iterator<WebDriver> it = trackedWebDriver.keySet().iterator();
-	while (it.hasNext()) {
-	    WebDriver s = it.next();
-	    Tracker t = trackedWebDriver.get(s);
-	    log.trace("Session currently open from " + t.clazz.getName());
-	}
+        Iterator<WebDriver> it = trackedWebDriver.keySet().iterator();
+        while (it.hasNext()) {
+            WebDriver s = it.next();
+            Tracker t = trackedWebDriver.get(s);
+            log.trace("Session currently open from " + t.clazz.getName());
+        }
     }
 }

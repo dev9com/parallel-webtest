@@ -48,7 +48,7 @@ public class WebDriverLauncher {
         }
 
         if (target.isHtmlUnit()) {
-            testLog.debug("Initializing HTMLUnit: " + jobName);
+            testLog.trace("Initializing HTMLUnit: " + jobName);
 
             return new HtmlUnitDriver(true);
 
@@ -58,18 +58,18 @@ public class WebDriverLauncher {
 
         boolean validWebDriver = false;
         
-        for (int attempt = 0; attempt < MAX_RETRIES && !validWebDriver; attempt++) {
-            testLog.debug("WebDriver provisioning attempt [{}]",  attempt +1 );
+        for (int attempt = 1; attempt <= MAX_RETRIES && !validWebDriver; attempt++) {
+            testLog.trace("WebDriver provisioning attempt [{}]",  attempt );
 
             if (target.isClassLoaded()) {
-                testLog.debug("Initializing WebDriver by specified class: "
+                testLog.trace("Initializing WebDriver by specified class: "
                         + jobName);
                 try {
                     driver = (WebDriver) Class.forName(target.version).newInstance();
                 } catch (WebDriverException e) {
                     testLog.error("Unable to load target WebDriver class.", e);     //Sometimes caused by port locking in FF
                     if (e.getMessage().contains("Unable to bind to locking port")) {
-                        testLog.error("Locking port error may be caused by ephemereal port exhaustion.  Try reducing the number of threads.");
+                        testLog.error("Locking port error may be caused by ephemeral port exhaustion.  Try reducing the number of threads.");
                     }
                 }
                 // If this is not a WebDriverException caused by ephemereal port locking, it's a programmatic error that shouldn't be retried.
@@ -86,9 +86,11 @@ public class WebDriverLauncher {
 
                 validWebDriver = driver != null;
             } else {
+                
+                String server = SauceLabsCredentials.getServer();
 
                 try {
-                    testLog.debug("Initializing ondemand.saucelabs.com:80 job: "
+                    testLog.trace("Initializing remote job: "
                             + jobName + " [" + uniqueId + "]");
 
                     ConnectionValidator
@@ -111,15 +113,15 @@ public class WebDriverLauncher {
 
                     if (driver.getWindowHandle() != null) {
                         validWebDriver = true;
-                        testLog.debug("Successfully launched SauceLabs WebDriver connection.");
-                        jobUrl = constructJobUrl(driver);
+                        testLog.debug("Successfully launched RemoteWebDriver for [{}].", server);
+                        jobUrl = constructSauceJobUrl(driver);
                         testLog.trace("Job url set to: " + jobUrl);
                     } else {
-                        testLog.warn("Unable to establish communication with SauceLabs on attempt "
-                                + attempt + " of " + MAX_RETRIES);
+                        testLog.warn("Unable to launch RemoteWebDriver for [{}] on attempt {} of {}.",
+                                new Object[] { server, attempt, MAX_RETRIES});
                     }
                 } catch (Throwable e) {
-                    testLog.error("Unable to connect with SauceLabs on attempt "
+                    testLog.error("Unable to launch RemoteWebDriver on attempt "
                             + attempt, e);
                 }
             }
@@ -132,7 +134,7 @@ public class WebDriverLauncher {
         return driver;
     }
     
-    private static String constructJobUrl(WebDriver driver) {
+    private static String constructSauceJobUrl(WebDriver driver) {
         return "https://saucelabs.com/jobs/"
                 + ((RemoteWebDriver) driver).getSessionId()
                 .toString();

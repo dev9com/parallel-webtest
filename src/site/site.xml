@@ -12,6 +12,7 @@
 
 		<menu name="Documentation">
 			<item name="Tutorial" href="tutorial.html"/>
+            <item name="Alternate Configurations" href="alternate.html"/>
 		</menu>
 		<menu ref="reports" />
 	</body>

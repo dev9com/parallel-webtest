@@ -34,7 +34,7 @@ public class SauceLabsCredentials {
 				"No Configuration Key Set");
 	}
 
-	/** This almost never changes */
+	/** This almost never changes, but it can be used to send tests to any selenium server */
 	public static String getServer() {
 		return ConfigurationValue.getConfigurationValue(SAUCELABS_SERVER,
 				"ondemand.saucelabs.com/wd/hub");
@@ -45,7 +45,7 @@ public class SauceLabsCredentials {
 			return new URL("http://" + getUser() + ":" + getKey() + "@"
 					+ getServer());
 		} catch (MalformedURLException e) {
-			log.error("Unable to parse SauceLabs connection information", e);
+			log.error("Unable to parse remote selenium server connection information", e);
 			return null;
 		}
 	}
