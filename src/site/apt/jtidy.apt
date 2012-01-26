@@ -1,0 +1,71 @@
+ ------
+ TidyVerifier
+ ------
+ David Drake
+ ------
+ 1/26/2012
+ ------
+
+Overview
+
+ {{{http://jtidy.sourceforge.net/}JTidy}} is a Java-based version of the popular
+ HTML syntax checker, Tidy HTML.  The TidyVerifier class, included in
+ parallel-webtest, can be used to easily verify HTML against Tidy's ruleset
+ (with a configurable level of strictness).
+
+Using TidyVerifier
+
+ The TidyVerifier is built using TidyVerifierBuilder.  The trivial case can be
+ shown below:
+
++---
+    TidyVerifier tidyVerifier = new TidyVerifierBuilder().build();
+    tidyVerifier.verify(someHtml);
++---
+
+ By default, TidyVerify will use all Tidy rules and capture messages of WARNING
+ severity or greater.  If any messages are captured, an AssertionException is
+ thrown containing a list of the messages.
+
+Configuring TidyVerifier
+
+ TidyVerifier can be configured in two ways: with a property file or with the
+ builder.  Where these configurations overlap, explicit builder configuration
+ overrides the property file.
+
+* The tidy configuration file
+
+   A sample tidy configuration file is included in parallel-webtest, located at
+   /src/test/resources/jtidy.properties.  The standard tidy configurations are
+   listed there as specified in JTidy's Configuration class.
+
+   The TidyMessageListener is also configured from this file.  The custom
+   configurations for the listener are as follows:
+
+   * <<ignored-codes>>: A list of integer error codes that should be ignored by
+     the listener.  Empty by default.
+
+   * <<display-error-codes>>: Boolean that sets whether error codes should be
+     displayed in logs and exceptions.  Set "true" by default.
+
+   * <<threshold-level>>: A numeric code for the lowest message level that should
+     be reported, on a scale of 0-3, where 0 is SUMMARY, 1 is INFO, 2 is
+     WARNING, and 3 is ERROR.  Default level is 2.
+
+   []
+
+   The configuration file is overridden by the builder if a configuration value
+   is specified during the build process.
+
+* The TidyVerifierBuilder
+
+   The builder process can also be used to configure some of these options.  See
+   the relevant Javadoc for specifics; an example is included below:
+
++---
+    TidyVerifier tidyVerifier = new TidyVerifierBuilder()
+                                        .setThreshold(TidyMessage.Level.ERROR)
+                                        .setPropertyFileName("/test.properties")
+                                        .build();
+    tidyVerifier.verify(someHtml);
++---

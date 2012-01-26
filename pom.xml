@@ -1,13 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.dynacrongroup</groupId>
-	<artifactId>parallel-webtest</artifactId>
+    <groupId>com.dynacrongroup</groupId>
+    <artifactId>parallel-webtest</artifactId>
     <packaging>jar</packaging>
     <name>parallel-webtest</name>
-	<version>1.0.17-SNAPSHOT</version>
-    <description>Parallel execution and numerous other utilities intended for web testing support.  For basic
-        information on usage, see the tutorial listed in the site's documentation</description>
+    <version>1.0.17-SNAPSHOT</version>
+    <description>Parallel execution and numerous other utilities intended for web testing support. For basic
+        information on usage, see the tutorial listed in the site's documentation
+    </description>
     <url>https://github.com/dynacron-group/parallel-webtest</url>
     <licenses>
         <license>
@@ -35,184 +37,240 @@
         </developer>
     </developers>
 
-	<properties>
-		<!-- Dependency configuration -->
-		<hamcrest.version>1.3.RC2</hamcrest.version>
-		<joda-time.version>2.0</joda-time.version>
-		<junit.version>4.10</junit.version>
-		<logback.version>1.0.0</logback.version>
+    <properties>
+        <!-- Dependency configuration -->
+        <commons-logging.version>1.1.1</commons-logging.version>
+        <hamcrest.version>1.3.RC2</hamcrest.version>
+        <jcl-over-slf4j.version>1.6.4</jcl-over-slf4j.version>
+        <joda-time.version>2.0</joda-time.version>
+        <junit.version>4.10</junit.version>
+        <jul-to-slf4j.version>1.6.4</jul-to-slf4j.version>
+        <logback.version>1.0.0</logback.version>
+        <slf4j.version>1.6.4</slf4j.version>
 
-		<!-- JUnit parallel run configuration -->
-		<parallelrun>classes</parallelrun>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<threadcount>5</threadcount>
+        <!-- JUnit parallel run configuration -->
+        <parallelrun>classes</parallelrun>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <threadcount>5</threadcount>
 
-		<!-- Target WebDriver configuration -->
-		<target-webdriver>org.openqa.selenium.htmlunit.HtmlUnitDriver</target-webdriver>
-	</properties>
+        <!-- Target WebDriver configuration -->
+        <target-webdriver>org.openqa.selenium.htmlunit.HtmlUnitDriver</target-webdriver>
+    </properties>
 
-	<distributionManagement>
-		<repository>
-			<id>cloudbees-private-release-repository</id>
-			<name>CloudBees Repository</name>
-			<url>dav:https://repository-dynacrongroup.forge.cloudbees.com/release/</url>
-		</repository>
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>cloudbees-private-release-repository</id>
+            <name>CloudBees Repository</name>
+            <url>dav:https://repository-dynacrongroup.forge.cloudbees.com/release/</url>
+        </repository>
+    </distributionManagement>
 
-	<scm>
-		<connection>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</developerConnection>
-		<url>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</url>
-	</scm>
+    <scm>
+        <connection>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</developerConnection>
+        <url>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</url>
+    </scm>
 
-	<dependencies>
-		<!-- No, really. We are bringing in JUnit as a dependency, not a test dependency. 
-			This is a test framework - you will bring this library in as a test dependency 
-			in your project. -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit-dep</artifactId>
-			<version>${junit.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hamcrest</groupId>
-					<artifactId>hamcrest-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
-			<version>${hamcrest.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>r09</version>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>2.16.1</version>
-		</dependency>
-	</dependencies>
-	<build>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-webdav-jackrabbit</artifactId>
-				<version>1.0</version>
-			</extension>
-		</extensions>
-		<pluginManagement>
-			<plugins>
+    <dependencies>
+        <!-- No, really. We are bringing in JUnit as a dependency, not a test dependency.
+              This is a test framework - you will bring this library in as a test dependency
+              in your project. -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+            <version>${junit.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r09</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.17.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jtidy</groupId>
+            <artifactId>jtidy</artifactId>
+            <version>r938</version>
+        </dependency>
+
+
+        <!-- logging dependencies -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- Defined below -->
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${jcl-over-slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${jul-to-slf4j.version}</version>
+        </dependency>
+
+        <!-- Provided by jcl-over-slf4j dependency -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav-jackrabbit</artifactId>
+                <version>1.0</version>
+            </extension>
+        </extensions>
+        <pluginManagement>
+            <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.0</version>
                 </plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.11</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>2.11</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.11</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.11</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
-		<plugins>
-			<plugin>
-				<artifactId>maven-site-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-descriptor</id>
-						<goals>
-							<goal>attach-descriptor</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-			<!-- This sets up the default run to be the full SauceLabs suite -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<parallel>${parallelrun}</parallel>
-					<threadCount>${threadcount}</threadCount>
-					<perCoreThreadCount>false</perCoreThreadCount>
-					<systemPropertyVariables>
-						<http.proxyHost>${http.proxyHost}</http.proxyHost>
-						<http.proxyPort>${http.proxyPort}</http.proxyPort>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <!-- This sets up the default run to be the full SauceLabs suite -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <parallel>${parallelrun}</parallel>
+                    <threadCount>${threadcount}</threadCount>
+                    <perCoreThreadCount>false</perCoreThreadCount>
+                    <systemPropertyVariables>
+                        <http.proxyHost>${http.proxyHost}</http.proxyHost>
+                        <http.proxyPort>${http.proxyPort}</http.proxyPort>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.2</version>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>versions-maven-plugin</artifactId>
-				<version>1.2</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>dependency-updates-report</report>
-							<report>plugin-updates-report</report>
-							<report>property-updates-report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>1.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                            <report>property-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8</version>
             </plugin>
-		</plugins>
-	</reporting>
+        </plugins>
+    </reporting>
 
-	<!-- This is an example of launching a Firefox instance for local testing 
-		(i.e. not on the CI system) -->
-	<profiles>
-		<profile>
-			<id>local-firefox</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<target-webdriver>org.openqa.selenium.firefox.FirefoxDriver</target-webdriver>
-			</properties>
-		</profile>
-	</profiles>
-	<ciManagement>
-		<system>CloudBees</system>
-		<url>tbd</url>
-	</ciManagement>
+    <!-- This is an example of launching a Firefox instance for local testing
+         (i.e. not on the CI system) -->
+    <profiles>
+        <profile>
+            <id>local-firefox</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <target-webdriver>org.openqa.selenium.firefox.FirefoxDriver</target-webdriver>
+            </properties>
+        </profile>
+    </profiles>
+    <ciManagement>
+        <system>CloudBees</system>
+        <url>tbd</url>
+    </ciManagement>
 </project>

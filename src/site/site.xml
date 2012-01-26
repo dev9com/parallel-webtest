@@ -13,6 +13,7 @@
 		<menu name="Documentation">
 			<item name="Tutorial" href="tutorial.html"/>
             <item name="Alternate Configurations" href="alternate.html"/>
+            <item name="TidyVerifier" href="jtidy.html"/>
 		</menu>
 		<menu ref="reports" />
 	</body>
