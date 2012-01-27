@@ -62,6 +62,10 @@
             <name>CloudBees Repository</name>
             <url>dav:https://repository-dynacrongroup.forge.cloudbees.com/release/</url>
         </repository>
+        <site>
+            <id>doc-site</id>
+            <url>dav:https://repository-dynacrongroup.forge.cloudbees.com/release/site/${project.artifactId}</url>
+        </site>
     </distributionManagement>
 
     <scm>

@@ -5,6 +5,7 @@ import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.util.Path;
 import com.google.common.io.NullOutputStream;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class LogTMListenerTest extends WebDriverBase {
     /**
      * Currently a manual test... shouldn't throw an exception.
      */
+    @Ignore
     @Test
     public void verifyLoggerLogsErrors() {
         Tidy tidy = new Tidy();
@@ -50,7 +52,8 @@ public class LogTMListenerTest extends WebDriverBase {
         tidy.setTrimEmptyElements(false);
         tidy.parse(new ByteArrayInputStream(driver.getPageSource().getBytes()), new NullOutputStream());
     }
-    
+
+    @Ignore
     @Test
     public void showConfigOptions() {
         Configuration configuration = new Tidy().getConfiguration();
