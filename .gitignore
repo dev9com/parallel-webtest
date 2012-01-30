@@ -19,3 +19,7 @@ parallel-webtest.iws
 atlassian-ide-plugin.xml
 
 .gitignore
+
+effective.xml
+
+.gitignore

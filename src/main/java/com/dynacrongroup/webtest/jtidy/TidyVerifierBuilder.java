@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
 import org.w3c.tidy.TidyMessage;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,11 +21,6 @@ import java.util.TreeMap;
  * This class is currently experimental.
  */
 public class TidyVerifierBuilder {
-
-    static {
-        //Required to redirect errors from Tidy to slf4j
-        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-    }
 
     /**
      * By default, placed /src/test/resources/jtidy.properties
