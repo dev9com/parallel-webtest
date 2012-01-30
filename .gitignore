@@ -15,3 +15,7 @@ parallel-webtest.iml
 parallel-webtest.ipr
 
 parallel-webtest.iws
+
+atlassian-ide-plugin.xml
+
+.gitignore

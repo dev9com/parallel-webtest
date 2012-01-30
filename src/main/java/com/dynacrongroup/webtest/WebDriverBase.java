@@ -1,9 +1,12 @@
 package com.dynacrongroup.webtest;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestName;
-import org.junit.runners.Parameterized.Parameters;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,18 @@ import java.util.List;
  * Selenium recorder and/or by hand.
  */
 public class WebDriverBase {
+
+    /**
+     * The main WebDriver interface.
+     */
+    public WebDriver driver = null;
+
+    /**
+     * This is a special bit of JUnit magic to get the name of the test
+     */
+    @Rule
+    public TestName name = new TestName();
+
     /**
      * Allows reuse of a browser throughout a single class run.
      */
@@ -34,17 +49,6 @@ public class WebDriverBase {
      * Tracks the jobUrl, if specified, for the job in Sauce Labs.
      */
     private static ThreadLocal<String> jobUrl = new ThreadLocal<String>();
-
-    /**
-     * The main WebDriver interface.
-     */
-    public WebDriver driver = null;
-
-    /**
-     * This is a special bit of JUnit magic to get the name of the test
-     */
-    @Rule
-    public TestName name = new TestName();
 
     /**
      * The logger associated with this specific browser test execution
@@ -103,48 +107,33 @@ public class WebDriverBase {
                     .getSimpleName() + "," + name.getMethodName());
         }
 
-        // Assume that we have a current WebDriver instance to grab
-        timer.start();
-
-        // Grabs existing WebDriver
-        if (driver != null) {
-            return;
-        }
-
-        // Grabs existing WebDriver bound to this thread
         if (storedWebDriver.get() != null) {
+            browserTestLog.trace("Using existing threadLocal browser.");
             driver = storedWebDriver.get();
-            return;
+        } else {
+            // Launches new WebDriver instance
+            WebDriverLauncher launcher = new WebDriverLauncher();
+            driver = launcher.getNewWebDriverInstance(this.getJobName(),
+                    this.browserTestLog, targetWebBrowser);
+            setJobUrl(launcher.getJobUrl());
+
+            browserTestLog.debug("WebDriver ready.");
+            if (getJobURL().length() > 1) {
+                browserTestLog.info("View on SauceLabs at " + getJobURL());
+            }
+            storedWebDriver.set(driver);
+            WebDriverLeakCheck.add(this.getClass(), driver);
         }
 
-        // Launches new WebDriver instance
-        WebDriverLauncher launcher = new WebDriverLauncher();
-        driver = launcher.getNewWebDriverInstance(this.getJobName(),
-                this.browserTestLog, targetWebBrowser);
-        setJobUrl(launcher.getJobUrl());
-
-        browserTestLog.debug("WebDriver ready.");
-        if (getJobURL().length() > 1) {
-            browserTestLog.info("View on SauceLabs at " + getJobURL());
-        }
-        storedWebDriver.set(driver);
-        WebDriverLeakCheck.add(this.getClass(), driver);
-
-        // Looks like we didn't use the existing driver instance, so
-        // reset start time to now.
         timer.start();
     }
 
     @After
     public void noLongerUsingWebDriver() {
-
-        timer.stop();
-
         reduceToOneWindow();
-
+        timer.stop();
         methodsRemaining.set(methodsRemaining.get() - 1);
-
-        browserTestLog.trace("Methods left: " + methodsRemaining.get());
+        browserTestLog.trace("Methods left after run: " + methodsRemaining.get());
 
         if (methodsRemaining.get() == 0 && driver != null) {
             WebDriverLeakCheck.remove(driver);
@@ -153,25 +142,10 @@ public class WebDriverBase {
         }
     }
 
-    /**
-     * Simple utility method - sleeps for the specified number of milliseconds.
-     */
-    public void pause(int millisecs) {
-        try {
-            Thread.sleep(millisecs);
-        } catch (InterruptedException e) {
-            browserTestLog.debug("Thread sleep interrupted", e);
-        }
-    }
-
     public final TargetWebBrowser getTargetWebBrowser() {
         return targetWebBrowser;
     }
 
-    private final void setJobUrl(String url) {
-        jobUrl.set(url);
-    }
-    
     /**
      * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
      */
@@ -186,6 +160,26 @@ public class WebDriverBase {
     public final String getJobName() {
         return SystemName.getSystemName() + "-"
                 + this.getClass().getSimpleName();
+    }
+
+    /**
+     * Simple utility method - sleeps for the specified number of milliseconds.
+     */
+    public void pause(int millisecs) {
+        try {
+            Thread.sleep(millisecs);
+        } catch (InterruptedException e) {
+            browserTestLog.debug("Thread sleep interrupted", e);
+        }
+    }
+
+    /**
+     * This is the logger you should use if you want per-browser instance piping
+     * to work correctly. When you run tests in parallel, if you just use a
+     * local logger, all of the parallel executions will get intermixed.
+     */
+    public Logger getLogger() {
+        return browserTestLog;
     }
 
     /**
@@ -205,17 +199,12 @@ public class WebDriverBase {
         return count;
     }
 
-    /**
-     * This is the logger you should use if you want per-browser instance piping
-     * to work correctly. When you run tests in parallel, if you just use a
-     * local logger, all of the parallel executions will get intermixed.
-     */
-    public Logger getLogger() {
-        return browserTestLog;
+    private final void setJobUrl(String url) {
+        jobUrl.set(url);
     }
 
     private void reduceToOneWindow() {
-        if (driver.getWindowHandles().size() > 1) {
+        if (driver != null && driver.getWindowHandles().size() > 1) {
             String firstHandle = (String) driver.getWindowHandles().toArray()[0];
             for (String handle : driver.getWindowHandles()) {
                 if (!handle.equals(firstHandle)) {

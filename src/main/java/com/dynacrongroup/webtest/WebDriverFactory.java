@@ -1,9 +1,9 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.util.ConfigurationValue;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.dynacrongroup.webtest.util.ConfigurationValue;
 
 /**
  * This class figures out which WebDriver(s) to set up.
@@ -22,20 +22,24 @@ public class WebDriverFactory {
 
     public List<String[]> getDriverTargets() {
 
-        String selected = ConfigurationValue.getConfigurationValue(
+        List<String[]> targets;
+
+        String classDriver = ConfigurationValue.getConfigurationValue(
                 WEBDRIVER_DRIVER, null);
-        if (selected != null) {
-            return pair("byclass", selected);
+        if (classDriver != null) {
+            targets = pair("byclass", classDriver);
         }
-
-        String single_sauce = ConfigurationValue.getConfigurationValue(
-                SINGLE_SAUCE, null);
-        if (single_sauce != null) {
-            String[] items = splitTarget(single_sauce);
-            return pair(items[0], items[1]);
+        else {
+            String single_sauce = ConfigurationValue.getConfigurationValue(
+                    SINGLE_SAUCE, null);
+            if (single_sauce != null) {
+                String[] items = splitTarget(single_sauce);
+                targets = pair(items[0], items[1]);
+            } else {
+                targets = standardSauceLabsTargets();
+            }
         }
-
-        return standardSauceLabsTargets();
+        return targets;
     }
 
     /**

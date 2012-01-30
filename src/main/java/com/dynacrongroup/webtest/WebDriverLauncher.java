@@ -115,7 +115,7 @@ public class WebDriverLauncher {
                         validWebDriver = true;
                         testLog.debug("Successfully launched RemoteWebDriver for [{}].", server);
                         jobUrl = constructSauceJobUrl(driver);
-                        testLog.trace("Job url set to: " + jobUrl);
+                        testLog.trace("Job url set to: {}", jobUrl);
                     } else {
                         testLog.warn("Unable to launch RemoteWebDriver for [{}] on attempt {} of {}.",
                                 new Object[] { server, attempt, MAX_RETRIES});

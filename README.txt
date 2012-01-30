@@ -1,3 +1,8 @@
+The full tutorial and documentation for parallel-webtest can be found in the
+generated site:
+
+http://repository-dynacrongroup.forge.cloudbees.com/release/sites/parallel-webtest/tutorial.html
+
 Configuring parallel-webtest
 
  The parallel-webtest library can be configured using either system properties,
