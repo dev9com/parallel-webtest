@@ -1,12 +1,11 @@
 package com.dynacrongroup.webtest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
+import com.dynacrongroup.webtest.util.ConfigurationValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dynacrongroup.webtest.util.ConfigurationValue;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * SauceLabs credentials. Using the standard values as defaults, with an option
@@ -22,6 +21,7 @@ public class SauceLabsCredentials {
 			.getLogger(SauceLabsCredentials.class);
 
 	private SauceLabsCredentials() {
+        throw new IllegalAccessError("Utility class should not be constructed");
 	};
 
 	public static String getUser() {
@@ -40,13 +40,13 @@ public class SauceLabsCredentials {
 				"ondemand.saucelabs.com/wd/hub");
 	}
 
-	public static URL getConnectionString() {
+	public static URL getConnectionString() throws MalformedURLException {
 		try {
 			return new URL("http://" + getUser() + ":" + getKey() + "@"
 					+ getServer());
 		} catch (MalformedURLException e) {
 			log.error("Unable to parse remote selenium server connection information", e);
-			return null;
+			throw e;
 		}
 	}
 }

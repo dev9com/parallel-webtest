@@ -14,6 +14,10 @@ public class TidyVerifierTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(TidyVerifierTest.class);
 
+//    {
+//        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+//    }
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

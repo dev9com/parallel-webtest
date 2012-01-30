@@ -1,15 +1,5 @@
 package com.dynacrongroup.webtest;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -19,6 +9,16 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
+
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This is modification of org.junit.runners.Parameterized to descriptively parameterize tests.
@@ -79,17 +79,32 @@ public class DescriptivelyParameterized extends Suite {
          */
         private String describeParams() {
             String returnValue;
-            Object[] params;
 
             try {
-                params = computeParams();
-                String[] stringParams = (String[]) params;
-                returnValue = StringUtils.join(stringParams, "|");
+                Object[] params = computeParams();
+                returnValue = formatParams(params);
             } catch (Exception e) {
                 returnValue = ((Integer) fParameterSetNumber).toString();
             }
 
             return returnValue;
+        }
+
+        /**
+         * Override this method to provide custom parameter formatting.
+         * @param params
+         * @return A formatted string to be appenedd to the test name.  Truncates
+         * to 20 characters at most.
+         */
+        public String formatParams(Object[] params) {
+            String formattedParams;
+            String[] stringParams = (String[]) params;
+            formattedParams = StringUtils.join(stringParams, "|");
+            if (formattedParams != null && formattedParams.length() > 20) {
+                // Truncate if the params are excessively long...
+                formattedParams = formattedParams.substring(0, 20);
+            }
+            return formattedParams;
         }
 
         @Override

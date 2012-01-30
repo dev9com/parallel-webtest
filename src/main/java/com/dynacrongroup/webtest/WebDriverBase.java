@@ -102,6 +102,7 @@ public class WebDriverBase {
      */
     @Before
     public void startWebDriver() {
+        
         if (timer == null) {
             timer = new Timing(targetWebBrowser, this.getClass()
                     .getSimpleName() + "," + name.getMethodName());

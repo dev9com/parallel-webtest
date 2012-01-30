@@ -73,14 +73,9 @@ public class WebDriverLauncher {
                     }
                 }
                 // If this is not a WebDriverException caused by ephemereal port locking, it's a programmatic error that shouldn't be retried.
-                catch (InstantiationException e) {
+                catch (Exception e) {
                     testLog.error("Unable to load target WebDriver class.", e);
-                    break;
-                } catch (IllegalAccessException e) {
-                    testLog.error("Unable to load target WebDriver class.", e);
-                    break;
-                } catch (ClassNotFoundException e) {
-                    testLog.error("Unable to load target WebDriver class.", e);
+                    driver = null;
                     break;
                 }
 
@@ -120,7 +115,7 @@ public class WebDriverLauncher {
                         testLog.warn("Unable to launch RemoteWebDriver for [{}] on attempt {} of {}.",
                                 new Object[] { server, attempt, MAX_RETRIES});
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     testLog.error("Unable to launch RemoteWebDriver on attempt "
                             + attempt, e);
                 }
@@ -128,8 +123,7 @@ public class WebDriverLauncher {
         }
 
         if (driver == null) {
-            throw new IllegalAccessError(
-                    "Unable to initialize valid WebDriver.");
+            throw new ExceptionInInitializerError("Unable to initialize valid WebDriver.");
         }
         return driver;
     }

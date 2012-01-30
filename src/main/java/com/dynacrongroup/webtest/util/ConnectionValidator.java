@@ -1,11 +1,11 @@
 package com.dynacrongroup.webtest.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Validate that a particular URL is accessible */
 public class ConnectionValidator {
@@ -14,6 +14,7 @@ public class ConnectionValidator {
 
     /** Makes checkstyle happy */
     private ConnectionValidator() {
+        throw new UnsupportedOperationException("Class is utility class; should not be instantiated.");
     }
 
     public static boolean verifyConnection(String path) {

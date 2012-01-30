@@ -1,17 +1,18 @@
 package com.dynacrongroup.webtest.util;
 
+import com.dynacrongroup.webtest.SauceLabsCredentials;
+import com.dynacrongroup.webtest.SystemName;
+import com.dynacrongroup.webtest.WebDriverFactory;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.dynacrongroup.webtest.SauceLabsCredentials;
-import com.dynacrongroup.webtest.SystemName;
-import com.dynacrongroup.webtest.WebDriverFactory;
+import static org.apache.commons.lang.StringUtils.join;
 
 /**
  * This utility class provides support for isolating your web tests from a
@@ -118,45 +119,46 @@ public class Path {
 
 	/**
 	 * Reports the SauceLabs configuration string expected by this Path
-	 * configuration object, for Sauce Connect v1
+	 * configuration object. Updated to use Sauce Connect v3.
 	 * 
 	 * @return command-line configuration string
-     * @deprecated Sauce connect v3 does not require or use specific ports, hosts
 	 */
 	public String getExpectedSauceConnectString() {
-		String[] args = new String[] { "sauce_connect", "-u",
-				SauceLabsCredentials.getUser(), "-k",
-				SauceLabsCredentials.getKey(), "-s", this.server, "-d",
-				this.server, "-d", "\'*." + this.server + "\'", "-p",
-				this.port + "", "-t", this.port + "" };
-
-		StringBuilder result = new StringBuilder();
-		for (String s : args) {
-			result.append(s);
-			result.append((" "));
-		}
-
-		return result.toString();
+		String[] args = new String[] { "java",
+                "-jar",
+                "Sauce-Connect.jar",
+				SauceLabsCredentials.getUser(),
+				SauceLabsCredentials.getKey() };
+        
+        return join(args, " ");
 	}
 
-    //TODO: update this method for use with sauce connect 3
+    /**
+     * Adds a log statement with the expected Sauce Connect command.  Implementation is
+     * still a bit old fashioned; based on the idea that the sauce connect string might
+     * change.
+     */
 	public void checkSauce() {
 		if (!sauceConnectWarnings.contains(getExpectedSauceConnectString())) {
 			sauceConnectWarnings.add(getExpectedSauceConnectString());
 
-			log.info("*** This test suite expects to be able to connect to "
-					+ this.protocol
-					+ this.server
-					+ this.port
-					+ " on your local system, and in the SauceLabs environment. You can use this command to launch SauceConnect if needed.");
+			log.info("*** This test suite expects to be able to connect to [{}] on your local system, and in the " +
+                    "SauceLabs environment. You can use this command to launch SauceConnect if needed.",
+                    this);
 			log.info("*** " + getExpectedSauceConnectString());
 		}
 	}
 
+    /**
+     * Used to determine whether the current path is local.  Can be useful for adding branching
+     * logic to code based on the currently configured server.
+     * @return True if the host matches the system name or localhost.
+     */
     public  Boolean isLocal() {
         Boolean local = null;
         if (server != null) {
-            local =  SystemName.getSystemName().equalsIgnoreCase(server);
+            local =  (SystemName.getSystemName().equalsIgnoreCase(server) ||
+                        "localhost".equalsIgnoreCase(server));
         }
         return local;
     }
@@ -191,6 +193,10 @@ public class Path {
 		}
 	}
 
+    /**
+     *
+     * @return the path object converted to string, with no page appended to the url.
+     */
     @Override
     public String toString() {
         return translate("");

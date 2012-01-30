@@ -1,12 +1,15 @@
 package com.dynacrongroup.webtest.jtidy;
 
+import com.google.common.io.NullOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
 import org.w3c.tidy.TidyMessage;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -19,6 +22,11 @@ import java.util.TreeMap;
  * This class is currently experimental.
  */
 public class TidyVerifierBuilder {
+
+    static {
+        //Required to redirect errors from Tidy to slf4j
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+    }
 
     /**
      * By default, placed /src/test/resources/jtidy.properties
@@ -128,6 +136,7 @@ public class TidyVerifierBuilder {
         if (properties != null) {
             this.tidy.setConfigurationFromProps(properties);
         }
+        this.tidy.setErrout(new PrintWriter(new NullOutputStream()));
         this.tidy.setMessageListener(listener);
         return this.tidy;
     }
@@ -143,7 +152,7 @@ public class TidyVerifierBuilder {
                 LOG.info("Property file [{}] not found.  Using default settings.", propertyFileName);
             }
         } catch (IOException e) {
-            LOG.warn("Unable to load property file [{}]", propertyFileName);
+            LOG.warn("Unable to load property file [{}], using default settings.", propertyFileName);
         }
         return properties;
     }

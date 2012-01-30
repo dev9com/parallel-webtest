@@ -22,55 +22,55 @@ public class ConfigurationValue {
             .getLogger(ConfigurationValue.class);
 
     private ConfigurationValue() {
-        // Checkstyle
+        throw new UnsupportedOperationException("Should not create utility class");
     }
 
-    ;
-
+    /**
+     * Sets value to null if the value is empty, an unexpanded maven property, or
+     * is set to the string "null".
+     * 
+     * @param value
+     *          A configuration value to be filtered.
+     * @return value if it does not match filter
+     */
     private static String getValueIfSet(String value) {
-        String result = null;
+        String result = value;
 
-        if (value == null) {
-            return result;
+        if ( value.isEmpty()
+                || value.contains("${")
+                || "null".equalsIgnoreCase(value)) {
+            result = null;
         }
 
-        if (value.isEmpty()) {
-            return null;
-        }
-
-        // Check for unexpanded Maven property
-        if (value.contains("${")) {
-            return null;
-        }
-
-        // Simple "wipe out" override mechanism
-        if ("null".equals(value)) {
-            return null;
-        }
-
-        return value;
+        return result;
     }
 
+    /**
+     * Retrieves configuration according to the following rules.  If a System Property Variable
+     * is present with the key, use that property.  Otherwise, if an environment variable is
+     * present with the key, use that property.  Otherwise, use the default given.
+     * @param key
+     *          Key to search for.
+     * @param defaultValue
+     *          Default to be used if system and env properties are missing.
+     * @return  String value of configuration; may be null.
+     */
     public static String getConfigurationValue(String key, String defaultValue) {
-
-        String result = null;
-
-        result = getValueIfSet(System.getProperty(key));
-
-        if (result != null) {
-            log.trace("found System Property key " + key + " set to " + result);
-            return result;
+        String result;
+        
+        if (System.getProperties().containsKey(key)) {
+            result = getValueIfSet(System.getProperty(key));
+            log.trace("found System Property key [{}] set to [{}]", key, result);
+        }
+        else if (System.getenv().containsKey(key)) {
+            result = getValueIfSet(System.getenv(key));
+            log.trace("found Environment Property key [{}] set to [{}]", key, result);
+        }
+        else {
+            result = defaultValue;
+            log.trace("Using default key [{}] set to [{}]", key, result);
         }
 
-        result = getValueIfSet(System.getenv(key));
-        if (result != null) {
-            log.trace("found System Environment key " + key + " set to "
-                    + result);
-            return result;
-        }
-
-        log.trace("using default key " + key + " set to " + defaultValue);
-
-        return defaultValue;
+        return result;
     }
 }
