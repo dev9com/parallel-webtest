@@ -84,6 +84,10 @@ public class DescriptivelyParameterized extends Suite {
                 Object[] params = computeParams();
                 returnValue = formatParams(params);
             } catch (Exception e) {
+                returnValue = null;
+            }
+
+            if (returnValue == null) {
                 returnValue = ((Integer) fParameterSetNumber).toString();
             }
 

@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.jtidy;
 
 import com.google.common.io.NullOutputStream;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
@@ -50,6 +51,10 @@ public class TidyVerifier {
         LOG.trace("Creating TidyVerifier from builder.");
         this.listener = builder.getListener();
         this.tidy = builder.getTidy();
+    }
+    
+    public void verifyHtml(WebDriver driver) throws Throwable {
+        verifyHtml(driver.getPageSource());
     }
 
     public void verifyHtml(String html) throws Throwable {
