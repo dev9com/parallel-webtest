@@ -3,6 +3,7 @@ package com.dynacrongroup.webtest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,5 +171,15 @@ public class WebDriverUtilities {
                                                  String text) {
 
         return webElement.getText().contains(text);
+    }
+
+    public static String constructSauceJobUrl(String id) {
+        return "https://saucelabs.com/jobs/"
+                + id;
+    }
+
+    public static String getJobIdFromDriver(WebDriver driver) {
+        return ((RemoteWebDriver) driver).getSessionId()
+                .toString();
     }
 }

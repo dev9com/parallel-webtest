@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.test;
+package com.dynacrongroup.webtest;
 
 import org.junit.Test;
 

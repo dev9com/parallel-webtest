@@ -25,12 +25,6 @@ public class WebDriverLauncher {
      */
     protected static String uniqueId = String.valueOf(UUID.randomUUID());
 
-    private String jobUrl = "";
-
-    public String getJobUrl() {
-        return jobUrl;
-    }
-
     /**
      * Returns the actual web drivers. Requires the logger and target web
      * browser to be specified.
@@ -109,7 +103,8 @@ public class WebDriverLauncher {
                     if (driver.getWindowHandle() != null) {
                         validWebDriver = true;
                         testLog.debug("Successfully launched RemoteWebDriver for [{}].", server);
-                        jobUrl = constructSauceJobUrl(driver);
+                        String jobUrl = WebDriverUtilities.constructSauceJobUrl(
+                                WebDriverUtilities.getJobIdFromDriver(driver));
                         testLog.trace("Job url set to: {}", jobUrl);
                     } else {
                         testLog.warn("Unable to launch RemoteWebDriver for [{}] on attempt {} of {}.",
@@ -127,10 +122,5 @@ public class WebDriverLauncher {
         }
         return driver;
     }
-    
-    private static String constructSauceJobUrl(WebDriver driver) {
-        return "https://saucelabs.com/jobs/"
-                + ((RemoteWebDriver) driver).getSessionId()
-                .toString();
-    }
+
 }

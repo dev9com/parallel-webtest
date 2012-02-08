@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.test;
+package com.dynacrongroup.webtest;
 
 import com.dynacrongroup.webtest.ParallelRunner;
 import com.dynacrongroup.webtest.WebDriverBase;

@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.test;
+package com.dynacrongroup.webtest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,10 +7,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -29,60 +26,46 @@ import org.slf4j.LoggerFactory;
  * future reference.
  */
 @RunWith(value = Parameterized.class)
-public class SimpleTest {
-    private static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
+public class SimpleTestChild extends SimpleTest {
+    private static final Logger log = LoggerFactory
+	    .getLogger(SimpleTestChild.class);
 
-    private static int count = 0;
-
-    @Rule
-    public TestName name = new TestName();
     private final String parameter;
 
-    public SimpleTest(String paramter) {
+    public SimpleTestChild(String paramter) {
+	super(paramter);
 	this.parameter = paramter;
 	log.info("constructor / " + parameter);
-
     }
 
     @BeforeClass
-    public static void beforeClass() {
-	log.info("beforeClass");
+    public static void beforeClassChild() {
+	log.info("beforeClassChild");
     }
 
     @Before
-    public void before() {
-	count++;
-	log.info("before [" + count + "]");
+    public void beforeChild() {
+	log.info("beforeChild");
     }
 
     @After
-    public void after() {
-	log.info("after");
-	count--;
+    public void afterChild() {
+	log.info("afterChild");
     }
 
     @AfterClass
-    static public void afterClass() {
-	log.info("afterClass (" + count + ")");
+    static public void afterClassChild() {
+	log.info("afterClassChild");
     }
 
     @Test
-    public void checkSomething() {
-	log.info("test / " + name.getMethodName() + " / " + parameter);
-    }
-
-    @Test
-    public void secondCheckSomething() {
-	log.info("test2 / " + parameter);
-    }
-
-    @Ignore
-    public void notAtest() {
+    public void testChild() {
+	log.info("testChild / " + name.getMethodName() + " / " + parameter);
     }
 
     @Parameters
-    static public List<String[]> parameters() {
-	log.info("parameters");
+    static public List<String[]> parametersChild() {
+	log.info("parametersChild");
 	List<String[]> result = new ArrayList<String[]>();
 	result.add(new String[] { "one" });
 	result.add(new String[] { "two" });

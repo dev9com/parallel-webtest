@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.util.SauceREST;
 import com.google.common.annotations.VisibleForTesting;
 import org.junit.After;
 import org.junit.Before;
@@ -7,6 +8,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +38,11 @@ public class WebDriverBase {
     public TestName name = new TestName();
 
     /**
+     * Transmits job pass/fail data.
+     */
+    private static final SauceREST sauceRest = new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey());
+
+    /**
      * Allows reuse of a browser throughout a single class run.
      */
     private static ThreadLocal<WebDriver> storedWebDriver = new ThreadLocal<WebDriver>();
@@ -46,9 +54,14 @@ public class WebDriverBase {
     private static ThreadLocal<Integer> methodsRemaining = new ThreadLocal<Integer>();
 
     /**
-     * Tracks the jobUrl, if specified, for the job in Sauce Labs.
+     * Tracks the jobId, if specified, for the job in Sauce Labs.
      */
-    private static ThreadLocal<String> jobUrl = new ThreadLocal<String>();
+    private static ThreadLocal<String> jobId = new ThreadLocal<String>();
+
+    /**
+     * Stores job pass/fail data for a given parameterized run.
+     */
+    private static ThreadLocal<Boolean> jobPassed = new ThreadLocal<Boolean>();
 
     /**
      * The logger associated with this specific browser test execution
@@ -67,6 +80,16 @@ public class WebDriverBase {
      */
     private Timing timer;
 
+    @Rule
+    public TestWatcher failWatcher = new TestWatcher() {
+        @Override
+        protected void failed(Throwable e, Description d) {
+            jobPassed.set(false);
+        }
+    };
+
+
+
     /**
      * Used by the JUnit parameterized options to configure the parameterized
      * configuration options.
@@ -81,7 +104,11 @@ public class WebDriverBase {
         }
 
         if (getJobURL() == null) {
-            setJobUrl("");
+            setJobId("");
+        }
+        
+        if (jobPassed.get() == null) {
+            jobPassed.set(true);
         }
     }
 
@@ -116,7 +143,7 @@ public class WebDriverBase {
             WebDriverLauncher launcher = new WebDriverLauncher();
             driver = launcher.getNewWebDriverInstance(this.getJobName(),
                     this.browserTestLog, targetWebBrowser);
-            setJobUrl(launcher.getJobUrl());
+            setJobId(WebDriverUtilities.getJobIdFromDriver(driver));
 
             browserTestLog.debug("WebDriver ready.");
             if (getJobURL().length() > 1) {
@@ -130,13 +157,23 @@ public class WebDriverBase {
     }
 
     @After
-    public void noLongerUsingWebDriver() {
+    public void noLongerUsingWebDriver() throws IOException {
         reduceToOneWindow();
         timer.stop();
         methodsRemaining.set(methodsRemaining.get() - 1);
         browserTestLog.trace("Methods left after run: " + methodsRemaining.get());
 
         if (methodsRemaining.get() == 0 && driver != null) {
+            //If this job is running in Sauce Labs, send pass/fail information.
+            if (!targetWebBrowser.isClassLoaded()) {
+                if (jobPassed.get()) {
+                    sauceRest.jobPassed(jobId.get());
+                }
+                else {
+                    browserTestLog.warn("failed job can be viewed at {}", getJobURL());
+                    sauceRest.jobFailed(jobId.get());
+                }
+            }
             WebDriverLeakCheck.remove(driver);
             driver = null;
             storedWebDriver.set(null);
@@ -151,7 +188,14 @@ public class WebDriverBase {
      * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
      */
     public final String getJobURL() {
-        return jobUrl.get();
+        return WebDriverUtilities.constructSauceJobUrl(jobId.get());
+    }
+
+    /**
+     * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
+     */
+    public final String getJobId() {
+        return jobId.get();
     }
 
     /**
@@ -200,8 +244,8 @@ public class WebDriverBase {
         return count;
     }
 
-    private final void setJobUrl(String url) {
-        jobUrl.set(url);
+    private final void setJobId(String id) {
+        jobId.set(id);
     }
 
     private void reduceToOneWindow() {

@@ -1,14 +1,5 @@
-package com.dynacrongroup.webtest.test;
+package com.dynacrongroup.webtest;
 
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URL;
-import java.util.List;
-
-import com.dynacrongroup.webtest.SauceLabsCredentials;
-import com.dynacrongroup.webtest.util.ConfigurationValue;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;

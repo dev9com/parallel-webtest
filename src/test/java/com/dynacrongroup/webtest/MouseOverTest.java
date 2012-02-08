@@ -1,23 +1,14 @@
-package com.dynacrongroup.webtest.test;
+package com.dynacrongroup.webtest;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.dynacrongroup.webtest.ParallelRunner;
-import com.dynacrongroup.webtest.WebDriverBase;
-import com.dynacrongroup.webtest.WebDriverUtilities;
 import com.dynacrongroup.webtest.util.Path;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
