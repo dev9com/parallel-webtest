@@ -1,8 +1,5 @@
 package com.dynacrongroup.webtest;
 
-import com.dynacrongroup.webtest.ParallelRunner;
-import com.dynacrongroup.webtest.WebDriverBase;
-import com.dynacrongroup.webtest.WebDriverUtilities;
 import com.dynacrongroup.webtest.util.Path;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,17 +23,16 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
     
     @Before
     public void loadPage() {
-        if (!driver.getTitle().startsWith("Dynacron Group")) {
-            driver.get(p._(""));
+        if (!driver.getTitle().startsWith("Webtest")) {
+            driver.get(p._("/webtest.html"));
         }
     }
 
 	@Test
 	public void isElementPresentTest() throws Exception {
         getLogger().info("Starting test [{}]", name.getMethodName());
-        getLogger().info("JobUrl is [{}]", getJobURL());
 		assertTrue(WebDriverUtilities.isElementPresent(driver,
-				By.id("site-title")));
+				By.tagName("h2")));
 		assertFalse(WebDriverUtilities.isElementPresent(driver,
 				By.id("magic-dragons")));
 	}
@@ -45,16 +41,14 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 //    @Ignore("getting connection refused from one browser; investigating")
 	public void waitForElementTest() throws Exception {
         getLogger().info("Starting test [{}]", name.getMethodName());
-        getLogger().info("JobUrl is [{}]", getJobURL());
-		driver.findElement(By.id("site-title")).click();
-		WebDriverUtilities.waitForElement(driver, By.id("site-title"));
+        driver.navigate().refresh();
+		WebDriverUtilities.waitForElement(driver, By.tagName("h2"));
 	}
 
 	@Test
 //	@Ignore("timeout problem...?")
 	public void isTextPresentTest() throws Exception {
         getLogger().info("Starting test [{}]", name.getMethodName());
-        getLogger().info("JobUrl is [{}]", getJobURL());
 		assertTrue(WebDriverUtilities.isTextPresent(driver, "Dynacron Group"));
 		assertFalse(WebDriverUtilities.isTextPresent(driver,
 				"ponies in a field"));

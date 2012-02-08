@@ -281,6 +281,18 @@
             <properties>
                 <target-webdriver>org.openqa.selenium.firefox.FirefoxDriver</target-webdriver>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <WEBDRIVER_DRIVER>${target-webdriver}</WEBDRIVER_DRIVER>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
     <ciManagement>
