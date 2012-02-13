@@ -93,6 +93,12 @@ Overview
      browser/version combination (like firefox:7, iexplore:8, or chrome:*), then all
      tests will be run against this browser remotely in Sauce Labs.
 
+** <<REMOTE_SERVER_VERSION>>: defaults to "2.0.19"
+
+     Records the version of the remote selenium server used when running tests through
+     Sauce Labs.  Sauce default is 2.8.0, so this is overridden to provide more recent
+     features.
+
 ** <<SAUCELABS_SERVER>>: defaults to "ondemand.saucelabs.com/wd/hub"
 
      This is

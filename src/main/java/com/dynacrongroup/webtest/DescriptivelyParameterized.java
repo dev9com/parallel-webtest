@@ -97,7 +97,7 @@ public class DescriptivelyParameterized extends Suite {
         /**
          * Override this method to provide custom parameter formatting.
          * @param params
-         * @return A formatted string to be appenedd to the test name.  Truncates
+         * @return A formatted string to be appended to the test name.  Truncates
          * to 20 characters at most.
          */
         public String formatParams(Object[] params) {

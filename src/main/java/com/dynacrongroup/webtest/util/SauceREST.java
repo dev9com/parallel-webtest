@@ -1,14 +1,5 @@
 package com.dynacrongroup.webtest.util;
 
-/**
- * Created by IntelliJ IDEA.
- * User: yurodivuie
- * Date: 2/8/12
- * Time: 1:55 PM
- * To change this template use File | Settings | File Templates.
- */
-
-
 import org.json.simple.JSONValue;
 import org.apache.commons.codec.binary.Base64;
 
@@ -20,7 +11,9 @@ import java.util.Map;
 
 
 /**
- * Code from Sauce Labs, on github: https://github.com/saucelabs/saucerest-java
+ * Based on Sauce Labs code, on github: https://github.com/saucelabs/saucerest-java.
+ *
+ * Used to set the pass/fail status on tests.
  */
 public class SauceREST {
     protected String username;

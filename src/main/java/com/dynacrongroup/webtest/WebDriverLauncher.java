@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.util.ConfigurationValue;
 import com.dynacrongroup.webtest.util.ConnectionValidator;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -96,6 +97,7 @@ public class WebDriverLauncher {
                     capabillities.setCapability("name", jobName);
                     capabillities.setCapability("tags", SystemName.getSystemName());
                     capabillities.setCapability("build", uniqueId);
+                    capabillities.setCapability("selenium-version", ConfigurationValue.getConfigurationValue("REMOTE_SERVER_VERSION", "2.19.0"));
                     driver = new RemoteWebDriver(
                             SauceLabsCredentials.getConnectionString(),
                             capabillities);
