@@ -2,7 +2,6 @@ package com.dynacrongroup.webtest;
 
 import com.dynacrongroup.webtest.util.SauceREST;
 import com.google.common.annotations.VisibleForTesting;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -10,6 +9,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,11 +80,49 @@ public class WebDriverBase {
      */
     private Timing timer;
 
+    /**
+     * JUnit rule that handles reporting failures and tear down after tests are complete.
+     */
     @Rule
-    public TestWatcher failWatcher = new TestWatcher() {
+    public TestWatcher webDriverWatcher = new TestWatcher() {
         @Override
         protected void failed(Throwable e, Description d) {
+            sendContextMessage("failed. " + e.getMessage());
             jobPassed.set(false);
+        }
+
+        @Override
+        protected void succeeded(Description description) {
+            sendContextMessage("passed.");
+        }
+
+        /**
+         * Cleans up drivers after tests and reports on results.  Note that this is executed
+         * after the failed/succeeded methods, allowing the watcher to send context updates
+         * before destroying the driver.
+         */
+        @Override
+        protected void finished(Description description) {
+            reduceToOneWindow();
+            timer.stop();
+            methodsRemaining.set(methodsRemaining.get() - 1);
+            browserTestLog.trace("Methods left after run: " + methodsRemaining.get());
+
+            // Test class is complete
+            if (methodsRemaining.get() == 0 && driver != null) {
+                //If this job is running in Sauce Labs, send pass/fail information
+                if (!targetWebBrowser.isClassLoaded()) {
+                    if (jobPassed.get()) {
+                        sauceRest.jobPassed(jobId.get());
+                    }
+                    else {
+                        sauceRest.jobFailed(jobId.get());
+                    }
+                }
+                WebDriverLeakCheck.remove(driver);
+                driver = null;
+                storedWebDriver.set(null);
+            }
         }
     };
 
@@ -103,10 +141,6 @@ public class WebDriverBase {
             methodsRemaining.set(countTestMethods(this.getClass()));
         }
 
-        if (getJobURL() == null) {
-            setJobId("");
-        }
-        
         if (jobPassed.get() == null) {
             jobPassed.set(true);
         }
@@ -129,7 +163,7 @@ public class WebDriverBase {
      */
     @Before
     public void startWebDriver() {
-        
+
         if (timer == null) {
             timer = new Timing(targetWebBrowser, this.getClass()
                     .getSimpleName() + "," + name.getMethodName());
@@ -146,38 +180,15 @@ public class WebDriverBase {
             setJobId(WebDriverUtilities.getJobIdFromDriver(driver));
 
             browserTestLog.debug("WebDriver ready.");
-            if (getJobURL().length() > 1) {
+            if (getJobURL() != null) {
                 browserTestLog.info("View on SauceLabs at " + getJobURL());
             }
             storedWebDriver.set(driver);
             WebDriverLeakCheck.add(this.getClass(), driver);
         }
+        sendContextMessage("started.");
 
         timer.start();
-    }
-
-    @After
-    public void noLongerUsingWebDriver() throws IOException {
-        reduceToOneWindow();
-        timer.stop();
-        methodsRemaining.set(methodsRemaining.get() - 1);
-        browserTestLog.trace("Methods left after run: " + methodsRemaining.get());
-
-        if (methodsRemaining.get() == 0 && driver != null) {
-            //If this job is running in Sauce Labs, send pass/fail information.
-            if (!targetWebBrowser.isClassLoaded()) {
-                if (jobPassed.get()) {
-                    sauceRest.jobPassed(jobId.get());
-                }
-                else {
-                    browserTestLog.warn("failed job can be viewed at {}", getJobURL());
-                    sauceRest.jobFailed(jobId.get());
-                }
-            }
-            WebDriverLeakCheck.remove(driver);
-            driver = null;
-            storedWebDriver.set(null);
-        }
     }
 
     public final TargetWebBrowser getTargetWebBrowser() {
@@ -188,7 +199,13 @@ public class WebDriverBase {
      * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
      */
     public final String getJobURL() {
-        return WebDriverUtilities.constructSauceJobUrl(jobId.get());
+        String jobUrl = null;
+
+        if (getJobId() != null && !this.targetWebBrowser.isClassLoaded()) {
+            jobUrl = WebDriverUtilities.constructSauceJobUrl(jobId.get());
+        }
+
+        return jobUrl;
     }
 
     /**
@@ -258,6 +275,12 @@ public class WebDriverBase {
                 }
             }
             driver.switchTo().window(firstHandle);
+        }
+    }
+
+    private void sendContextMessage(String message) {
+        if (driver != null && !targetWebBrowser.isClassLoaded()) {
+            ((JavascriptExecutor) driver).executeScript("sauce:context=// " + name.getMethodName() + " " + message);
         }
     }
 }

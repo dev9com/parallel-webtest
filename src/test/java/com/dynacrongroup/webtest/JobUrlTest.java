@@ -1,20 +1,16 @@
 package com.dynacrongroup.webtest;
 
-import com.dynacrongroup.webtest.ParallelRunner;
-import com.dynacrongroup.webtest.WebDriverBase;
-import com.dynacrongroup.webtest.WebDriverUtilities;
 import com.dynacrongroup.webtest.util.Path;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Sample WebDriver test case.
@@ -23,6 +19,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(ParallelRunner.class)
 public class JobUrlTest extends WebDriverBase {
 	Path p = new Path("www.google.com", 80);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(JobUrlTest.class);
 
 	public JobUrlTest(String browser, String browserVersion) {
 		super(browser, browserVersion);
@@ -39,7 +37,7 @@ public class JobUrlTest extends WebDriverBase {
             assertThat(this.getJobURL(), containsString(((RemoteWebDriver) driver).getSessionId().toString()));
         }
         else {
-            assertThat(this.getJobURL(), equalTo(""));
+            assertThat(this.getJobURL(), nullValue());
         }
     }
 
@@ -48,3 +46,4 @@ public class JobUrlTest extends WebDriverBase {
         this.verifyJobUrlContainsSessionID();
     }
 }
+

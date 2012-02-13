@@ -179,7 +179,12 @@ public class WebDriverUtilities {
     }
 
     public static String getJobIdFromDriver(WebDriver driver) {
-        return ((RemoteWebDriver) driver).getSessionId()
-                .toString();
+        String id = null;
+
+        if (driver.getClass().isAssignableFrom(RemoteWebDriver.class)) {
+            id = ((RemoteWebDriver) driver).getSessionId().toString();
+        }
+        
+        return id;
     }
 }
