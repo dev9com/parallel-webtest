@@ -10,7 +10,7 @@ import java.net.URL;
 /** Validate that a particular URL is accessible */
 public class ConnectionValidator {
 
-    private static final Logger log = LoggerFactory.getLogger(ConnectionValidator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectionValidator.class);
 
     /** Makes checkstyle happy */
     private ConnectionValidator() {
@@ -24,10 +24,10 @@ public class ConnectionValidator {
     /** Simple utility method, attempts to connect to the specified path and read a line of text.
      */
     public static boolean verifyConnection(String path, boolean silent) {
-        URL url = null;
+        Boolean success = false;
 
         try {
-            url = new URL(path);
+            URL url = new URL(path);
             BufferedReader contents;
 
             InputStreamReader isr = new InputStreamReader(url.openStream());
@@ -35,13 +35,13 @@ public class ConnectionValidator {
             contents = new BufferedReader(isr);
 
             String readLine = contents.readLine();
-            return !readLine.isEmpty();
+            success =  !readLine.isEmpty();
 
         } catch (Exception ex) {
             if (!silent) {
-                log.error("Unable to connect to " + path, ex);
+                LOG.error("Unable to connect to " + path, ex);
             }
         }
-        return false;
+        return success;
     }
 }
