@@ -308,6 +308,42 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- in CI environment, test both htmlunit and sauce execution to verify local/remote both work -->
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>htmlunit-pass</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <WEBDRIVER_DRIVER>org.openqa.selenium.htmlunit.HtmlUnitDriver</WEBDRIVER_DRIVER>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>sauce-pass</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <WEBDRIVER_DRIVER>null</WEBDRIVER_DRIVER>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
     <ciManagement>
         <system>CloudBees</system>

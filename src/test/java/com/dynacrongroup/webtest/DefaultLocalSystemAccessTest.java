@@ -24,19 +24,19 @@ public class DefaultLocalSystemAccessTest extends WebDriverBase {
 
 	@Test
 	public void firstTest() throws Exception {
-		driver.get(_("/"));
+		driver.get(_("/webtest.html"));
 		assertTrue(driver.getPageSource().contains("Dynacron"));
 	}
 
 	@Test
 	public void secondTest() throws Exception {
-		driver.get(_("/"));
+		driver.get(_("/webtest.html"));
 		assertTrue(driver.getPageSource().contains("Group"));
 	}
 
 	@Test
 	public void thirdTest() throws Exception {
-		driver.get(_("/"));
+		driver.get(_("/webtest.html"));
 		assertTrue(driver.getPageSource().contains("Group"));
 	}
 
