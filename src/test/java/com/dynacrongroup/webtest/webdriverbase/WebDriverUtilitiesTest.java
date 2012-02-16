@@ -1,5 +1,8 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.webdriverbase;
 
+import com.dynacrongroup.webtest.ParallelRunner;
+import com.dynacrongroup.webtest.WebDriverBase;
+import com.dynacrongroup.webtest.WebDriverUtilities;
 import com.dynacrongroup.webtest.util.Path;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +35,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 	public void isElementPresentTest() throws Exception {
         getLogger().info("Starting test [{}]", name.getMethodName());
 		assertTrue(WebDriverUtilities.isElementPresent(driver,
-				By.tagName("h2")));
+                By.tagName("h2")));
 		assertFalse(WebDriverUtilities.isElementPresent(driver,
 				By.id("magic-dragons")));
 	}

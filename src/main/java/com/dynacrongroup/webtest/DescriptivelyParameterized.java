@@ -97,16 +97,18 @@ public class DescriptivelyParameterized extends Suite {
         /**
          * Override this method to provide custom parameter formatting.
          * @param params
-         * @return A formatted string to be appended to the test name.  Truncates
-         * to 20 characters at most.
+         * @return A formatted string to be appended to the test name.
          */
         public String formatParams(Object[] params) {
             String formattedParams;
             String[] stringParams = (String[]) params;
+            if (stringParams[1].contains("Driver")) {
+                String driver = stringParams[1];
+                formattedParams = driver.substring(driver.lastIndexOf(".") + 1, driver.lastIndexOf("Driver"));
+            }
+            else {
+            
             formattedParams = StringUtils.join(stringParams, "|");
-            if (formattedParams != null && formattedParams.length() > 20) {
-                // Truncate if the params are excessively long...
-                formattedParams = formattedParams.substring(0, 20);
             }
             return formattedParams;
         }
