@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dynacrongroup</groupId>
     <artifactId>parallel-webtest</artifactId>
     <packaging>jar</packaging>
     <name>parallel-webtest</name>
-    <version>1.0.23-SNAPSHOT</version>
+    <version>1.0.23</version>
     <description>Parallel execution and numerous other utilities intended for web testing support. For basic
         information on usage, see the tutorial listed in the site's documentation
     </description>
