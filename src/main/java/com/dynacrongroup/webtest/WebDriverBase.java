@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.annotation.Experimental;
 import com.dynacrongroup.webtest.util.SauceREST;
 import com.google.common.annotations.VisibleForTesting;
 import org.junit.Before;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is the base class for interfacing with WebDriver. It handles the
@@ -79,6 +81,12 @@ public class WebDriverBase {
      * Used to track the timing for output to webdriver-timings.csv
      */
     private Timing timer;
+
+
+    /**
+     * Used to provide optional custom capabilities.  Experimental.
+     */
+    private Map<String, Object> customCapabilities = null;
 
     /**
      * JUnit rule that handles reporting failures and tear down after tests are complete.
@@ -146,6 +154,16 @@ public class WebDriverBase {
         }
     }
 
+
+    /**
+     * Optional experimental constructor for adding custom capabilities to remote web driver browsers.
+     */
+    @Experimental
+    public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
+        this(browser, version);
+        this.customCapabilities = customCapabilities;
+    }
+
     /**
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
@@ -176,7 +194,7 @@ public class WebDriverBase {
             // Launches new WebDriver instance
             WebDriverLauncher launcher = new WebDriverLauncher();
             driver = launcher.getNewWebDriverInstance(this.getJobName(),
-                    this.browserTestLog, targetWebBrowser);
+                    this.browserTestLog, targetWebBrowser, customCapabilities);
             setJobId(WebDriverUtilities.getJobIdFromDriver(driver));
 
             browserTestLog.debug("WebDriver ready.");
@@ -186,8 +204,8 @@ public class WebDriverBase {
             storedWebDriver.set(driver);
             WebDriverLeakCheck.add(this.getClass(), driver);
         }
-        sendContextMessage("started.");
 
+        sendContextMessage("started.");
         timer.start();
     }
 

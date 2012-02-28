@@ -10,6 +10,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -32,6 +33,15 @@ public class WebDriverLauncher {
      */
     public WebDriver getNewWebDriverInstance(String jobName, Logger testLog,
                                              TargetWebBrowser target) {
+        return getNewWebDriverInstance(jobName, testLog, target, null);
+    }
+
+    /**
+     * Returns the actual web drivers. Requires the logger and target web
+     * browser to be specified.  Custom capabilities are optional.
+     */
+    public WebDriver getNewWebDriverInstance(String jobName, Logger testLog,
+                                             TargetWebBrowser target, Map<String, Object> customCapabilities) {
 
         if (testLog == null) {
             throw new IllegalArgumentException(
@@ -52,9 +62,9 @@ public class WebDriverLauncher {
         WebDriver driver = null;
 
         boolean validWebDriver = false;
-        
+
         for (int attempt = 1; attempt <= MAX_RETRIES && !validWebDriver; attempt++) {
-            testLog.trace("WebDriver provisioning attempt [{}]",  attempt );
+            testLog.trace("WebDriver provisioning attempt [{}]", attempt);
 
             if (target.isClassLoaded()) {
                 testLog.trace("Initializing WebDriver by specified class: "
@@ -76,7 +86,7 @@ public class WebDriverLauncher {
 
                 validWebDriver = driver != null;
             } else {
-                
+
                 String server = SauceLabsCredentials.getServer();
 
                 try {
@@ -92,15 +102,16 @@ public class WebDriverLauncher {
                     if (target.isInternetExplorer() && target.version.contains("9")) {
                         platform = Platform.VISTA;
                     }
-                    DesiredCapabilities capabillities = new DesiredCapabilities(
+                    DesiredCapabilities capabilities = new DesiredCapabilities(
                             target.browser, target.version, platform);
-                    capabillities.setCapability("name", jobName);
-                    capabillities.setCapability("tags", SystemName.getSystemName());
-                    capabillities.setCapability("build", uniqueId);
-                    capabillities.setCapability("selenium-version", ConfigurationValue.getConfigurationValue("REMOTE_SERVER_VERSION", "2.19.0"));
+                    capabilities.setCapability("name", jobName);
+                    capabilities.setCapability("tags", SystemName.getSystemName());
+                    capabilities.setCapability("build", uniqueId);
+                    capabilities.setCapability("selenium-version", ConfigurationValue.getConfigurationValue("REMOTE_SERVER_VERSION", "2.19.0"));
+                    addCustomCapabilities(capabilities, customCapabilities, testLog);
                     driver = new RemoteWebDriver(
                             SauceLabsCredentials.getConnectionString(),
-                            capabillities);
+                            capabilities);
 
                     if (driver.getWindowHandle() != null) {
                         validWebDriver = true;
@@ -110,7 +121,7 @@ public class WebDriverLauncher {
                         testLog.trace("Job url set to: {}", jobUrl);
                     } else {
                         testLog.warn("Unable to launch RemoteWebDriver for [{}] on attempt {} of {}.",
-                                new Object[] { server, attempt, MAX_RETRIES});
+                                new Object[]{server, attempt, MAX_RETRIES});
                     }
                 } catch (Exception e) {
                     testLog.error("Unable to launch RemoteWebDriver on attempt "
@@ -123,6 +134,15 @@ public class WebDriverLauncher {
             throw new ExceptionInInitializerError("Unable to initialize valid WebDriver.");
         }
         return driver;
+    }
+
+    private void addCustomCapabilities(DesiredCapabilities capabilities, Map<String, Object> customCapabilities, Logger testLog) {
+        if (customCapabilities != null) {
+            for (String customCapability : customCapabilities.keySet()) {
+                testLog.debug("Adding capability [{}] - [{}]", customCapability, customCapabilities.get(customCapability));
+                capabilities.setCapability(customCapability, customCapabilities.get(customCapability));
+            }
+        }
     }
 
 }

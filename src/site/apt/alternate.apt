@@ -11,7 +11,7 @@ Overview
  parallel_webtest was originally designed to parallelize tests sent to Sauce
  Labs, but it can be used to send tests to any Selenium server.
 
-Running tests against an alternate remote server
+* Running tests against an alternate remote server
 
  The following settings will need to be changed to send tests to a selenium
  server other than Sauce Labs.
@@ -24,8 +24,26 @@ Running tests against an alternate remote server
  * [SINGLE_SAUCE]: this should be set to the connection string for the browser
  the server will use.  For example: "iexplore:8" or "chrome:*".
 
-Limitations
+** Limitations
 
  The library was designed for use with Sauce Labs, so the logging displayed
  may still contain references to Sauce Labs.  In addition, the "getJobUrl"
  function of WebDriverBase will return an invalid value.
+
+* Adding/modifying desired capabilities.
+
+ It's possible to modify the desired capabilities requested when building a
+ remote web driver.  To do this, you'll need to create a Map<String,Object>
+ of the capabilities desired before constructing the class, and change the
+ default constructor to insert the capabilities.  See CustomCapabilitiesTest
+ for an example.
+
++---
+  static Map<String,Object> customCapabilities;
+
+  // Insert code to initialize customCapabilities (using @BeforeClass?)
+
+  public TestClassName(String browser, String browserVersion) {
+    super(browser, browserVersion, customCapabilities);
+  }
++---
