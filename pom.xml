@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dynacrongroup</groupId>
@@ -318,31 +319,12 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <WEBDRIVER_DRIVER>org.openqa.selenium.htmlunit.HtmlUnitDriver</WEBDRIVER_DRIVER>
+                                <WEBDRIVER_DRIVER>null</WEBDRIVER_DRIVER>
                             </systemPropertyVariables>
+                            <includes>
+                                <include>**/webdriverbase/*Test.java</include>
+                            </includes>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>htmlunit-pass</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>sauce-pass</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemPropertyVariables>
-                                        <WEBDRIVER_DRIVER>null</WEBDRIVER_DRIVER>
-                                    </systemPropertyVariables>
-                                    <includes>
-                                        <include>**/webdriverbase/*Test.java</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
