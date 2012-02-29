@@ -64,7 +64,10 @@ public class SauceREST {
      * @return
      */
     public JSONObject stopJob(String jobId) {
-        return jobRestRequest(jobId, HttpMethod.PUT.name(), "/stop", null);
+        Map<String, Object> updates = new HashMap<String, Object>();
+        updates.put("tags", new String[]{"manual-stop"});
+        String jsonText = JSONValue.toJSONString(updates);
+        return jobRestRequest(jobId, HttpMethod.PUT.name(), "/stop", jsonText);
     }
 
     /**
@@ -79,13 +82,14 @@ public class SauceREST {
     private JSONObject jobRestRequest(String jobId, String method, String suffix, String json ) {
 
         JSONObject result = null;
+        URL restEndpoint = null;
 
         if (suffix == null) {
             suffix = "";
         }
 
         try {
-            URL restEndpoint = new URL(RESTURL + "/v1/" + username + "/jobs/" + jobId + suffix);
+            restEndpoint = new URL(RESTURL + "/v1/" + username + "/jobs/" + jobId + suffix);
             String auth = username + ":" + accessKey;
             auth = "Basic " + new String(Base64.encodeBase64(auth.getBytes()));
 
@@ -106,9 +110,11 @@ public class SauceREST {
             result = (JSONObject)JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
             postBack.disconnect();
 
-            LOG.debug("Raw result: {}", result.toString());
+            LOG.trace("Raw result: {}", result.toString());
         } catch (IOException e) {
-            LOG.error("Exception while trying to get Sauce job info: {}", e );
+            LOG.error("Exception while trying to get Sauce job info using {} - {}: {}",
+                    new Object[]{restEndpoint.toExternalForm(), method, e} );
+            LOG.error("Auth token: {}", username + ":" + accessKey);
         }
 
         return result;
