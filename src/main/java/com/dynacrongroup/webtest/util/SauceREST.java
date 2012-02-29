@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class SauceREST {
      *
      * @param jobId     id for job in Sauce
      * @param method    Http method ("GET", "PUT")
-     * @param suffix    optional suffix for request aftert id (like "/stop")
+     * @param suffix    optional suffix for request after id (like "/stop")
      * @param json      optional json parameters
      * @return
      */
@@ -92,11 +93,19 @@ public class SauceREST {
             postBack.setDoOutput(true);
             postBack.setRequestMethod(method);
             postBack.setRequestProperty("Authorization", auth);
+
             if (json != null) {
-                postBack.getOutputStream().write(json.getBytes());
+                OutputStream stream = postBack.getOutputStream();
+                stream.write(json.getBytes());
+                stream.close();
+            }
+            else {
+                postBack.connect();
             }
 
             result = (JSONObject)JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
+            postBack.disconnect();
+
             LOG.debug("Raw result: {}", result.toString());
         } catch (IOException e) {
             LOG.error("Exception while trying to get Sauce job info: {}", e );
