@@ -16,18 +16,18 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Sample WebDriver test case.
- * 
+ *
  */
 @RunWith(ParallelRunner.class)
 public class JobUrlTest extends WebDriverBase {
 	Path p = new Path("www.google.com", 80);
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(JobUrlTest.class);
 
 	public JobUrlTest(String browser, String browserVersion) {
 		super(browser, browserVersion);
 	}
-    
+
     @Before
     public void loadPage() {
         driver.get(p._(""));
@@ -35,7 +35,7 @@ public class JobUrlTest extends WebDriverBase {
 
 	@Test
     public void verifyJobUrlContainsSessionID() {
-        if (!this.getTargetWebBrowser().isClassLoaded()) {
+        if (this.getTargetWebBrowser().isRemote()) {
             assertThat(this.getJobURL(), containsString(((RemoteWebDriver) driver).getSessionId().toString()));
         }
         else {

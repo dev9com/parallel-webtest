@@ -119,7 +119,7 @@ public class WebDriverBase {
             // Test class is complete
             if (methodsRemaining.get() == 0 && driver != null) {
                 //If this job is running in Sauce Labs, send pass/fail information
-                if (!targetWebBrowser.isClassLoaded()) {
+                if (targetWebBrowser.isRemote()) {
                     if (jobPassed.get()) {
                         sauceRest.jobPassed(jobId.get());
                     }
@@ -297,7 +297,7 @@ public class WebDriverBase {
     }
 
     private void sendContextMessage(String message) {
-        if (driver != null && !targetWebBrowser.isClassLoaded()) {
+        if (driver != null && targetWebBrowser.isRemote()) {
             ((JavascriptExecutor) driver).executeScript("sauce:context=// " + name.getMethodName() + " " + message);
         }
     }

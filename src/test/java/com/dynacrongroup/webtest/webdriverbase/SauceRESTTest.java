@@ -8,13 +8,9 @@ import com.dynacrongroup.webtest.util.Path;
 import com.dynacrongroup.webtest.util.SauceREST;
 import org.json.simple.JSONObject;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -22,30 +18,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 /**
- * Sample WebDriver test case showing how to use custom capabilities.
+ * Sample WebDriver test case showing how to use the rest interface.
  *
  */
 @RunWith(ParallelRunner.class)
-public class CustomCapabilitiesTest extends WebDriverBase {
+public class SauceRESTTest extends WebDriverBase {
 	Path p = new Path("www.dynacrongroup.com", 80);
 
-    public static Map<String, Object> customCapabilities;
 
-    @BeforeClass
-    public static void setCapabilities() {
-        customCapabilities = new HashMap<String, Object>();
-        customCapabilities.put("name", "veryCustomName");
-        customCapabilities.put("fakeCapability", "What happens if I enter a bad capability?");
-
-        Map<String, String> customData = new HashMap<String,String>();
-        customData.put("release", "experimental");
-
-        customCapabilities.put("custom-data", customData);
-    }
-
-
-	public CustomCapabilitiesTest(String browser, String browserVersion) {
-		super(browser, browserVersion, customCapabilities);
+	public SauceRESTTest(String browser, String browserVersion) {
+		super(browser, browserVersion);
 	}
 
     @Before
@@ -57,19 +39,20 @@ public class CustomCapabilitiesTest extends WebDriverBase {
     }
 
     /**
-     * Test demonstrates that custom capabilities were received.
+     * Verify that a test can be stopped via the rest interface, using status from rest interface.
      * @throws Exception
      */
-	@Test
-	public void capabilitySetTest() throws Exception {
+    @Test
+    public void stopJobTest() throws Exception {
 
         getLogger().info("Starting test [{}]", name.getMethodName());
-		assertTrue(WebDriverUtilities.isElementPresent(driver,
+        assertTrue(WebDriverUtilities.isElementPresent(driver,
                 By.tagName("h2")));
 
+        new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey()).stopJob(this.getJobId());
+
         JSONObject status = new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey()).requestStatus(this.getJobId());
+        assertThat((String) status.get("status"), equalTo("complete"));
 
-        assertThat(status.get("name"), equalTo(customCapabilities.get("name")));
     }
-
 }
