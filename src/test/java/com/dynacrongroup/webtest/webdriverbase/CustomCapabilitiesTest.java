@@ -67,7 +67,7 @@ public class CustomCapabilitiesTest extends WebDriverBase {
 		assertTrue(WebDriverUtilities.isElementPresent(driver,
                 By.tagName("h2")));
 
-        JSONObject status = new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey()).requestStatus(this.getJobId());
+        JSONObject status = new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey()).getJobStatus(this.getJobId());
 
         assertThat(status.get("name"), equalTo(customCapabilities.get("name")));
     }

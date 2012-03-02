@@ -1,7 +1,7 @@
 package com.dynacrongroup.webtest.util;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
 import org.apache.commons.codec.binary.Base64;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -23,10 +20,10 @@ import java.util.Map;
  * Used to set the pass/fail status on tests.
  */
 public class SauceREST {
+
     protected String username;
     protected String accessKey;
 
-    public static final String RESTURL = "http://saucelabs.com/rest";
 
     private static final Logger LOG = LoggerFactory.getLogger(SauceREST.class);
 
@@ -35,27 +32,67 @@ public class SauceREST {
         this.accessKey = accessKey;
     }
 
+    public JSONObject getAccountDetails() {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("GET")
+                .addUsersToPath()
+                .addUserIdToPath(username)
+                .build();
+
+        return (JSONObject)sendRestRequest(request);
+    }
+
+
+    public JSONObject getUsageData() {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("GET")
+                .addUsersToPath()
+                .addUserIdToPath(username)
+                .addGenericSuffix("/usage")
+                .build();
+
+        return (JSONObject)sendRestRequest(request);
+    }
+
+    public JSONArray getAllJobs() {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("GET")
+                .addUserIdToPath(username)
+                .addJobsToPath()
+                .build();
+
+        return (JSONArray)sendRestRequest(request);
+    }
+
+    public JSONObject getJobStatus(String jobId) {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("GET")
+                .addUserIdToPath(username)
+                .addJobsToPath()
+                .addJobIdToPath(jobId)
+                .build();
+
+        return (JSONObject)sendRestRequest(request);
+    }
+
     public JSONObject jobPassed(String jobId) {
-        Map<String, Object> updates = new HashMap<String, Object>();
-        updates.put("passed", true);
-        return updateJobInfo(jobId, updates);
+        return updateJob(jobId, "passed", true);
     }
 
     public JSONObject jobFailed(String jobId) {
-        Map<String, Object> updates = new HashMap<String, Object>();
-        updates.put("passed", false);
-        return updateJobInfo(jobId, updates);
+        return updateJob(jobId, "passed", false);
     }
 
-    public JSONObject updateJobInfo(String jobId, Map<String, Object> updates) {
-        String jsonText = JSONValue.toJSONString(updates);
-        return jobRestRequest(jobId, HttpMethod.PUT.name() , null, jsonText);
-    }
+    public JSONObject updateJob(String jobId, String jsonKey, Object jsonValue) {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .addJSON(jsonKey, jsonValue)
+                .setHTTPMethod("PUT")
+                .addUserIdToPath(username)
+                .addJobsToPath()
+                .addJobIdToPath(jobId)
+                .build();
 
-
-
-    public JSONObject requestStatus(String jobId) {
-        return jobRestRequest(jobId, HttpMethod.GET.name() , null, null);
+        return (JSONObject)sendRestRequest(request);
     }
 
     /**
@@ -64,59 +101,101 @@ public class SauceREST {
      * @return
      */
     public JSONObject stopJob(String jobId) {
-        Map<String, Object> updates = new HashMap<String, Object>();
-        updates.put("tags", new String[]{"manual-stop"});
-        String jsonText = JSONValue.toJSONString(updates);
-        return jobRestRequest(jobId, HttpMethod.PUT.name(), "/stop", jsonText);
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("PUT")
+                .addUserIdToPath(username)
+                .addJobsToPath()
+                .addJobIdToPath(jobId)
+                .addGenericSuffix("/stop")
+                .build();
+
+        return (JSONObject)sendRestRequest(request);
     }
 
-    /**
-     * General function for connection to sauce labs rest interface for a given job.
-     *
-     * @param jobId     id for job in Sauce
-     * @param method    Http method ("GET", "PUT")
-     * @param suffix    optional suffix for request after id (like "/stop")
-     * @param json      optional json parameters
-     * @return
-     */
-    private JSONObject jobRestRequest(String jobId, String method, String suffix, String json ) {
+    public JSONArray getAllTunnels() {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("GET")
+                .addUserIdToPath(username)
+                .addGenericSuffix("/tunnels")
+                .build();
 
-        JSONObject result = null;
-        URL restEndpoint = null;
+        return (JSONArray)sendRestRequest(request);
+    }
 
-        if (suffix == null) {
-            suffix = "";
-        }
+    public JSONObject getTunnelStatus(String tunnelId) {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("GET")
+                .addUserIdToPath(username)
+                .addGenericSuffix("/tunnels/")
+                .addGenericSuffix(tunnelId)
+                .build();
+
+        return (JSONObject)sendRestRequest(request);
+    }
+
+    public JSONObject deleteTunnel(String tunnelId) {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("DELETE")
+                .addUserIdToPath(username)
+                .addGenericSuffix("/tunnels/")
+                .addGenericSuffix(tunnelId)
+                .build();
+
+        return (JSONObject)sendRestRequest(request);
+    }
+
+    public JSONObject getSauceStatus() {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("GET")
+                .addGenericSuffix("/info/status")
+                .build();
+
+        return (JSONObject)sendRestRequest(request);
+    }
+
+    public JSONArray getSauceBrowsers() {
+        SauceRESTRequest request = new SauceRESTRequestBuilder()
+                .setHTTPMethod("GET")
+                .addGenericSuffix("/info/browsers")
+                .build();
+
+        return (JSONArray)sendRestRequest(request);
+    }
+
+
+    public Object sendRestRequest(SauceRESTRequest request) {
+
+        Object result = null;
 
         try {
-            restEndpoint = new URL(RESTURL + "/v1/" + username + "/jobs/" + jobId + suffix);
             String auth = username + ":" + accessKey;
             auth = "Basic " + new String(Base64.encodeBase64(auth.getBytes()));
 
-            HttpURLConnection postBack = (HttpURLConnection) restEndpoint.openConnection();
+            HttpURLConnection postBack = (HttpURLConnection) request.getRequestUrl().openConnection();
+            postBack.setRequestProperty("Content-Type", "application/json");
             postBack.setDoOutput(true);
-            postBack.setRequestMethod(method);
+            postBack.setRequestMethod(request.getMethod());
             postBack.setRequestProperty("Authorization", auth);
 
-            if (json != null) {
+            if (request.getJsonParameters() != null) {
                 OutputStream stream = postBack.getOutputStream();
-                stream.write(json.getBytes());
+                stream.write(request.getJsonParameters().getBytes());
                 stream.close();
             }
-            else {
+            else if (!request.method.equalsIgnoreCase("GET")){
                 postBack.connect();
             }
 
-            result = (JSONObject)JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
+            result = JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
             postBack.disconnect();
 
             LOG.trace("Raw result: {}", result.toString());
         } catch (IOException e) {
-            LOG.error("Exception while trying to get Sauce job info using {} - {}: {}",
-                    new Object[]{restEndpoint.toExternalForm(), method, e} );
-            LOG.error("Auth token: {}", username + ":" + accessKey);
+            LOG.error("Exception while trying to execute rest request using {} - {}: {}",
+                    new Object[]{request.getRequestUrl().toExternalForm(), request.getMethod(), e.getMessage()} );
         }
 
         return result;
     }
+
 }

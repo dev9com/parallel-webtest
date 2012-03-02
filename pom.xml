@@ -46,7 +46,7 @@
         <jul-to-slf4j.version>1.6.4</jul-to-slf4j.version>
         <logback.version>1.0.0</logback.version>
         <powermock.version>1.4.9</powermock.version>
-        <selenium.version>2.19.0</selenium.version>
+        <selenium.version>2.20.0</selenium.version>
         <slf4j.version>1.6.4</slf4j.version>
 
         <!-- JUnit parallel run configuration -->
@@ -309,7 +309,6 @@
             </build>
         </profile>
 
-        <!-- in CI environment, test both htmlunit and sauce execution to verify local/remote both work -->
         <profile>
             <id>ci</id>
             <build>
@@ -320,9 +319,6 @@
                             <systemPropertyVariables>
                                 <WEBDRIVER_DRIVER>null</WEBDRIVER_DRIVER>
                             </systemPropertyVariables>
-                            <includes>
-                                <include>**/webdriverbase/*Test.java</include>
-                            </includes>
                         </configuration>
                     </plugin>
                 </plugins>
