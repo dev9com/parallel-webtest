@@ -182,9 +182,9 @@ public class SauceREST {
                 stream.write(request.getJsonParameters().getBytes());
                 stream.close();
             }
-            else if (!request.method.equalsIgnoreCase("GET")){
+/*            else if (!request.method.equalsIgnoreCase("GET")){
                 postBack.connect();
-            }
+            }*/
 
             result = JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
             postBack.disconnect();
