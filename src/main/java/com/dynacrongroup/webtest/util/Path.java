@@ -7,8 +7,11 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,179 +25,190 @@ import static org.apache.commons.lang.StringUtils.join;
  * development environment).
  */
 public class Path {
-	/** These system properties can be used to override defaults */
-	public static final String WEBDRIVER_PROTOCOL = "WEBDRIVER_PROTOCOL";
-	public static final String WEBDRIVER_SERVER = "WEBDRIVER_SERVER";
-	public static final String WEBDRIVER_PORT = "WEBDRIVER_PORT";
-	public static final String WEBDRIVER_CONTEXT = "WEBDRIVER_CONTEXT";
+    /**
+     * These system properties can be used to override defaults
+     */
+    public static final String WEBDRIVER_PROTOCOL = "WEBDRIVER_PROTOCOL";
+    public static final String WEBDRIVER_SERVER = "WEBDRIVER_SERVER";
+    public static final String WEBDRIVER_PORT = "WEBDRIVER_PORT";
+    public static final String WEBDRIVER_CONTEXT = "WEBDRIVER_CONTEXT";
 
-	private final static Logger log = LoggerFactory.getLogger(Path.class);
+    private final static Logger LOG = LoggerFactory.getLogger(Path.class);
 
-	private static Set<String> sauceConnectWarnings = new HashSet<String>();
-	/**
-	 * Used to track the various servers that the test suite[s] expect to talk
-	 * to. This is used to make sure that the same warning is not sent over and
-	 * over.
-	 */
+    private static Set<String> sauceConnectWarnings = new HashSet<String>();
+    /**
+     * Used to track the various servers that the test suite[s] expect to talk
+     * to. This is used to make sure that the same warning is not sent over and
+     * over.
+     */
 
-	private String protocol = "http";
-	private String server = null;
-	private String context = "";
-	private int port = 8080;
+    private String protocol = "http";
+    private String server = null;
+    private String context = "";
+    private int port = 8080;
 
-	public Path() {
-		init();
-	}
+    public Path() {
+        init();
+    }
 
-	public Path(String server) {
-		init();
-		this.server = server;
-	}
+    public Path(String server) {
+        init();
+        this.server = server;
+    }
 
-	public Path(int port) {
-		init();
-		this.port = port;
-	}
+    public Path(int port) {
+        init();
+        this.port = port;
+    }
 
-	public Path(String server, int port) {
-		init();
-		this.server = server;
-		this.port = port;
-	}
+    public Path(String server, int port) {
+        init();
+        this.server = server;
+        this.port = port;
+    }
 
-	public Path(String protocol, String server, int port) {
-		init();
-		this.protocol = protocol;
-		this.server = server;
-		this.port = port;
-	}
+    public Path(String protocol, String server, int port) {
+        init();
+        this.protocol = protocol;
+        this.server = server;
+        this.port = port;
+    }
 
-	public String getProtocol() {
-		return protocol;
-	}
+    public String getProtocol() {
+        return protocol;
+    }
 
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
 
-	public String getServer() {
-		return server;
-	}
+    public String getServer() {
+        return server;
+    }
 
-	public void setServer(String server) {
-		this.server = server;
-	}
+    public void setServer(String server) {
+        this.server = server;
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public String getContext() {
-		return context;
-	}
+    public String getContext() {
+        return context;
+    }
 
-	/** Alias for translate() */
-	public String _(String path) {
-		return translate(path);
-	}
+    /**
+     * Alias for translate()
+     */
+    public String _(String path) {
+        return translate(path);
+    }
 
-	public void setContext(String context) {
-		this.context = context;
-	}
+    public void setContext(String context) {
+        this.context = context;
+    }
 
-	public String translate(String path) {
+    public String translate(String path) {
 
-		try {
-			return new URL(protocol, server, port, context + path)
-					.toExternalForm();
-		} catch (MalformedURLException e) {
-			log.error(e.getMessage());
-			return null;
-		}
-	}
+        try {
+            return new URL(protocol, server, port, context + path)
+                    .toExternalForm();
+        } catch (MalformedURLException e) {
+            LOG.error(e.getMessage());
+            return null;
+        }
+    }
 
-	/**
-	 * Reports the SauceLabs configuration string expected by this Path
-	 * configuration object. Updated to use Sauce Connect v3.
-	 * 
-	 * @return command-line configuration string
-	 */
-	public String getExpectedSauceConnectString() {
-		String[] args = new String[] { "java",
+    /**
+     * Reports the SauceLabs configuration string expected by this Path
+     * configuration object. Updated to use Sauce Connect v3.
+     *
+     * @return command-line configuration string
+     */
+    public String getExpectedSauceConnectString() {
+        String[] args = new String[]{"java",
                 "-jar",
                 "Sauce-Connect.jar",
-				SauceLabsCredentials.getUser(),
-				SauceLabsCredentials.getKey() };
-        
+                SauceLabsCredentials.getUser(),
+                SauceLabsCredentials.getKey()};
+
         return join(args, " ");
-	}
+    }
 
     /**
      * Adds a log statement with the expected Sauce Connect command.  Implementation is
      * still a bit old fashioned; based on the idea that the sauce connect string might
      * change.
      */
-	public void checkSauce() {
-		if (!sauceConnectWarnings.contains(getExpectedSauceConnectString())) {
-			sauceConnectWarnings.add(getExpectedSauceConnectString());
+    public void checkSauce() {
+        if (!sauceConnectWarnings.contains(getExpectedSauceConnectString())) {
+            sauceConnectWarnings.add(getExpectedSauceConnectString());
 
-			log.info("*** This test suite expects to be able to connect to [{}] on your local system, and in the " +
+            LOG.info("*** This test suite expects to be able to connect to [{}] on your local system, and in the " +
                     "SauceLabs environment. You can use this command to launch SauceConnect if needed.",
                     this);
-			log.info("*** " + getExpectedSauceConnectString());
-		}
-	}
+            LOG.info("*** " + getExpectedSauceConnectString());
+        }
+    }
 
     /**
      * Used to determine whether the current path is local.  Can be useful for adding branching
      * logic to code based on the currently configured server.
+     *
      * @return True if the host matches the system name or localhost.
      */
-    public  Boolean isLocal() {
+    public Boolean isLocal() {
         Boolean local = null;
+
         if (server != null) {
-            local =  (SystemName.getSystemName().equalsIgnoreCase(server) ||
-                        "localhost".equalsIgnoreCase(server));
+            try {
+                InetAddress address = InetAddress.getByName(server);
+                LOG.trace("Address is {}", address.getAddress());
+                local = Arrays.equals(address.getAddress(), new byte[]{127, 0, 0, 1});
+            } catch (UnknownHostException e) {
+                LOG.error(e.getMessage());
+            }
         }
+
         return local;
     }
 
 
-	private void init() {
-		if (server == null) {
+    private void init() {
+        if (server == null) {
 
-			protocol = ConfigurationValue.getConfigurationValue(
-					WEBDRIVER_PROTOCOL, "http");
+            protocol = ConfigurationValue.getConfigurationValue(
+                    WEBDRIVER_PROTOCOL, "http");
 
-			String driver = ConfigurationValue.getConfigurationValue(
-					WebDriverFactory.WEBDRIVER_DRIVER, null);
-			if (driver != null
-					&& HtmlUnitDriver.class.toString().contains(driver)) {
-				port = 8080;
-			}
+            String driver = ConfigurationValue.getConfigurationValue(
+                    WebDriverFactory.WEBDRIVER_DRIVER, null);
+            if (driver != null
+                    && HtmlUnitDriver.class.toString().contains(driver)) {
+                port = 8080;
+            }
 
-			if (protocol.equalsIgnoreCase("https")) {
-				port = 443;
-			}
-			server = SystemName.getSystemName();
+            if (protocol.equalsIgnoreCase("https")) {
+                port = 443;
+            }
+            server = SystemName.getSystemName();
 
-			server = ConfigurationValue.getConfigurationValue(WEBDRIVER_SERVER,
-					server);
+            server = ConfigurationValue.getConfigurationValue(WEBDRIVER_SERVER,
+                    server);
 
-			port = Integer.parseInt(ConfigurationValue.getConfigurationValue(
-					WEBDRIVER_PORT, port + ""));
+            port = Integer.parseInt(ConfigurationValue.getConfigurationValue(
+                    WEBDRIVER_PORT, port + ""));
 
-			context = ConfigurationValue.getConfigurationValue(
-					WEBDRIVER_CONTEXT, "");
-		}
-	}
+            context = ConfigurationValue.getConfigurationValue(
+                    WEBDRIVER_CONTEXT, "");
+        }
+    }
 
     /**
-     *
      * @return the path object converted to string, with no page appended to the url.
      */
     @Override

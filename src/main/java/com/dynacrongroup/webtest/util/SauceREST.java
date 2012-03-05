@@ -124,6 +124,11 @@ public class SauceREST {
         return (JSONObject) sendRestRequest(request);
     }
 
+    public boolean isTunnelPresent() {
+        JSONArray tunnels = getAllTunnels();
+        return (!tunnels.isEmpty());
+    }
+
     public JSONArray getAllTunnels() {
         SauceRESTRequest request = new SauceRESTRequestBuilder()
                 .setHTTPMethod("GET")
