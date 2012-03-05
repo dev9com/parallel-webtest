@@ -185,6 +185,9 @@ public class SauceREST {
                 stream.write(request.getJsonParameters().getBytes());
                 stream.close();
             }
+            else {
+                postBack.setRequestProperty("content-length", "0");
+            }
 
             Integer responseCode = postBack.getResponseCode();
             if (responseCode == 200) {
