@@ -173,6 +173,8 @@ public class SauceREST {
 
             HttpURLConnection postBack = (HttpURLConnection) request.getRequestUrl().openConnection();
             postBack.setDoOutput(true);
+            postBack.setDoInput(true);
+            postBack.setUseCaches(false);
             postBack.setRequestMethod(request.getMethod());
             postBack.setRequestProperty("Authorization", auth);
 
@@ -182,17 +184,14 @@ public class SauceREST {
                 stream.write(request.getJsonParameters().getBytes());
                 stream.close();
             }
-            else if (!request.method.equalsIgnoreCase("GET")){
-                postBack.connect();
-            }
 
             result = JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
             postBack.disconnect();
 
             LOG.trace("Raw result: {}", result.toString());
         } catch (IOException e) {
-            LOG.error("Exception while trying to execute rest request using {} - {}: {}",
-                    new Object[]{request.getRequestUrl().toExternalForm(), request.getMethod(), e.getMessage()} );
+            LOG.error("Exception while trying to execute rest request: {}\n{}",
+                    new Object[]{e.getMessage(), e.getStackTrace()} );
         }
 
         return result;
