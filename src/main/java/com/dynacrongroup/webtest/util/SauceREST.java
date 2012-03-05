@@ -39,7 +39,7 @@ public class SauceREST {
                 .addUserIdToPath(username)
                 .build();
 
-        return (JSONObject)sendRestRequest(request);
+        return (JSONObject) sendRestRequest(request);
     }
 
 
@@ -51,7 +51,7 @@ public class SauceREST {
                 .addGenericSuffix("/usage")
                 .build();
 
-        return (JSONObject)sendRestRequest(request);
+        return (JSONObject) sendRestRequest(request);
     }
 
     public JSONArray getAllJobs() {
@@ -61,7 +61,7 @@ public class SauceREST {
                 .addJobsToPath()
                 .build();
 
-        return (JSONArray)sendRestRequest(request);
+        return (JSONArray) sendRestRequest(request);
     }
 
     public JSONObject getJobStatus(String jobId) {
@@ -72,7 +72,7 @@ public class SauceREST {
                 .addJobIdToPath(jobId)
                 .build();
 
-        return (JSONObject)sendRestRequest(request);
+        return (JSONObject) sendRestRequest(request);
     }
 
     public JSONObject jobPassed(String jobId) {
@@ -92,11 +92,12 @@ public class SauceREST {
                 .addJobIdToPath(jobId)
                 .build();
 
-        return (JSONObject)sendRestRequest(request);
+        return (JSONObject) sendRestRequest(request);
     }
 
     /**
      * Stop a currently running job.  Should not be necessary to use in WebDriverBase
+     *
      * @param jobId
      * @return
      */
@@ -109,7 +110,7 @@ public class SauceREST {
                 .addGenericSuffix("/stop")
                 .build();
 
-        return (JSONObject)sendRestRequest(request);
+        return (JSONObject) sendRestRequest(request);
     }
 
     public JSONArray getAllTunnels() {
@@ -119,7 +120,7 @@ public class SauceREST {
                 .addGenericSuffix("/tunnels")
                 .build();
 
-        return (JSONArray)sendRestRequest(request);
+        return (JSONArray) sendRestRequest(request);
     }
 
     public JSONObject getTunnelStatus(String tunnelId) {
@@ -130,7 +131,7 @@ public class SauceREST {
                 .addGenericSuffix(tunnelId)
                 .build();
 
-        return (JSONObject)sendRestRequest(request);
+        return (JSONObject) sendRestRequest(request);
     }
 
     public JSONObject deleteTunnel(String tunnelId) {
@@ -141,7 +142,7 @@ public class SauceREST {
                 .addGenericSuffix(tunnelId)
                 .build();
 
-        return (JSONObject)sendRestRequest(request);
+        return (JSONObject) sendRestRequest(request);
     }
 
     public JSONObject getSauceStatus() {
@@ -150,7 +151,7 @@ public class SauceREST {
                 .addGenericSuffix("/info/status")
                 .build();
 
-        return (JSONObject)sendRestRequest(request);
+        return (JSONObject) sendRestRequest(request);
     }
 
     public JSONArray getSauceBrowsers() {
@@ -159,7 +160,7 @@ public class SauceREST {
                 .addGenericSuffix("/info/browsers")
                 .build();
 
-        return (JSONArray)sendRestRequest(request);
+        return (JSONArray) sendRestRequest(request);
     }
 
 
@@ -172,26 +173,32 @@ public class SauceREST {
             auth = "Basic " + new String(Base64.encodeBase64(auth.getBytes()));
 
             HttpURLConnection postBack = (HttpURLConnection) request.getRequestUrl().openConnection();
-            postBack.setDoOutput(true);
             postBack.setDoInput(true);
             postBack.setUseCaches(false);
             postBack.setRequestMethod(request.getMethod());
             postBack.setRequestProperty("Authorization", auth);
 
             if (request.getJsonParameters() != null) {
+                postBack.setDoOutput(true);
                 postBack.setRequestProperty("Content-Type", "application/json");
                 OutputStream stream = postBack.getOutputStream();
                 stream.write(request.getJsonParameters().getBytes());
                 stream.close();
             }
 
-            result = JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
+            Integer responseCode = postBack.getResponseCode();
+            if (responseCode == 200) {
+                result = JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
+            }
+            else {
+                LOG.error("Received response code {}: {}", responseCode, postBack.getResponseMessage());
+            }
             postBack.disconnect();
 
             LOG.trace("Raw result: {}", result.toString());
         } catch (IOException e) {
             LOG.error("Exception while trying to execute rest request: {}\n{}",
-                    new Object[]{e.getMessage(), e.getStackTrace()} );
+                    new Object[]{e.getMessage(), e.getStackTrace()});
         }
 
         return result;
