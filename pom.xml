@@ -123,11 +123,17 @@
             <artifactId>jtidy</artifactId>
             <version>r938</version>
         </dependency>
+
         <!-- used by SauceREST -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
         </dependency>
 
 

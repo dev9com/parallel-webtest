@@ -1,6 +1,17 @@
 package com.dynacrongroup.webtest.util;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -164,7 +175,12 @@ public class SauceREST {
     }
 
 
-    public Object sendRestRequest(SauceRESTRequest request) {
+    /**
+     * @deprecated  Use sendRestRequest
+     * @param request   request created by SauceRESTRequestBuilder
+     * @return  Json from Sauce Labs
+     */
+    public Object sendHttpUrlConnectionRestRequest(SauceRESTRequest request) {
 
         Object result = null;
 
@@ -184,19 +200,69 @@ public class SauceREST {
                 OutputStream stream = postBack.getOutputStream();
                 stream.write(request.getJsonParameters().getBytes());
                 stream.close();
-            }
-            else {
+            } else {
                 postBack.setRequestProperty("content-length", "0");
             }
 
             Integer responseCode = postBack.getResponseCode();
             if (responseCode == 200) {
                 result = JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
-            }
-            else {
+            } else {
                 LOG.error("Received response code {}: {}", responseCode, postBack.getResponseMessage());
             }
             postBack.disconnect();
+
+            LOG.trace("Raw result: {}", result.toString());
+        } catch (IOException e) {
+            LOG.error("Exception while trying to execute rest request: {}\n{}",
+                    new Object[]{e.getMessage(), e.getStackTrace()});
+        }
+
+        return result;
+    }
+
+
+    public Object sendRestRequest(SauceRESTRequest request) {
+
+        Object result = null;
+
+        try {
+            HttpClient client = new HttpClient();
+
+            Credentials defaultcreds = new UsernamePasswordCredentials(username, accessKey);
+            client.getState().setCredentials(AuthScope.ANY, defaultcreds);
+
+            HttpMethod method = null;
+
+            if (request.getMethod().equalsIgnoreCase("get")) {
+                method = new GetMethod(request.requestUrl.toExternalForm());
+            } else if (request.getMethod().equalsIgnoreCase("delete")) {
+                method = new DeleteMethod(request.requestUrl.toExternalForm());
+            } else {
+
+                EntityEnclosingMethod eMethod = null;
+
+                if (request.getMethod().equalsIgnoreCase("post")) {
+                    eMethod = new PostMethod(request.requestUrl.toExternalForm());
+                } else if (request.getMethod().equalsIgnoreCase("put")) {
+                    eMethod = new PutMethod(request.requestUrl.toExternalForm());
+                }
+
+                if (request.getJsonParameters() != null) {
+                    eMethod.setRequestEntity(new StringRequestEntity(request.getJsonParameters(), "application/json", "utf-8"));
+                }
+
+                method = eMethod;
+            }
+
+
+
+            Integer responseCode = client.executeMethod(method);
+            if (responseCode == 200) {
+                result = JSONValue.parse(method.getResponseBodyAsString());
+            } else {
+                LOG.error("Received response code {}: {}", responseCode, method.getResponseBodyAsString());
+            }
 
             LOG.trace("Raw result: {}", result.toString());
         } catch (IOException e) {
