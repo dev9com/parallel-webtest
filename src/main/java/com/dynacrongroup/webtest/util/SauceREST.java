@@ -172,19 +172,19 @@ public class SauceREST {
             auth = "Basic " + new String(Base64.encodeBase64(auth.getBytes()));
 
             HttpURLConnection postBack = (HttpURLConnection) request.getRequestUrl().openConnection();
-            postBack.setRequestProperty("Content-Type", "application/json");
             postBack.setDoOutput(true);
             postBack.setRequestMethod(request.getMethod());
             postBack.setRequestProperty("Authorization", auth);
 
             if (request.getJsonParameters() != null) {
+                postBack.setRequestProperty("Content-Type", "application/json");
                 OutputStream stream = postBack.getOutputStream();
                 stream.write(request.getJsonParameters().getBytes());
                 stream.close();
             }
-/*            else if (!request.method.equalsIgnoreCase("GET")){
+            else if (!request.method.equalsIgnoreCase("GET")){
                 postBack.connect();
-            }*/
+            }
 
             result = JSONValue.parse(new BufferedReader(new InputStreamReader(postBack.getInputStream())));
             postBack.disconnect();
