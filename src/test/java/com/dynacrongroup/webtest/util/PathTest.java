@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.util;
 
 import com.dynacrongroup.webtest.SystemName;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ public class PathTest {
     }
 
     @Test
+    @Ignore("This is only the case if mapped in the host file.")
     public void testSystemName() {
         LOG.info("using {}", SystemName.getSystemName());
 
