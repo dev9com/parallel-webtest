@@ -1,13 +1,14 @@
 package com.dynacrongroup.webtest;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class keeps track of the allocated WebDriver instances. It is used to
@@ -55,7 +56,12 @@ public class WebDriverLeakCheck {
     }
 
     public static void remove(WebDriver s) {
-        s.quit();
+        try {
+            s.quit();
+        }
+        catch (WebDriverException e) {
+            log.warn(e.getMessage());
+        }
         trackedWebDriver.remove(s);
         log.trace("WebDriver shut down. " + WebDriverLeakCheck.open()
                 + " still running.");
