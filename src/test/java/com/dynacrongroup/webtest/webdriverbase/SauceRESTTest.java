@@ -9,6 +9,7 @@ import com.dynacrongroup.webtest.util.Path;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -49,6 +50,7 @@ public class SauceRESTTest extends WebDriverBase {
      * @throws Exception
      */
     @Test
+    @Ignore("Calling this manually causes trouble for WebDriver lifecycle.")
     public void stopJobTest() throws Exception {
 
         getLogger().info("Starting test [{}]", name.getMethodName());
