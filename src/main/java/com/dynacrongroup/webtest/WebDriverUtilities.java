@@ -180,11 +180,10 @@ public class WebDriverUtilities {
 
     public static String getJobIdFromDriver(WebDriver driver) {
         String id = null;
-
-        if (driver.getClass().isAssignableFrom(RemoteWebDriver.class)) {
+        if (RemoteWebDriver.class.isAssignableFrom(driver.getClass())) {
             id = ((RemoteWebDriver) driver).getSessionId().toString();
         }
-        
+
         return id;
     }
 }

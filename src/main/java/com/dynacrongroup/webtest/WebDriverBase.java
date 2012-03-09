@@ -1,22 +1,14 @@
 package com.dynacrongroup.webtest;
 
-import com.dynacrongroup.webtest.annotation.Experimental;
-import com.dynacrongroup.webtest.util.SauceREST;
-import com.google.common.annotations.VisibleForTesting;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TestName;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -40,20 +32,10 @@ public class WebDriverBase {
     public TestName name = new TestName();
 
     /**
-     * Transmits job pass/fail data.
+     * JUnit rule that handles reporting failures and managing WebDriver teardown
      */
-    private static final SauceREST sauceRest = new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey());
-
-    /**
-     * Allows reuse of a browser throughout a single class run.
-     */
-    private static ThreadLocal<WebDriver> storedWebDriver = new ThreadLocal<WebDriver>();
-
-    /**
-     * Tracks the number of test methods to be executed, shutting down the
-     * browser instance after the test is done.
-     */
-    private static ThreadLocal<Integer> methodsRemaining = new ThreadLocal<Integer>();
+    @Rule
+    public WebDriverWatcher webDriverWatcher;
 
     /**
      * Tracks the jobId, if specified, for the job in Sauce Labs.
@@ -63,7 +45,7 @@ public class WebDriverBase {
     /**
      * Stores job pass/fail data for a given parameterized run.
      */
-    private static ThreadLocal<Boolean> jobPassed = new ThreadLocal<Boolean>();
+    private static ThreadLocal<WebDriverWatcher> localWatcher = new ThreadLocal<WebDriverWatcher>();
 
     /**
      * The logger associated with this specific browser test execution
@@ -82,86 +64,41 @@ public class WebDriverBase {
      */
     private Timing timer;
 
-
-    /**
-     * Used to provide optional custom capabilities.  Experimental.
-     */
-    private Map<String, Object> customCapabilities = null;
-
-    /**
-     * JUnit rule that handles reporting failures and tear down after tests are complete.
-     */
-    @Rule
-    public TestWatcher webDriverWatcher = new TestWatcher() {
-        @Override
-        protected void failed(Throwable e, Description d) {
-            sendContextMessage("failed. " + e.getMessage());
-            jobPassed.set(false);
-        }
-
-        @Override
-        protected void succeeded(Description description) {
-            sendContextMessage("passed.");
-        }
-
-        /**
-         * Cleans up drivers after tests and reports on results.  Note that this is executed
-         * after the failed/succeeded methods, allowing the watcher to send context updates
-         * before destroying the driver.
-         */
-        @Override
-        protected void finished(Description description) {
-            reduceToOneWindow();
-            timer.stop();
-            methodsRemaining.set(methodsRemaining.get() - 1);
-            browserTestLog.trace("Methods left after run: " + methodsRemaining.get());
-
-            // Test class is complete
-            if (methodsRemaining.get() == 0 && driver != null) {
-                //If this job is running in Sauce Labs, send pass/fail information
-                if (targetWebBrowser.isRemote()) {
-                    if (jobPassed.get()) {
-                        sauceRest.jobPassed(jobId.get());
-                    }
-                    else {
-                        sauceRest.jobFailed(jobId.get());
-                    }
-                }
-                WebDriverLeakCheck.remove(driver);
-                driver = null;
-                storedWebDriver.set(null);
-            }
-        }
-    };
-
-
-
     /**
      * Used by the JUnit parameterized options to configure the parameterized
      * configuration options.
      */
     public WebDriverBase(String browser, String version) {
+        this(browser, version, null);
+    }
+
+    /**
+     * Alternate parameterized constructor for supplying custom capabilities.
+     */
+    public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
         this.targetWebBrowser = new TargetWebBrowser(browser, version);
         browserTestLog = LoggerFactory.getLogger(this.getClass()
                 .getName() + "-" + this.targetWebBrowser.humanReadable());
 
-        if (methodsRemaining.get() == null) {
-            methodsRemaining.set(countTestMethods(this.getClass()));
+        //webDriverWatcher tracks the driver lifecycle and reports on results to sauce labs.
+        if (localWatcher.get() == null) {
+
+            driver = WebDriverLauncher.getNewWebDriverInstance(
+                    this.getJobName(),
+                    browserTestLog,
+                    targetWebBrowser,
+                    customCapabilities);
+
+            setJobId(WebDriverUtilities.getJobIdFromDriver(driver));
+
+            browserTestLog.debug("WebDriver ready.");
+            if (getJobURL() != null) {
+                browserTestLog.info("View on SauceLabs at " + getJobURL());
+            }
+
+            localWatcher.set(new WebDriverWatcher(this.getClass(), this.driver, this.browserTestLog));
         }
-
-        if (jobPassed.get() == null) {
-            jobPassed.set(true);
-        }
-    }
-
-
-    /**
-     * Optional experimental constructor for adding custom capabilities to remote web driver browsers.
-     */
-    @Experimental
-    public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
-        this(browser, version);
-        this.customCapabilities = customCapabilities;
+        webDriverWatcher = localWatcher.get();
     }
 
     /**
@@ -181,32 +118,21 @@ public class WebDriverBase {
      */
     @Before
     public void startWebDriver() {
+        if (driver == null) {
+            driver = webDriverWatcher.getDriver();
+        }
 
         if (timer == null) {
             timer = new Timing(targetWebBrowser, this.getClass()
                     .getSimpleName() + "," + name.getMethodName());
         }
 
-        if (storedWebDriver.get() != null) {
-            browserTestLog.trace("Using existing threadLocal browser.");
-            driver = storedWebDriver.get();
-        } else {
-            // Launches new WebDriver instance
-            WebDriverLauncher launcher = new WebDriverLauncher();
-            driver = launcher.getNewWebDriverInstance(this.getJobName(),
-                    this.browserTestLog, targetWebBrowser, customCapabilities);
-            setJobId(WebDriverUtilities.getJobIdFromDriver(driver));
-
-            browserTestLog.debug("WebDriver ready.");
-            if (getJobURL() != null) {
-                browserTestLog.info("View on SauceLabs at " + getJobURL());
-            }
-            storedWebDriver.set(driver);
-            WebDriverLeakCheck.add(this.getClass(), driver);
-        }
-
-        sendContextMessage("started.");
         timer.start();
+    }
+
+    @After
+    public void stopTimer() {
+        timer.stop();
     }
 
     public final TargetWebBrowser getTargetWebBrowser() {
@@ -227,7 +153,7 @@ public class WebDriverBase {
     }
 
     /**
-     * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
+     * Returns the SauceLabs job id (if there is one).
      */
     public final String getJobId() {
         return jobId.get();
@@ -262,43 +188,7 @@ public class WebDriverBase {
         return browserTestLog;
     }
 
-    /**
-     * This method counts the number of test methods. This counter is used to
-     * help shut down the browsers when the test is complete.
-     */
-    @VisibleForTesting
-    static int countTestMethods(
-            @SuppressWarnings("rawtypes") Class clazz) {
-        int count = 0;
-        for (Method m : clazz.getMethods()) {
-            if ((m.getAnnotation(Test.class) != null)
-                    && (m.getAnnotation(Ignore.class) == null)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     private final void setJobId(String id) {
         jobId.set(id);
-    }
-
-    private void reduceToOneWindow() {
-        if (driver != null && driver.getWindowHandles().size() > 1) {
-            String firstHandle = (String) driver.getWindowHandles().toArray()[0];
-            for (String handle : driver.getWindowHandles()) {
-                if (!handle.equals(firstHandle)) {
-                    driver.switchTo().window(handle);
-                    driver.close();
-                }
-            }
-            driver.switchTo().window(firstHandle);
-        }
-    }
-
-    private void sendContextMessage(String message) {
-        if (driver != null && targetWebBrowser.isRemote()) {
-            ((JavascriptExecutor) driver).executeScript("sauce:context=// " + name.getMethodName() + " " + message);
-        }
     }
 }

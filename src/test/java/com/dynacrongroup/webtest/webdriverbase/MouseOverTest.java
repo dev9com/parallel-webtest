@@ -1,9 +1,5 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import com.dynacrongroup.webtest.ParallelRunner;
 import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.util.Path;
@@ -15,10 +11,12 @@ import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Test was added to verify that using native mouse events would not crash the
  * browser.  It's still present for reference.
- * 
+ *
  * @author drakdr1
  */
 

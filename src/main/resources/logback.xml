@@ -1,0 +1,45 @@
+<configuration>
+	<!-- Defines the format for log entries. -->
+	<property name="logEntryFormat"
+		value="%-12date{HH:mm:ss.SSS}  %-5level  %-60logger{60} -> %msg%n" />
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are by default assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+		<encoder>
+			<pattern>${logEntryFormat}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="TIMINGFILE" class="ch.qos.logback.core.FileAppender">
+		<file>target/webtest-timings.csv</file>
+		<append>true</append>
+		<!-- Defines the format of the logged entry -->
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.dynacrongroup.webtest.Timing" level="TRACE"
+		additivity="false">
+		<appender-ref ref="TIMINGFILE" />
+	</logger>
+
+	<logger name="com.dynacrongroup.webtest" level="DEBUG" />
+
+    <!-- By default, HTMLUnit will complain about a LOT of CSS rules. Set to
+         WARN or disable to see these warnings. -->
+    <logger name="com.gargoylesoftware.htmlunit.DefaultCssErrorHandler"
+            level="ERROR" />
+
+    <!-- Removes nag messages, in conjunction with Sysout-over-slf4j -->
+    <logger name="org.w3c.tidy.Report"
+            level="OFF" />
+    
+    <logger name="uk.org.lidalia.sysoutslf4j"
+            level="WARN" />
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

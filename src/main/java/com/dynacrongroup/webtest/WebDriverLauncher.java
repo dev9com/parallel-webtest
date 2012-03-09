@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.util.CapturingRemoteWebDriver;
 import com.dynacrongroup.webtest.util.ConfigurationValue;
 import com.dynacrongroup.webtest.util.ConnectionValidator;
 import org.openqa.selenium.Platform;
@@ -7,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -27,11 +27,16 @@ public class WebDriverLauncher {
      */
     protected static String uniqueId = String.valueOf(UUID.randomUUID());
 
+
+    private WebDriverLauncher() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     /**
      * Returns the actual web drivers. Requires the logger and target web
      * browser to be specified.
      */
-    public WebDriver getNewWebDriverInstance(String jobName, Logger testLog,
+    public static WebDriver getNewWebDriverInstance(String jobName, Logger testLog,
                                              TargetWebBrowser target) {
         return getNewWebDriverInstance(jobName, testLog, target, null);
     }
@@ -40,7 +45,7 @@ public class WebDriverLauncher {
      * Returns the actual web drivers. Requires the logger and target web
      * browser to be specified.  Custom capabilities are optional.
      */
-    public WebDriver getNewWebDriverInstance(String jobName, Logger testLog,
+    public static WebDriver getNewWebDriverInstance(String jobName, Logger testLog,
                                              TargetWebBrowser target, Map<String, Object> customCapabilities) {
 
         if (testLog == null) {
@@ -109,7 +114,7 @@ public class WebDriverLauncher {
                     capabilities.setCapability("build", uniqueId);
                     capabilities.setCapability("selenium-version", ConfigurationValue.getConfigurationValue("REMOTE_SERVER_VERSION", "2.19.0"));
                     addCustomCapabilities(capabilities, customCapabilities, testLog);
-                    driver = new RemoteWebDriver(
+                    driver = new CapturingRemoteWebDriver(
                             SauceLabsCredentials.getConnectionString(),
                             capabilities);
 
@@ -136,7 +141,7 @@ public class WebDriverLauncher {
         return driver;
     }
 
-    private void addCustomCapabilities(DesiredCapabilities capabilities, Map<String, Object> customCapabilities, Logger testLog) {
+    private static void addCustomCapabilities(DesiredCapabilities capabilities, Map<String, Object> customCapabilities, Logger testLog) {
         if (customCapabilities != null) {
             for (String customCapability : customCapabilities.keySet()) {
                 testLog.debug("Adding capability [{}] - [{}]", customCapability, customCapabilities.get(customCapability));
