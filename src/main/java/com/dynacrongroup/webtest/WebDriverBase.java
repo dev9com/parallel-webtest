@@ -3,7 +3,9 @@ package com.dynacrongroup.webtest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.rules.RuleChain;
 import org.junit.rules.TestName;
+import org.junit.rules.TestRule;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +33,18 @@ public class WebDriverBase {
     @Rule
     public TestName name = new TestName();
 
+    @Rule
+    public TestRule testWatcherChain;
+
+    /**
+     * JUnit rule that handles reporting test method status.
+     */
+    public SauceLabsContextReporter sauceReporter;
+
     /**
      * JUnit rule that handles reporting failures and managing WebDriver teardown
      */
-    @Rule
     public WebDriverManager webDriverManager;
-
-    @Rule
-    public SauceLabsContextReporter sauceReporter;
 
     /**
      * Tracks the jobId, if specified, for the job in Sauce Labs.
@@ -101,10 +107,7 @@ public class WebDriverBase {
             }
 
         }
-        webDriverManager = getStoredManager();
-
-        //Sauce Labs reporter provides logging in Sauce Labs for test start/stop points.
-        sauceReporter = new SauceLabsContextReporter(webDriverManager.getDriver());
+        initializeJUnitRules();
     }
 
     /**
@@ -195,6 +198,12 @@ public class WebDriverBase {
      */
     public Logger getLogger() {
         return browserTestLog;
+    }
+
+    private final void initializeJUnitRules() {
+        webDriverManager = getStoredManager();
+        sauceReporter = new SauceLabsContextReporter(webDriverManager.getDriver());
+        testWatcherChain = RuleChain.outerRule(webDriverManager).around(sauceReporter);
     }
 
     private final void setJobId(String id) {
