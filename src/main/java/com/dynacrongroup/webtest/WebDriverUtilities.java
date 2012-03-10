@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.util.CapturingRemoteWebDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -178,6 +179,12 @@ public class WebDriverUtilities {
                 + id;
     }
 
+    /**
+     * Utility that provides the jobId for a driver that extends RemoteWebDriver.
+     *
+     * @param driver
+     * @return A unique id for a given job.  Can be used to find jobs in Sauce Labs.
+     */
     public static String getJobIdFromDriver(WebDriver driver) {
         String id = null;
         if (RemoteWebDriver.class.isAssignableFrom(driver.getClass())) {
@@ -185,5 +192,30 @@ public class WebDriverUtilities {
         }
 
         return id;
+    }
+
+    /**
+     * Verifies that the driver is for a remote browser.
+     * @return
+     */
+    public static Boolean isExecutedRemotely(WebDriver driver) {
+        Boolean remote = false;
+        if (driver != null && CapturingRemoteWebDriver.class.isAssignableFrom(driver.getClass())) {
+            remote = true;
+        }
+        return remote;
+    }
+
+    public static void reduceToOneWindow(WebDriver driver) {
+        if (driver != null && driver.getWindowHandles().size() > 1) {
+            String firstHandle = (String) driver.getWindowHandles().toArray()[0];
+            for (String handle : driver.getWindowHandles()) {
+                if (!handle.equals(firstHandle)) {
+                    driver.switchTo().window(handle);
+                    driver.close();
+                }
+            }
+            driver.switchTo().window(firstHandle);
+        }
     }
 }

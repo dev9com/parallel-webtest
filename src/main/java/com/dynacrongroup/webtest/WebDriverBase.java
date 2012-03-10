@@ -35,7 +35,10 @@ public class WebDriverBase {
      * JUnit rule that handles reporting failures and managing WebDriver teardown
      */
     @Rule
-    public WebDriverWatcher webDriverWatcher;
+    public WebDriverManager webDriverManager;
+
+    @Rule
+    public SauceLabsContextReporter sauceReporter;
 
     /**
      * Tracks the jobId, if specified, for the job in Sauce Labs.
@@ -45,7 +48,7 @@ public class WebDriverBase {
     /**
      * Stores job pass/fail data for a given parameterized run.
      */
-    private static ThreadLocal<WebDriverWatcher> localWatcher = new ThreadLocal<WebDriverWatcher>();
+    private static ThreadLocal<WebDriverManager> storedManager = new ThreadLocal<WebDriverManager>();
 
     /**
      * The logger associated with this specific browser test execution
@@ -76,19 +79,20 @@ public class WebDriverBase {
      * Alternate parameterized constructor for supplying custom capabilities.
      */
     public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
-        this.targetWebBrowser = new TargetWebBrowser(browser, version);
+        targetWebBrowser = new TargetWebBrowser(browser, version);
         browserTestLog = LoggerFactory.getLogger(this.getClass()
                 .getName() + "-" + this.targetWebBrowser.humanReadable());
 
-        //webDriverWatcher tracks the driver lifecycle and reports on results to sauce labs.
-        if (localWatcher.get() == null) {
+        //webDriverManager tracks the driver lifecycle
+        if (getStoredManager() == null) {
 
             driver = WebDriverLauncher.getNewWebDriverInstance(
-                    this.getJobName(),
+                    getJobName(),
                     browserTestLog,
                     targetWebBrowser,
                     customCapabilities);
 
+            setStoredManager(new WebDriverManager(this.getClass(), this.driver, this.browserTestLog));
             setJobId(WebDriverUtilities.getJobIdFromDriver(driver));
 
             browserTestLog.debug("WebDriver ready.");
@@ -96,9 +100,11 @@ public class WebDriverBase {
                 browserTestLog.info("View on SauceLabs at " + getJobURL());
             }
 
-            localWatcher.set(new WebDriverWatcher(this.getClass(), this.driver, this.browserTestLog));
         }
-        webDriverWatcher = localWatcher.get();
+        webDriverManager = getStoredManager();
+
+        //Sauce Labs reporter provides logging in Sauce Labs for test start/stop points.
+        sauceReporter = new SauceLabsContextReporter(webDriverManager.getDriver());
     }
 
     /**
@@ -119,12 +125,14 @@ public class WebDriverBase {
     @Before
     public void startWebDriver() {
         if (driver == null) {
-            driver = webDriverWatcher.getDriver();
+            driver = webDriverManager.getDriver();
         }
 
         if (timer == null) {
-            timer = new Timing(targetWebBrowser, this.getClass()
-                    .getSimpleName() + "," + name.getMethodName());
+            String testName = String.format("%s,%s",
+                    this.getClass().getSimpleName(),
+                    name.getMethodName());
+            timer = new Timing(targetWebBrowser, testName);
         }
 
         timer.start();
@@ -144,9 +152,10 @@ public class WebDriverBase {
      */
     public final String getJobURL() {
         String jobUrl = null;
+        String currentJobId = getJobId();
 
-        if (getJobId() != null && !this.targetWebBrowser.isClassLoaded()) {
-            jobUrl = WebDriverUtilities.constructSauceJobUrl(jobId.get());
+        if (currentJobId != null && targetWebBrowser.isRemote()) {
+            jobUrl = WebDriverUtilities.constructSauceJobUrl(currentJobId);
         }
 
         return jobUrl;
@@ -190,5 +199,13 @@ public class WebDriverBase {
 
     private final void setJobId(String id) {
         jobId.set(id);
+    }
+
+    private final void setStoredManager(WebDriverManager manager) {
+        storedManager.set(manager);
+    }
+
+    private final WebDriverManager getStoredManager() {
+        return storedManager.get();
     }
 }

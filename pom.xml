@@ -77,6 +77,15 @@
         <url>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</url>
     </scm>
 
+    <!-- needed for sauce-rest -->
+    <repositories>
+        <repository>
+            <id>dynacrongroup-repository</id>
+            <url>https://repository-dynacrongroup.forge.cloudbees.com/release</url>
+        </repository>
+    </repositories>
+
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -129,9 +138,18 @@
         <dependency>
             <groupId>com.dynacrongroup</groupId>
             <artifactId>sauce-rest</artifactId>
-            <version>0.0</version>
+            <version>0.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-codec</artifactId>
+                    <groupId>commons-codec</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
 
         <!-- logging dependencies -->
         <dependency>
@@ -177,9 +195,15 @@
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>1.9.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hamcrest-core</artifactId>
+                    <groupId>org.hamcrest</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 

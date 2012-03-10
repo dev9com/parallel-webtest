@@ -26,15 +26,15 @@
 
 	<logger name="com.dynacrongroup.webtest" level="DEBUG" />
 
-    <!-- By default, HTMLUnit will complain about a LOT of CSS rules. Set to
+    <!-- By default, HTMLUnit will complain about a LOT of CSS and JS rules. Set to
          WARN or disable to see these warnings. -->
-    <logger name="com.gargoylesoftware.htmlunit.DefaultCssErrorHandler"
-            level="ERROR" />
+    <logger name="com.gargoylesoftware.htmlunit"
+            level="OFF" />
 
     <!-- Removes nag messages, in conjunction with Sysout-over-slf4j -->
     <logger name="org.w3c.tidy.Report"
             level="OFF" />
-    
+
     <logger name="uk.org.lidalia.sysoutslf4j"
             level="WARN" />
 

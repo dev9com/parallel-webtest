@@ -13,12 +13,7 @@ public class WebDriverFactory {
     public final static String WEBDRIVER_DRIVER = "WEBDRIVER_DRIVER";
     public final static String SINGLE_SAUCE = "SINGLE_SAUCE";
     public final static String DEFAULT_TARGETS = "DEFAULT_TARGETS";
-
-    public List<String[]> pair(String key, String value) {
-        List<String[]> results = new ArrayList<String[]>();
-        results.add(new String[]{key, value});
-        return results;
-    }
+    public final static String STANDARD_TARGETS = "firefox:5,iexplore:7,iexplore:8,iexplore:9,chrome:*";
 
     public List<String[]> getDriverTargets() {
 
@@ -26,18 +21,16 @@ public class WebDriverFactory {
 
         String classDriver = ConfigurationValue.getConfigurationValue(
                 WEBDRIVER_DRIVER, null);
+        String single_sauce = ConfigurationValue.getConfigurationValue(
+                SINGLE_SAUCE, null);
+
         if (classDriver != null) {
             targets = pair("byclass", classDriver);
-        }
-        else {
-            String single_sauce = ConfigurationValue.getConfigurationValue(
-                    SINGLE_SAUCE, null);
-            if (single_sauce != null) {
-                String[] items = splitTarget(single_sauce);
-                targets = pair(items[0], items[1]);
-            } else {
-                targets = standardSauceLabsTargets();
-            }
+        } else if (single_sauce != null) {
+            String[] items = splitTarget(single_sauce);
+            targets = pair(items[0], items[1]);
+        } else {
+            targets = standardSauceLabsTargets();
         }
         return targets;
     }
@@ -50,15 +43,20 @@ public class WebDriverFactory {
      */
     private List<String[]> standardSauceLabsTargets() {
         List<String[]> result = new ArrayList<String[]>();
-
         String[] defaultSauceLabsTargets = ConfigurationValue.getConfigurationValue(DEFAULT_TARGETS,
-                "firefox:5,iexplore:7,iexplore:8,iexplore:9,chrome:*").split(",");
+                STANDARD_TARGETS).split(",");
 
         for (String windowsBrowser : defaultSauceLabsTargets) {
             result.add(splitTarget(windowsBrowser));
         }
 
         return result;
+    }
+
+    private List<String[]> pair(String key, String value) {
+        List<String[]> results = new ArrayList<String[]>();
+        results.add(new String[]{key, value});
+        return results;
     }
 
     /**
