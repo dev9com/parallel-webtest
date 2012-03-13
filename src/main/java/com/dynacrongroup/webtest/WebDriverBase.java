@@ -155,6 +155,12 @@ public class WebDriverBase {
     public Logger getLogger() {
         return browserTestLog;
     }
+    private Logger createTestLogger() {
+        String logName = String.format("%s-%s",
+                this.getClass().getName(),
+                getTargetWebBrowser().humanReadable());
+        return LoggerFactory.getLogger(logName);
+    }
 
     private void setTestWatcherChain(TestRule rule) {
         testWatcherChain.set(rule);
@@ -164,12 +170,12 @@ public class WebDriverBase {
         return testWatcherChain.get();
     }
 
-    public DriverProviderRule getDriverProviderRule() {
-        return driverProviderRule.get();
+    private void setDriverProviderRule(DriverProviderRule driverProviderRule) {
+        WebDriverBase.driverProviderRule.set(driverProviderRule);
     }
 
-    public static void setDriverProviderRule(DriverProviderRule driverProviderRule) {
-        WebDriverBase.driverProviderRule.set(driverProviderRule);
+    private DriverProviderRule getDriverProviderRule() {
+        return driverProviderRule.get();
     }
 
     private void initializeJUnitRules() {
@@ -191,9 +197,10 @@ public class WebDriverBase {
     }
 
     private RuleChain createStandardRuleChain() {
-        TimerRule timerRule = new TimerRule();
-        DriverProviderRule newDriverProviderRule = new DriverProviderRule(testDriverConfiguration, getLogger());    //Needs to be last; creates and kills the driver.
+        //DriverProviderRule is created first and executed last, so that driver is available first and removed last.
+        DriverProviderRule newDriverProviderRule = new DriverProviderRule(testDriverConfiguration, getLogger());
         setDriverProviderRule(newDriverProviderRule);
+        TimerRule timerRule = new TimerRule();
 
         return RuleChain.outerRule(newDriverProviderRule)   //Outer rule is executed last.
                 .around(timerRule);
@@ -206,18 +213,12 @@ public class WebDriverBase {
      */
     private RuleChain attachRemoteReportingRules(RuleChain chain) {
         FinalTestStatusRule finalTestStatusRule = new FinalTestStatusRule(getJobId());
-        SauceLabsContextReportRule sauceLabsContextReportRule = new SauceLabsContextReportRule(driver);
+        SauceLabsContextReportRule sauceLabsContextReportRule =
+                new SauceLabsContextReportRule(getDriverProviderRule().getDriver());
 
         return chain
                 .around(finalTestStatusRule)
                 .around(sauceLabsContextReportRule);
-    }
-
-    private Logger createTestLogger() {
-        String logName = String.format("%s-%s",
-                this.getClass().getName(),
-                getTargetWebBrowser().humanReadable());
-        return LoggerFactory.getLogger(logName);
     }
 
 
