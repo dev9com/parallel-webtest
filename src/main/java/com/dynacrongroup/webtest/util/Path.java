@@ -1,6 +1,5 @@
 package com.dynacrongroup.webtest.util;
 
-import com.dynacrongroup.webtest.SauceLabsCredentials;
 import com.dynacrongroup.webtest.SystemName;
 import com.dynacrongroup.webtest.WebDriverFactory;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -14,8 +13,6 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.apache.commons.lang.StringUtils.join;
 
 /**
  * This utility class provides support for isolating your web tests from a
@@ -121,38 +118,6 @@ public class Path {
         } catch (MalformedURLException e) {
             LOG.error(e.getMessage());
             return null;
-        }
-    }
-
-    /**
-     * Reports the SauceLabs configuration string expected by this Path
-     * configuration object. Updated to use Sauce Connect v3.
-     *
-     * @return command-line configuration string
-     */
-    public String getExpectedSauceConnectString() {
-        String[] args = new String[]{"java",
-                "-jar",
-                "Sauce-Connect.jar",
-                SauceLabsCredentials.getUser(),
-                SauceLabsCredentials.getKey()};
-
-        return join(args, " ");
-    }
-
-    /**
-     * Adds a log statement with the expected Sauce Connect command.  Implementation is
-     * still a bit old fashioned; based on the idea that the sauce connect string might
-     * change.
-     */
-    public void checkSauce() {
-        if (!sauceConnectWarnings.contains(getExpectedSauceConnectString())) {
-            sauceConnectWarnings.add(getExpectedSauceConnectString());
-
-            LOG.info("*** This test suite expects to be able to connect to [{}] on your local system, and in the " +
-                    "SauceLabs environment. You can use this command to launch SauceConnect if needed.",
-                    this);
-            LOG.info("*** " + getExpectedSauceConnectString());
         }
     }
 

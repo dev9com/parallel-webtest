@@ -107,7 +107,7 @@ public class DescriptivelyParameterized extends Suite {
                 formattedParams = driver.substring(driver.lastIndexOf(".") + 1, driver.lastIndexOf("Driver"));
             }
             else {
-            
+
             formattedParams = StringUtils.join(stringParams, "|");
             }
             return formattedParams;

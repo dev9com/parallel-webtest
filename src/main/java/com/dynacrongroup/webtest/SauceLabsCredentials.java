@@ -11,7 +11,7 @@ import java.net.URL;
  * SauceLabs credentials. Using the standard values as defaults, with an option
  * to override via system properties (e.g. in a Maven profile).
  */
-public class SauceLabsCredentials {
+public final class SauceLabsCredentials {
 
 	private static final String SAUCELABS_USER = "SAUCELABS_USER";
 	private static final String SAUCELABS_KEY = "SAUCELABS_KEY";
@@ -40,13 +40,13 @@ public class SauceLabsCredentials {
 				"ondemand.saucelabs.com/wd/hub");
 	}
 
-	public static URL getConnectionString() throws MalformedURLException {
+	public static URL getConnectionString() {
 		try {
 			return new URL("http://" + getUser() + ":" + getKey() + "@"
 					+ getServer());
 		} catch (MalformedURLException e) {
 			log.error("Unable to parse remote selenium server connection information", e);
-			throw e;
+            return null;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.rule;
 
 import org.junit.Test;
 
@@ -44,29 +44,29 @@ public class MethodCountTest {
     @Test
     public void verifyParentclassCount() {
         assertThat("Subclass with no test methods should have the same number of methods as superclass",
-                WebDriverManager.countTestMethods(Parent.class),
+                ClassFinishRule.countTestMethods(Parent.class),
                 equalTo(2));
     }
 
     @Test
     public void verifySubclassCount() {
         assertThat("Subclass with no test methods should have the same number of methods as superclass",
-                WebDriverManager.countTestMethods(Sub1.class),
-                equalTo(WebDriverManager.countTestMethods(Parent.class)));
+                ClassFinishRule.countTestMethods(Sub1.class),
+                equalTo(ClassFinishRule.countTestMethods(Parent.class)));
     }
 
     @Test
     public void verifySubSubclassCount() {
         assertThat("SubSubclass with no test methods should have the same number of methods as superclass",
-                WebDriverManager.countTestMethods(Sub2.class),
-                equalTo(WebDriverManager.countTestMethods(Parent.class)));
+                ClassFinishRule.countTestMethods(Sub2.class),
+                equalTo(ClassFinishRule.countTestMethods(Parent.class)));
     }
 
     @Test
     public void verifySubclassWithNewMethodCount() {
         assertThat("Subclass with one test method should have one more test method than superclass",
-                WebDriverManager.countTestMethods(Sub3.class),
-                equalTo(WebDriverManager.countTestMethods(Parent.class) + 1));
+                ClassFinishRule.countTestMethods(Sub3.class),
+                equalTo(ClassFinishRule.countTestMethods(Parent.class) + 1));
     }
 
 }

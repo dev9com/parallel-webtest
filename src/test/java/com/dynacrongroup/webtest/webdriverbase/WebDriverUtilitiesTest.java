@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Sample WebDriver test case.
- * 
+ *
  */
 @RunWith(ParallelRunner.class)
 public class WebDriverUtilitiesTest extends WebDriverBase {
@@ -23,7 +23,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 	public WebDriverUtilitiesTest(String browser, String browserVersion) {
 		super(browser, browserVersion);
 	}
-    
+
     @Before
     public void loadPage() {
         if (!driver.getTitle().startsWith("Webtest")) {

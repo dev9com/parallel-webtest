@@ -13,10 +13,10 @@ import static java.lang.String.format;
  * failures.
  */
 public class MapTMListener extends AbstractTMListener {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTMListener.class);
 
-    private TreeMap<TidyMessage.Level, List<TidyMessage>> messages;
+    private Map<TidyMessage.Level, List<TidyMessage>> messages;
 
     /**
      * Constructs a tidy message listener that reports messages of the given level or higher to a map of levels to
@@ -25,7 +25,7 @@ public class MapTMListener extends AbstractTMListener {
      * @param messages  A map of message levels to lists of messages with that level.
      * @param thresholdLevel             The minimum severity level that will be displayed.
      */
-    public MapTMListener(TreeMap<TidyMessage.Level, List<TidyMessage>> messages, TidyMessage.Level thresholdLevel) {
+    public MapTMListener(Map<TidyMessage.Level, List<TidyMessage>> messages, TidyMessage.Level thresholdLevel) {
         super(thresholdLevel);
         this.messages = messages;
     }
@@ -36,7 +36,7 @@ public class MapTMListener extends AbstractTMListener {
      *
      * @param messages  A map of message levels to lists of messages with that level.
      */
-    public MapTMListener(TreeMap<TidyMessage.Level, List<TidyMessage>> messages) {
+    public MapTMListener(Map<TidyMessage.Level, List<TidyMessage>> messages) {
         super();
         this.messages = messages;
     }
@@ -60,15 +60,18 @@ public class MapTMListener extends AbstractTMListener {
      */
     public void verify() throws AssertionError {
         if (!messages.isEmpty()) {
-            
+
+            TreeMap<TidyMessage.Level, List<TidyMessage>> sortedMessages =
+                    new TreeMap<TidyMessage.Level, List<TidyMessage>>(messages);
+
             //Error Header
             String description = format("JTidy has reported messages with level [%s] or greater\n", threshold);
-            for(TidyMessage.Level currentLevel : messages.descendingKeySet()) {
-                
+            for(TidyMessage.Level currentLevel : sortedMessages.descendingKeySet()) {
+
                 //Error Subheader: level
-                description += (format("\n%s %s messages:\n", messages.get(currentLevel).size(), currentLevel));
-                for (TidyMessage tidyMessage : messages.get(currentLevel)) {
-                    
+                description += (format("\n%s %s messages:\n", sortedMessages.get(currentLevel).size(), currentLevel));
+                for (TidyMessage tidyMessage : sortedMessages.get(currentLevel)) {
+
                     //Error Entry
                     description += (format("  %s\n", formatTidyMessage(tidyMessage)));
                 }

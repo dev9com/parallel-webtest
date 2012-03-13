@@ -14,7 +14,7 @@ public class CollectorTMListener extends AbstractTMListener{
      * Constructs a tidy message listener that reports messages of the given level or higher to an ErrorCollector
      * as throwables.
      *
-     * @param errorCollector    An ErrorCollector that should be used as a rule from the test case.
+     * @param errorCollector    An ErrorCollector that should be used as a com.dynacrongroup.webtest.rule from the test case.
      * @param thresholdLevel    The minimum severity level that will be displayed.
      */
     public CollectorTMListener(ErrorCollector errorCollector, TidyMessage.Level thresholdLevel) {
@@ -26,7 +26,7 @@ public class CollectorTMListener extends AbstractTMListener{
      * Constructs a tidy message listener that reports messages of the given level or higher to an ErrorCollector
      * as throwables.  Uses default AbstractTMListener threshold.
      *
-     * @param errorCollector    An ErrorCollector that should be used as a rule from the test case.
+     * @param errorCollector    An ErrorCollector that should be used as a com.dynacrongroup.webtest.rule from the test case.
      */
     public CollectorTMListener(ErrorCollector errorCollector) {
         super();
@@ -35,12 +35,12 @@ public class CollectorTMListener extends AbstractTMListener{
 
 
     /**
-     * A stub to provide a common interface.  Actual verification is part of the ErrorCollector rule.
+     * A stub to provide a common interface.  Actual verification is part of the ErrorCollector com.dynacrongroup.webtest.rule.
      * @throws AssertionError    Never thrown
      */
     @Override
     public void verify() throws AssertionError {
-        // Does nothing.  Verification happens automatically with ErrorCollector rule.
+        // Does nothing.  Verification happens automatically with ErrorCollector com.dynacrongroup.webtest.rule.
     }
 
     @Override

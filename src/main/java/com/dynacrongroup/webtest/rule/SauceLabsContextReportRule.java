@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.rule;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -14,11 +14,11 @@ import org.openqa.selenium.WebDriver;
  *
  *
  */
-public class SauceLabsContextReporter extends TestWatcher {
+public class SauceLabsContextReportRule extends TestWatcher {
 
     WebDriver driver;
 
-    public SauceLabsContextReporter(WebDriver driver) {
+    public SauceLabsContextReportRule(WebDriver driver) {
         this.driver = driver;
     }
 
@@ -42,9 +42,7 @@ public class SauceLabsContextReporter extends TestWatcher {
      * @param message
      */
     void sendContextMessage(String message) {
-        if (driver != null && WebDriverUtilities.isExecutedRemotely(driver)) {
-            ((JavascriptExecutor) driver).executeScript("sauce:context=// " + message);
-        }
+        ((JavascriptExecutor) driver).executeScript("sauce:context=// " + message);
     }
 
 }

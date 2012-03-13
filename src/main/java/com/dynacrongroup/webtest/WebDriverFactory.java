@@ -10,10 +10,10 @@ import java.util.List;
  */
 public class WebDriverFactory {
 
-    public final static String WEBDRIVER_DRIVER = "WEBDRIVER_DRIVER";
-    public final static String SINGLE_SAUCE = "SINGLE_SAUCE";
-    public final static String DEFAULT_TARGETS = "DEFAULT_TARGETS";
-    public final static String STANDARD_TARGETS = "firefox:5,iexplore:7,iexplore:8,iexplore:9,chrome:*";
+    public static final String WEBDRIVER_DRIVER = "WEBDRIVER_DRIVER";
+    public static final String SINGLE_SAUCE = "SINGLE_SAUCE";
+    public static final String DEFAULT_TARGETS = "DEFAULT_TARGETS";
+    public static final String STANDARD_TARGETS = "firefox:5,iexplore:7,iexplore:8,iexplore:9,chrome:*";
 
     public List<String[]> getDriverTargets() {
 

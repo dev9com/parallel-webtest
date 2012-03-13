@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.util;
+package com.dynacrongroup.webtest.driver;
 
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;

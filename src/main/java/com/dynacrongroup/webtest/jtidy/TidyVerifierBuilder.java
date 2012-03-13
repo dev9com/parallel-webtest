@@ -26,7 +26,7 @@ public class TidyVerifierBuilder {
      * By default, placed /src/test/resources/jtidy.properties
      */
     public static final String DEFAULT_PROP_FILE = "/jtidy.properties";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(TidyVerifierBuilder.class);
 
     private TidyMessage.Level threshold = null;
@@ -136,11 +136,11 @@ public class TidyVerifierBuilder {
     }
 
     private Properties getProperties() {
-        Properties properties = new Properties();
+        Properties newProperties = new Properties();
         try {
             InputStream stream = this.getClass().getResourceAsStream(propertyFileName);
             if (stream != null) {
-                properties.load(stream);
+                newProperties.load(stream);
             }
             else {
                 LOG.info("Property file [{}] not found.  Using default settings.", propertyFileName);
@@ -148,6 +148,6 @@ public class TidyVerifierBuilder {
         } catch (IOException e) {
             LOG.warn("Unable to load property file [{}], using default settings.", propertyFileName);
         }
-        return properties;
+        return newProperties;
     }
 }

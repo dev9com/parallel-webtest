@@ -1,7 +1,6 @@
 package com.dynacrongroup.webtest;
 
 import org.junit.runners.model.RunnerScheduler;
-import org.junit.runners.Parameterized;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

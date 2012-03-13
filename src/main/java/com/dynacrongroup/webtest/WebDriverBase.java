@@ -1,18 +1,24 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.rule.DriverCleanUpRule;
+import com.dynacrongroup.webtest.rule.FinalTestStatusRule;
+import com.dynacrongroup.webtest.rule.SauceLabsContextReportRule;
+import com.dynacrongroup.webtest.rule.TimerRule;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestName;
 import org.junit.rules.TestRule;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static com.dynacrongroup.webtest.WebDriverUtilities.reduceToOneWindow;
 
 /**
  * This is the base class for interfacing with WebDriver. It handles the
@@ -34,27 +40,17 @@ public class WebDriverBase {
     public TestName name = new TestName();
 
     @Rule
-    public TestRule testWatcherChain;
-
-    /**
-     * JUnit rule that handles reporting test method status.
-     */
-    public SauceLabsContextReporter sauceReporter;
-
-    /**
-     * JUnit rule that handles reporting failures and managing WebDriver teardown
-     */
-    public WebDriverManager webDriverManager;
-
-    /**
-     * Tracks the jobId, if specified, for the job in Sauce Labs.
-     */
-    private static ThreadLocal<String> jobId = new ThreadLocal<String>();
+    public TestRule localTestWatcherChain;
 
     /**
      * Stores job pass/fail data for a given parameterized run.
      */
-    private static ThreadLocal<WebDriverManager> storedManager = new ThreadLocal<WebDriverManager>();
+    private static ThreadLocal<TestRule> testWatcherChain = new ThreadLocal<TestRule>();
+
+    /**
+     * Stores whether the class is on its first method.
+     */
+    private static ThreadLocal<Boolean> firstMethod = new ThreadLocal<Boolean>();
 
     /**
      * The logger associated with this specific browser test execution
@@ -62,16 +58,9 @@ public class WebDriverBase {
     private final Logger browserTestLog;
 
     /**
-     * This is the target browser/version for this test. The values are a bit
-     * different with Selenium 2/ WebDriver. See the WebDriverFactory and
-     * WebDriverLauncher for more details.
+     * The configuration for the WebDriver used for these tests.
      */
-    private final TargetWebBrowser targetWebBrowser;
-
-    /**
-     * Used to track the timing for output to webdriver-timings.csv
-     */
-    private Timing timer;
+    private final TestDriverConfiguration testDriverConfiguration;
 
     /**
      * Used by the JUnit parameterized options to configure the parameterized
@@ -85,29 +74,14 @@ public class WebDriverBase {
      * Alternate parameterized constructor for supplying custom capabilities.
      */
     public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
-        targetWebBrowser = new TargetWebBrowser(browser, version);
-        browserTestLog = LoggerFactory.getLogger(this.getClass()
-                .getName() + "-" + this.targetWebBrowser.humanReadable());
+        TargetWebBrowser targetWebBrowser = new TargetWebBrowser(browser, version);
+        testDriverConfiguration = new TestDriverConfiguration(this.getClass(), targetWebBrowser, customCapabilities);
 
-        //webDriverManager tracks the driver lifecycle
-        if (getStoredManager() == null) {
-
-            driver = WebDriverLauncher.getNewWebDriverInstance(
-                    getJobName(),
-                    browserTestLog,
-                    targetWebBrowser,
-                    customCapabilities);
-
-            setStoredManager(new WebDriverManager(this.getClass(), this.driver, this.browserTestLog));
-            setJobId(WebDriverUtilities.getJobIdFromDriver(driver));
-
-            browserTestLog.debug("WebDriver ready.");
-            if (getJobURL() != null) {
-                browserTestLog.info("View on SauceLabs at " + getJobURL());
-            }
-
-        }
+        browserTestLog = createTestLogger();
+        driver = WebDriverStorage.getDriver(testDriverConfiguration);
         initializeJUnitRules();
+
+        reportStartUp();
     }
 
     /**
@@ -121,33 +95,18 @@ public class WebDriverBase {
         return new WebDriverFactory().getDriverTargets();
     }
 
-    /**
-     * Starts up the WebDriver instance. Uses a combination of ThreadLocals and
-     * other things to ensure that one browser instance is maintained per test.
-     */
-    @Before
-    public void startWebDriver() {
-        if (driver == null) {
-            driver = webDriverManager.getDriver();
-        }
-
-        if (timer == null) {
-            String testName = String.format("%s,%s",
-                    this.getClass().getSimpleName(),
-                    name.getMethodName());
-            timer = new Timing(targetWebBrowser, testName);
-        }
-
-        timer.start();
-    }
-
     @After
-    public void stopTimer() {
-        timer.stop();
+    public void cleanUpDriverWindows() {
+        reduceToOneWindow(driver);
     }
 
+    /**
+     * This is the target browser/version for this test. The values are a bit
+     * different with Selenium 2/ WebDriver. See the WebDriverFactory and
+     * WebDriverLauncher for more details.
+     */
     public final TargetWebBrowser getTargetWebBrowser() {
-        return targetWebBrowser;
+        return testDriverConfiguration.getTargetWebBrowser();
     }
 
     /**
@@ -157,8 +116,8 @@ public class WebDriverBase {
         String jobUrl = null;
         String currentJobId = getJobId();
 
-        if (currentJobId != null && targetWebBrowser.isRemote()) {
-            jobUrl = WebDriverUtilities.constructSauceJobUrl(currentJobId);
+        if (currentJobId != null && getTargetWebBrowser().isRemote()) {
+            jobUrl = "https://saucelabs.com/jobs/" + currentJobId;
         }
 
         return jobUrl;
@@ -168,7 +127,11 @@ public class WebDriverBase {
      * Returns the SauceLabs job id (if there is one).
      */
     public final String getJobId() {
-        return jobId.get();
+        String id = null;
+        if (RemoteWebDriver.class.isAssignableFrom(driver.getClass())) {
+            id = ((RemoteWebDriver) driver).getSessionId().toString();
+        }
+        return id;
     }
 
     /**
@@ -176,8 +139,7 @@ public class WebDriverBase {
      * the name of the class.
      */
     public final String getJobName() {
-        return SystemName.getSystemName() + "-"
-                + this.getClass().getSimpleName();
+        return WebDriverLauncher.getJobName(this.getClass());
     }
 
     /**
@@ -200,21 +162,74 @@ public class WebDriverBase {
         return browserTestLog;
     }
 
-    private final void initializeJUnitRules() {
-        webDriverManager = getStoredManager();
-        sauceReporter = new SauceLabsContextReporter(webDriverManager.getDriver());
-        testWatcherChain = RuleChain.outerRule(webDriverManager).around(sauceReporter);
+    private void setTestWatcherChain(TestRule rule) {
+        testWatcherChain.set(rule);
     }
 
-    private final void setJobId(String id) {
-        jobId.set(id);
+    private TestRule getTestWatcherChain() {
+        return testWatcherChain.get();
     }
 
-    private final void setStoredManager(WebDriverManager manager) {
-        storedManager.set(manager);
+    private void reportStartUp() {
+        if (firstMethod.get() == null || firstMethod.get()) {
+            String message = "WebDriver ready.";
+            if (getTargetWebBrowser().isRemote()) {
+                 message += "  View on Sauce Labs at " + getJobURL();
+            }
+            browserTestLog.info(message);
+            firstMethod.set(false);
+        }
     }
 
-    private final WebDriverManager getStoredManager() {
-        return storedManager.get();
+
+    private void initializeJUnitRules() {
+        localTestWatcherChain = getTestWatcherChain();
+        if (localTestWatcherChain == null) {
+            localTestWatcherChain = createTestWatcherChain();
+            setTestWatcherChain(localTestWatcherChain);
+        }
     }
+
+    private TestRule createTestWatcherChain() {
+        RuleChain chain = createStandardRuleChain();
+
+        if (getTargetWebBrowser().isRemote()) {
+            chain = attachRemoteReportingRules(chain);
+        }
+
+        return chain;
+    }
+
+    private RuleChain createStandardRuleChain() {
+        DriverCleanUpRule driverCleanUpRule = new DriverCleanUpRule(testDriverConfiguration);    //Needs to be last; kills the driver.
+        TimerRule timerRule = new TimerRule();
+
+        return RuleChain.outerRule(driverCleanUpRule)   //Outer rule is executed last.
+                .around(timerRule);
+    }
+
+    /**
+     * Adds rules that are only applicable in Sauce Labs.
+     *
+     * @param chain
+     */
+    private RuleChain attachRemoteReportingRules(RuleChain chain) {
+        FinalTestStatusRule finalTestStatusRule = new FinalTestStatusRule(getJobId());
+        SauceLabsContextReportRule sauceLabsContextReportRule = new SauceLabsContextReportRule(driver);
+
+        return chain
+                .around(finalTestStatusRule)
+                .around(sauceLabsContextReportRule);
+    }
+
+
+
+    private Logger createTestLogger() {
+        String logName = String.format("%s-%s",
+                this.getClass().getName(),
+                getTargetWebBrowser().humanReadable());
+        return LoggerFactory.getLogger(logName);
+    }
+
+
 }

@@ -19,7 +19,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.dynacrongroup.webtest.Timing" level="TRACE"
+	<logger name="com.dynacrongroup.webtest.rule.Timing" level="TRACE"
 		additivity="false">
 		<appender-ref ref="TIMINGFILE" />
 	</logger>
@@ -34,7 +34,7 @@
     <!-- Removes nag messages, in conjunction with Sysout-over-slf4j -->
     <logger name="org.w3c.tidy.Report"
             level="OFF" />
-    
+
     <logger name="uk.org.lidalia.sysoutslf4j"
             level="WARN" />
 
