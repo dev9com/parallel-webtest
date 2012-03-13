@@ -1,29 +1,26 @@
 package com.dynacrongroup.webtest;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestName;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Sample of the order of execution of JUnit test cases.
- * 
+ *
  * The order that various options in JUnit are executed can be confusing. For
  * example, are parameters generated before or after the BeforeClass options are
  * exercised?
- * 
+ *
  * This class technically doesn't have a lot to do with Selenium, but I used it
  * to clarify things when developing the Selenium classes, and so here it is for
  * future reference.
@@ -33,6 +30,45 @@ public class SimpleTest {
     private static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
 
     private static int count = 0;
+
+    /**
+     * Shows how rules are intermingled with the process.
+     */
+    @Rule
+    public TestWatcher testWatcher = new LogWatcher();
+
+
+    class LogWatcher extends TestWatcher{
+
+        LogWatcher() {
+            log.info("rule: constructor");
+        }
+
+        @Override
+        public Statement apply(Statement base, Description description) {
+            return super.apply(base, description);    //To change body of overridden methods use File | Settings | File Templates.
+        }
+
+        @Override
+        protected void succeeded(Description description) {
+            log.info("rule: succeeded");
+        }
+
+        @Override
+        protected void failed(Throwable e, Description description) {
+            log.info("rule: failed");
+        }
+
+        @Override
+        protected void starting(Description description) {
+            log.info("rule: starting");
+        }
+
+        @Override
+        protected void finished(Description description) {
+            log.info("rule: finished");
+        }
+    };
 
     @Rule
     public TestName name = new TestName();
