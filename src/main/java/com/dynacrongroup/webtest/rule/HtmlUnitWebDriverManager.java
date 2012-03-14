@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class manages the driver life cycle.
+ * Class manages the driver life cycle for a local, htmlunit driver.
  * <p/>
  * User: yurodivuie
  * Date: 3/11/12
@@ -15,6 +15,10 @@ public class HtmlUnitWebDriverManager extends AbstractWebDriverManager implement
 
     private static final Logger LOG = LoggerFactory.getLogger(HtmlUnitWebDriverManager.class);
 
+    /**
+     * Creates a new HtmlUnitWebDriverManager rule.
+     * @param driver
+     */
     public HtmlUnitWebDriverManager(WebDriver driver) {
         super(driver);
     }

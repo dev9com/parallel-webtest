@@ -11,15 +11,17 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 
 /**
+ * This TestWatcher com.dynacrongroup.webtest.rule notes when the last test method has finished.  It can be extended to
+ * provide custom behavior when a class finishes.
+ *
  * User: yurodivuie
  * Date: 3/9/12
  * Time: 8:52 AM
  *
- * This TestWatcher com.dynacrongroup.webtest.rule notes when the last test method has finished.  It can be extended to
- * provide custom behavior when a class finishes.
  */
 public class ClassFinishRule extends TestWatcher {
 
+    @VisibleForTesting
     Integer methodsRemaining = null;
     private static final Logger LOG = LoggerFactory.getLogger(ClassFinishRule.class);
 
@@ -43,7 +45,7 @@ public class ClassFinishRule extends TestWatcher {
     }
 
     /**
-     * Override this com.dynacrongroup.webtest.rule to provide custom behavior for when a test class has finished running.
+     * Override this rule to provide custom behavior for when a test class has finished running.
      * @param description
      */
     protected void classFinished(Description description) {

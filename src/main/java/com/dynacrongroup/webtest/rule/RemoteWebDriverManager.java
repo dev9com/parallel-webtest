@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class manages the driver life cycle.
+ * Class manages the driver life cycle for a RemoteWebDriver.
  * <p/>
  * User: yurodivuie
  * Date: 3/11/12
@@ -16,6 +16,10 @@ public class RemoteWebDriverManager extends AbstractWebDriverManager implements 
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteWebDriverManager.class);
 
+    /**
+     * Constructs a new RemoteWebDriverManager (typically used for Sauce Labs browsers).
+     * @param driver
+     */
     public RemoteWebDriverManager(WebDriver driver) {
         super(driver);
     }
@@ -29,7 +33,7 @@ public class RemoteWebDriverManager extends AbstractWebDriverManager implements 
     }
 
     /**
-     * Returns the SauceLabs job id (if there is one).
+     * Returns the SauceLabs job id.
      */
     @Override
     public final String getJobId() {

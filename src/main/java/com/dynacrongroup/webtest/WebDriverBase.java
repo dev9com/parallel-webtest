@@ -53,7 +53,7 @@ public class WebDriverBase {
     /**
      * Stores all rules for this class in the correct order of operation.
      */
-    private static ThreadLocal<WebDriverManager> webDriverProvider =
+    private static ThreadLocal<WebDriverManager> webDriverManager =
             new ThreadLocal<WebDriverManager>();
 
     /**
@@ -170,6 +170,10 @@ public class WebDriverBase {
         return LoggerFactory.getLogger(logName);
     }
 
+    /***************************************
+     * static ThreadLocal Accessors
+     ***************************************/
+
     private void setTestWatcherChain(TestRule rule) {
         testWatcherChain.set(rule);
     }
@@ -179,13 +183,20 @@ public class WebDriverBase {
     }
 
     private void setDriverManager(WebDriverManager driverManager) {
-        WebDriverBase.webDriverProvider.set(driverManager);
+        WebDriverBase.webDriverManager.set(driverManager);
     }
 
     private WebDriverManager getDriverManager() {
-        return webDriverProvider.get();
+        return webDriverManager.get();
     }
 
+    /***************************************
+     * JUnit Rule Management
+     ***************************************/
+
+    /**
+     * Sets the local test watcher chain, initializing if necessary.
+     */
     private final void initializeJUnitRules() {
         localTestWatcherChain = getTestWatcherChain();
         if (localTestWatcherChain == null) {
@@ -194,6 +205,10 @@ public class WebDriverBase {
         }
     }
 
+    /**
+     * Creates the rule chain that will be used for all tests
+     * @return
+     */
     private TestRule createTestWatcherChain() {
         RuleChain chain = createStandardRuleChain();
 
@@ -204,6 +219,10 @@ public class WebDriverBase {
         return chain;
     }
 
+    /**
+     * Creates the standard rule chain, which only tracks the driver and times test methods.
+     * @return
+     */
     private RuleChain createStandardRuleChain() {
 
         //WebDriverManager is created first and executed last, so that driver is available first and removed last.
@@ -214,6 +233,11 @@ public class WebDriverBase {
                 .around(methodTimer);
     }
 
+    /**
+     * Creates the driver manager with a new WebDriver driver.
+     * @return A WebDriverManager, which provides the manager to the tests and handles cleanup
+     *              after the tests have completed.
+     */
     private WebDriverManager createDriverManager() {
         WebDriverManagerFactory managerFactory = new WebDriverManagerFactory(getLogger());
         WebDriverManager manager = managerFactory.getManager(getJobName(), targetWebBrowser, customCapabilities);

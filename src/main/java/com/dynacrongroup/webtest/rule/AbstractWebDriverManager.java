@@ -4,7 +4,8 @@ import org.junit.runner.Description;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Class manages the driver life cycle.
+ * Abstract class for managing the driver life cycle.  Supplies default implementation of getJobUrl
+ * and getJobId, which can be overridden if the specific implementation supports these methods.
  * <p/>
  * User: yurodivuie
  * Date: 3/11/12

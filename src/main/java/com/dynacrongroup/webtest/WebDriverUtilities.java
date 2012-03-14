@@ -11,6 +11,8 @@ import static java.lang.String.format;
 import static org.junit.Assert.fail;
 
 /**
+ * Utility class that provides methods commonly used but missing from the WebDriver api.
+ *
  * @author David Drake
  */
 public final class WebDriverUtilities {
