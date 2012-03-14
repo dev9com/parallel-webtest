@@ -10,11 +10,11 @@ import org.openqa.selenium.WebDriver;
  * Date: 3/11/12
  * Time: 9:56 AM
  */
-abstract class AbstractWebDriverProvider extends ClassFinishRule implements WebDriverProvider {
+abstract class AbstractWebDriverManager extends ClassFinishRule implements WebDriverManager {
 
     WebDriver driver;
 
-    public AbstractWebDriverProvider(WebDriver driver) {
+    public AbstractWebDriverManager(WebDriver driver) {
         this.driver = driver;
         reportStartUp();
     }

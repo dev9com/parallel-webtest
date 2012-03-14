@@ -14,11 +14,11 @@ import org.openqa.selenium.WebDriver;
  *
  *
  */
-public class SauceLabsContextReportRule extends TestWatcher {
+public class SauceLabsLogger extends TestWatcher {
 
     WebDriver driver;
 
-    public SauceLabsContextReportRule(WebDriver driver) {
+    public SauceLabsLogger(WebDriver driver) {
         this.driver = driver;
     }
 

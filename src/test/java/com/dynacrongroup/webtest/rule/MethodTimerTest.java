@@ -14,14 +14,14 @@ import static org.mockito.Mockito.when;
  * Date: 3/13/12
  * Time: 10:18 AM
  */
-public class TimerRuleTest {
+public class MethodTimerTest {
 
     /**
      * Not an exhaustive test; just a sanity check.
      */
     @Test
     public void verifyTimerReturnsANumber() throws InterruptedException {
-        TimerRule rule = new TimerRule();
+        MethodTimer rule = new MethodTimer();
         Description mockDescription = mock(Description.class);
 
         when(mockDescription.getClassName()).thenReturn("class");

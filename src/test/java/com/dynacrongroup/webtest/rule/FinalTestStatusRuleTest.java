@@ -16,11 +16,11 @@ import static org.mockito.Mockito.verify;
 public class FinalTestStatusRuleTest {
 
     String testJobId = "1234";
-    FinalTestStatusRule rule;
+    SauceLabsFinalStatusReporter rule;
 
     @Before
     public void prepareRuleWithMock() {
-        rule = new FinalTestStatusRule(testJobId, "fakeUser", "fakeKey");
+        rule = new SauceLabsFinalStatusReporter(testJobId, "fakeUser", "fakeKey");
         rule.sauceREST = mock(SauceREST.class);
     }
 

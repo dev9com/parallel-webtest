@@ -10,14 +10,14 @@ import org.junit.runner.Description;
  * Date: 3/11/12
  * Time: 9:47 AM
  */
-public class FinalTestStatusRule extends ClassFinishRule {
+public class SauceLabsFinalStatusReporter extends ClassFinishRule {
 
     Boolean allTestsPassed = true;
     SauceREST sauceREST = null;
 
     private final String jobId;
 
-    public FinalTestStatusRule(String jobId, String user, String key) {
+    public SauceLabsFinalStatusReporter(String jobId, String user, String key) {
         this.jobId = jobId;
         this.sauceREST = new SauceREST(user, key);
     }

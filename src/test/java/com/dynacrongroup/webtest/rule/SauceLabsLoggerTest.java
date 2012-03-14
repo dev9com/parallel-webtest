@@ -17,10 +17,10 @@ import static org.mockito.Mockito.withSettings;
  * Date: 3/13/12
  * Time: 9:51 AM
  */
-public class SauceLabsContextReportRuleTest {
+public class SauceLabsLoggerTest {
 
     String fakeMethod = "contextTest";
-    SauceLabsContextReportRule rule;
+    SauceLabsLogger rule;
     Description description;
     WebDriver driver;
 
@@ -29,7 +29,7 @@ public class SauceLabsContextReportRuleTest {
         driver = mock(WebDriver.class, withSettings().extraInterfaces(JavascriptExecutor.class));
         description = mock(Description.class);
         when(description.getMethodName()).thenReturn(fakeMethod);
-        rule = new SauceLabsContextReportRule(driver);
+        rule = new SauceLabsLogger(driver);
     }
 
     @Test

@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
  * Date: 3/13/12
  * Time: 3:01 PM
  */
-public interface WebDriverProvider extends TestRule {
+public interface WebDriverManager extends TestRule {
     WebDriver getDriver();
 
     String getJobURL();

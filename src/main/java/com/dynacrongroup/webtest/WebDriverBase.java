@@ -1,9 +1,9 @@
 package com.dynacrongroup.webtest;
 
-import com.dynacrongroup.webtest.rule.FinalTestStatusRule;
-import com.dynacrongroup.webtest.rule.SauceLabsContextReportRule;
-import com.dynacrongroup.webtest.rule.TimerRule;
-import com.dynacrongroup.webtest.rule.WebDriverProvider;
+import com.dynacrongroup.webtest.rule.SauceLabsFinalStatusReporter;
+import com.dynacrongroup.webtest.rule.SauceLabsLogger;
+import com.dynacrongroup.webtest.rule.MethodTimer;
+import com.dynacrongroup.webtest.rule.WebDriverManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -53,8 +53,8 @@ public class WebDriverBase {
     /**
      * Stores all rules for this class in the correct order of operation.
      */
-    private static ThreadLocal<WebDriverProvider> webDriverProvider =
-            new ThreadLocal<WebDriverProvider>();
+    private static ThreadLocal<WebDriverManager> webDriverProvider =
+            new ThreadLocal<WebDriverManager>();
 
     /**
      * The logger associated with this specific browser test execution
@@ -102,7 +102,7 @@ public class WebDriverBase {
 
     @Before
     public void loadDriverFromProvider() {
-        driver = getDriverProviderRule().getDriver();
+        driver = getDriverManager().getDriver();
     }
 
     @After
@@ -123,14 +123,14 @@ public class WebDriverBase {
      * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
      */
     public final String getJobURL() {
-        return getDriverProviderRule().getJobURL();
+        return getDriverManager().getJobURL();
     }
 
     /**
      * Returns the SauceLabs job id (if there is one).
      */
     public final String getJobId() {
-        return getDriverProviderRule().getJobId();
+        return getDriverManager().getJobId();
     }
 
     /**
@@ -178,11 +178,11 @@ public class WebDriverBase {
         return testWatcherChain.get();
     }
 
-    private void setDriverProviderRule(WebDriverProvider driverProviderRule) {
-        WebDriverBase.webDriverProvider.set(driverProviderRule);
+    private void setDriverManager(WebDriverManager driverManager) {
+        WebDriverBase.webDriverProvider.set(driverManager);
     }
 
-    private WebDriverProvider getDriverProviderRule() {
+    private WebDriverManager getDriverManager() {
         return webDriverProvider.get();
     }
 
@@ -205,15 +205,20 @@ public class WebDriverBase {
     }
 
     private RuleChain createStandardRuleChain() {
-        //RemoteWebDriverProvider is created first and executed last, so that driver is available first and removed last.
-        WebDriverProviderFactory providerFactory = new WebDriverProviderFactory(getLogger());
 
-        WebDriverProvider provider = providerFactory.getProvider(getJobName(), targetWebBrowser, customCapabilities);
-        setDriverProviderRule(provider);
-        TimerRule timerRule = new TimerRule();
+        //WebDriverManager is created first and executed last, so that driver is available first and removed last.
+        WebDriverManager manager = createDriverManager();
+        MethodTimer methodTimer = new MethodTimer();
 
-        return RuleChain.outerRule(provider)   //Outer rule is executed last.
-                .around(timerRule);
+        return RuleChain.outerRule(manager)   //Outer rule is executed last.
+                .around(methodTimer);
+    }
+
+    private WebDriverManager createDriverManager() {
+        WebDriverManagerFactory managerFactory = new WebDriverManagerFactory(getLogger());
+        WebDriverManager manager = managerFactory.getManager(getJobName(), targetWebBrowser, customCapabilities);
+        setDriverManager(manager);
+        return  manager;
     }
 
     /**
@@ -225,13 +230,13 @@ public class WebDriverBase {
         String sauceUser = SauceLabsCredentials.getUser();
         String sauceKey = SauceLabsCredentials.getKey();
 
-        FinalTestStatusRule finalTestStatusRule = new FinalTestStatusRule(getJobId(), sauceUser, sauceKey);
-        SauceLabsContextReportRule sauceLabsContextReportRule =
-                new SauceLabsContextReportRule(getDriverProviderRule().getDriver());
+        SauceLabsFinalStatusReporter sauceLabsFinalStatusReporter = new SauceLabsFinalStatusReporter(getJobId(), sauceUser, sauceKey);
+        SauceLabsLogger sauceLabsLogger =
+                new SauceLabsLogger(getDriverManager().getDriver());
 
         return chain
-                .around(finalTestStatusRule)
-                .around(sauceLabsContextReportRule);
+                .around(sauceLabsFinalStatusReporter)
+                .around(sauceLabsLogger);
     }
 
 

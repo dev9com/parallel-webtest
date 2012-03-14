@@ -10,11 +10,11 @@ import org.junit.runner.Description;
  * Date: 3/9/12
  * Time: 8:52 AM
  */
-public class TimerRule extends TestWatcher {
+public class MethodTimer extends TestWatcher {
 
     Timing timer;
 
-    public TimerRule() {
+    public MethodTimer() {
     }
 
     @Override
