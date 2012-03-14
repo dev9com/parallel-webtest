@@ -1,6 +1,5 @@
 package com.dynacrongroup.webtest.rule;
 
-import com.dynacrongroup.webtest.SauceLabsCredentials;
 import com.dynacrongroup.webtest.sauce.SauceREST;
 import org.junit.runner.Description;
 
@@ -14,12 +13,13 @@ import org.junit.runner.Description;
 public class FinalTestStatusRule extends ClassFinishRule {
 
     Boolean allTestsPassed = true;
-    SauceREST sauceREST = new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey());
+    SauceREST sauceREST = null;
 
     private final String jobId;
 
-    public FinalTestStatusRule(String jobId) {
+    public FinalTestStatusRule(String jobId, String user, String key) {
         this.jobId = jobId;
+        this.sauceREST = new SauceREST(user, key);
     }
 
     @Override

@@ -13,7 +13,7 @@ import static org.junit.Assert.fail;
 /**
  * @author David Drake
  */
-public class WebDriverUtilities {
+public final class WebDriverUtilities {
 
     /**
      * Maximum number of seconds to wait when using waitForElement()

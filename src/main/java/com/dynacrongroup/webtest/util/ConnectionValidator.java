@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 /** Validate that a particular URL is accessible */
-public class ConnectionValidator {
+public final class ConnectionValidator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConnectionValidator.class);
 

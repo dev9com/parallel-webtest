@@ -51,6 +51,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 	@Test
 //	@Ignore("timeout problem...?")
 	public void isTextPresentTest() throws Exception {
+
         getLogger().info("Starting test [{}]", name.getMethodName());
 		assertTrue(WebDriverUtilities.isTextPresent(driver, "Dynacron Group"));
 		assertFalse(WebDriverUtilities.isTextPresent(driver,

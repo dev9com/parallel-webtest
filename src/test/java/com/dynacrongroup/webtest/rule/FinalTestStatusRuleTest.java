@@ -20,7 +20,7 @@ public class FinalTestStatusRuleTest {
 
     @Before
     public void prepareRuleWithMock() {
-        rule = new FinalTestStatusRule(testJobId);
+        rule = new FinalTestStatusRule(testJobId, "fakeUser", "fakeKey");
         rule.sauceREST = mock(SauceREST.class);
     }
 

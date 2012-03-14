@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * This class figures out which WebDriver(s) to set up.
  */
-public class WebDriverFactory {
+public class WebDriverParameterFactory {
 
     public static final String WEBDRIVER_DRIVER = "WEBDRIVER_DRIVER";
     public static final String SINGLE_SAUCE = "SINGLE_SAUCE";

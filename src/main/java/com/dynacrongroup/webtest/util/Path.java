@@ -1,8 +1,6 @@
 package com.dynacrongroup.webtest.util;
 
 import com.dynacrongroup.webtest.SystemName;
-import com.dynacrongroup.webtest.WebDriverFactory;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +9,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This utility class provides support for isolating your web tests from a
@@ -30,40 +26,55 @@ public class Path {
     public static final String WEBDRIVER_PORT = "WEBDRIVER_PORT";
     public static final String WEBDRIVER_CONTEXT = "WEBDRIVER_CONTEXT";
 
-    private final static Logger LOG = LoggerFactory.getLogger(Path.class);
-
-    private static Set<String> sauceConnectWarnings = new HashSet<String>();
-    /**
-     * Used to track the various servers that the test suite[s] expect to talk
-     * to. This is used to make sure that the same warning is not sent over and
-     * over.
-     */
+    private static final Logger LOG = LoggerFactory.getLogger(Path.class);
 
     private String protocol = "http";
     private String server = null;
     private String context = "";
     private int port = 8080;
 
+    /**
+     * Create default path object.
+     */
     public Path() {
         init();
     }
 
+    /**
+     * Create default path object with server overridden.
+     * @param server
+     */
     public Path(String server) {
         init();
         this.server = server;
     }
 
+    /**
+     * Create default path object with port overridden.
+     * @param port
+     */
     public Path(int port) {
         init();
         this.port = port;
     }
 
+    /**
+     * Create default path object with server and port overridden.
+     * @param server
+     * @param port
+     */
     public Path(String server, int port) {
         init();
         this.server = server;
         this.port = port;
     }
 
+    /**
+     * Create path object overriding all defaults.
+     * @param protocol
+     * @param server
+     * @param port
+     */
     public Path(String protocol, String server, int port) {
         init();
         this.protocol = protocol;
@@ -99,6 +110,10 @@ public class Path {
         return context;
     }
 
+    public void setContext(String context) {
+        this.context = context;
+    }
+
     /**
      * Alias for translate()
      */
@@ -106,19 +121,22 @@ public class Path {
         return translate(path);
     }
 
-    public void setContext(String context) {
-        this.context = context;
-    }
-
+    /**
+     * Translates path into a URL string.
+     * @param path  Path to append to the context.
+     * @return
+     */
     public String translate(String path) {
+        String fullUrl = null;
 
         try {
-            return new URL(protocol, server, port, context + path)
+            fullUrl = new URL(protocol, server, port, context + path)
                     .toExternalForm();
         } catch (MalformedURLException e) {
             LOG.error(e.getMessage());
-            return null;
         }
+
+        return fullUrl;
     }
 
     /**
@@ -145,32 +163,22 @@ public class Path {
 
 
     private void init() {
-        if (server == null) {
 
-            protocol = ConfigurationValue.getConfigurationValue(
-                    WEBDRIVER_PROTOCOL, "http");
+        protocol = ConfigurationValue.getConfigurationValue(
+                WEBDRIVER_PROTOCOL, "http");
 
-            String driver = ConfigurationValue.getConfigurationValue(
-                    WebDriverFactory.WEBDRIVER_DRIVER, null);
-            if (driver != null
-                    && HtmlUnitDriver.class.toString().contains(driver)) {
-                port = 8080;
-            }
-
-            if (protocol.equalsIgnoreCase("https")) {
-                port = 443;
-            }
-            server = SystemName.getSystemName();
-
-            server = ConfigurationValue.getConfigurationValue(WEBDRIVER_SERVER,
-                    server);
-
-            port = Integer.parseInt(ConfigurationValue.getConfigurationValue(
-                    WEBDRIVER_PORT, port + ""));
-
-            context = ConfigurationValue.getConfigurationValue(
-                    WEBDRIVER_CONTEXT, "");
+        if (protocol.equalsIgnoreCase("https")) {
+            port = 443;
         }
+
+        port = Integer.parseInt(ConfigurationValue.getConfigurationValue(
+                WEBDRIVER_PORT, String.valueOf(port)));
+
+        server = ConfigurationValue.getConfigurationValue(WEBDRIVER_SERVER,
+                SystemName.getSystemName());
+
+        context = ConfigurationValue.getConfigurationValue(
+                WEBDRIVER_CONTEXT, "");
     }
 
     /**

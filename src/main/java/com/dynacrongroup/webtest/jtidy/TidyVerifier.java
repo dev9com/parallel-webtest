@@ -52,16 +52,16 @@ public class TidyVerifier {
         this.listener = builder.getListener();
         this.tidy = builder.getTidy();
     }
-    
-    public void verifyHtml(WebDriver driver) throws Throwable {
+
+    public void verifyHtml(WebDriver driver) throws Exception {
         verifyHtml(driver.getPageSource());
     }
 
-    public void verifyHtml(String html) throws Throwable {
+    public void verifyHtml(String html) throws Exception {
         verifyHtml(new ByteArrayInputStream(html.getBytes()));
     }
-    
-    public void verifyHtml(InputStream stream) throws Throwable {
+
+    public void verifyHtml(InputStream stream) throws Exception {
         LOG.trace("Verifying html with JTidy");
         tidy.parse(stream, new NullOutputStream());
         listener.verify();

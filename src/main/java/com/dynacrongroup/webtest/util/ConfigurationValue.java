@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * there is no "unset" option to completely null out an already set value in
  * Maven)
  */
-public class ConfigurationValue {
+public final class ConfigurationValue {
 
     private final static Logger log = LoggerFactory
             .getLogger(ConfigurationValue.class);
@@ -28,7 +28,7 @@ public class ConfigurationValue {
     /**
      * Sets value to null if the value is empty, an unexpanded maven property, or
      * is set to the string "null".
-     * 
+     *
      * @param value
      *          A configuration value to be filtered.
      * @return value if it does not match filter
@@ -57,7 +57,7 @@ public class ConfigurationValue {
      */
     public static String getConfigurationValue(String key, String defaultValue) {
         String result;
-        
+
         if (System.getProperties().containsKey(key)) {
             result = getValueIfSet(System.getProperty(key));
             log.trace("found System Property key [{}] set to [{}]", key, result);

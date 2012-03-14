@@ -1,7 +1,5 @@
 package com.dynacrongroup.webtest.jtidy;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.TidyMessageListener;
 
@@ -10,19 +8,17 @@ import java.util.List;
 import java.util.Properties;
 
 public abstract class AbstractTMListener implements TidyMessageListener {
-    
+
     public static final String IGNORED_CODES_PROP = "ignored-codes";
     public static final String DISPLAY_CODES_PROP = "display-error-codes";
     public static final String THRESHOLD_LEVEL_PROP = "threshold-level";
 
     public static final TidyMessage.Level DEFAULT_THRESHOLD = TidyMessage.Level.WARNING;
     public static final Boolean DEFAULT_ERROR_CODE_DISPLAY = Boolean.TRUE;
-    
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractTMListener.class);
 
-    protected List<Integer> ignoredCodes = new ArrayList<Integer>();
-    protected TidyMessage.Level threshold;
-    protected Boolean displayErrorCodes = this.DEFAULT_ERROR_CODE_DISPLAY;
+    List<Integer> ignoredCodes = new ArrayList<Integer>();
+    TidyMessage.Level threshold;
+    Boolean displayErrorCodes = this.DEFAULT_ERROR_CODE_DISPLAY;
 
     AbstractTMListener(TidyMessage.Level level) {
         threshold = level;
@@ -42,17 +38,17 @@ public abstract class AbstractTMListener implements TidyMessageListener {
             reportMessage(tidyMessage);
         }
     }
-    
+
     public void setProperties(Properties properties) {
         setIgnoredCodes(getIgnoredCodesFromProps(properties));
         setDisplayErrorCodes(getErrorCodeDisplayFromProps(properties));
         setThreshold(getThresholdLevelFromProps(properties));
     }
-    
+
     public void setIgnoredCodes(List<Integer> codes) {
         this.ignoredCodes = codes;
     }
-    
+
     public void setDisplayErrorCodes(Boolean display) {
         this.displayErrorCodes = display;
     }
@@ -64,7 +60,7 @@ public abstract class AbstractTMListener implements TidyMessageListener {
     public abstract void verify() throws AssertionError;
 
     protected abstract void reportMessage(TidyMessage tidyMessage);
-    
+
     protected String formatTidyMessage(TidyMessage tidyMessage) {
         return String.format("line %s column %s - %s: %s %s",
                 tidyMessage.getLine(),
@@ -73,7 +69,7 @@ public abstract class AbstractTMListener implements TidyMessageListener {
                 tidyMessage.getMessage(),
                 formatErrorCode(tidyMessage));
     }
-    
+
     protected String formatErrorCode(TidyMessage message) {
         String formattedString = "";
         if (displayErrorCodes) {
@@ -94,7 +90,7 @@ public abstract class AbstractTMListener implements TidyMessageListener {
     }
 
     private Boolean getErrorCodeDisplayFromProps(Properties properties) {
-        
+
         String property = properties.getProperty(this.DISPLAY_CODES_PROP);
         return (property == null) ? displayErrorCodes : Boolean.valueOf(property);
     }

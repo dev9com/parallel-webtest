@@ -4,12 +4,12 @@ import com.dynacrongroup.webtest.util.ConfigurationValue;
 
 /**
  * Identifies the fully-qualified domain name of this machine.
- * 
+ *
  * You will want to set the value to the fully-qualified domain name of the
  * machine. For example, if your machine is GHQ123, set the WEBTEST_HOSTNAME
  * value to GHQ123.domain.org. This domain name should resolve on your machine.
  */
-public class SystemName {
+public final class SystemName {
 
 	static private String systemName = null;
 

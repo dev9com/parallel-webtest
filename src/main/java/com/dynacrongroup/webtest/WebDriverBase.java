@@ -1,9 +1,9 @@
 package com.dynacrongroup.webtest;
 
-import com.dynacrongroup.webtest.rule.DriverProviderRule;
 import com.dynacrongroup.webtest.rule.FinalTestStatusRule;
 import com.dynacrongroup.webtest.rule.SauceLabsContextReportRule;
 import com.dynacrongroup.webtest.rule.TimerRule;
+import com.dynacrongroup.webtest.rule.WebDriverProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -53,8 +53,8 @@ public class WebDriverBase {
     /**
      * Stores all rules for this class in the correct order of operation.
      */
-    private static ThreadLocal<DriverProviderRule> driverProviderRule =
-            new ThreadLocal<DriverProviderRule>();
+    private static ThreadLocal<WebDriverProvider> webDriverProvider =
+            new ThreadLocal<WebDriverProvider>();
 
     /**
      * The logger associated with this specific browser test execution
@@ -62,9 +62,14 @@ public class WebDriverBase {
     private final Logger browserTestLog;
 
     /**
-     * The configuration for the WebDriver used for these tests.
+     * The configuration for the browser used for these tests.
      */
-    private final TestDriverConfiguration testDriverConfiguration;
+    private final TargetWebBrowser targetWebBrowser;
+
+    /**
+     * Custom capabilities for this test (if a remote web driver test).
+     */
+    private final Map<String, Object> customCapabilities;
 
     /**
      * Used by the JUnit parameterized options to configure the parameterized
@@ -78,9 +83,9 @@ public class WebDriverBase {
      * Alternate parameterized constructor for supplying custom capabilities.
      */
     public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
-        TargetWebBrowser targetWebBrowser = new TargetWebBrowser(browser, version);
-        testDriverConfiguration = new TestDriverConfiguration(this.getClass(), targetWebBrowser, customCapabilities);
-        browserTestLog = createTestLogger();
+        this.targetWebBrowser = new TargetWebBrowser(browser, version);
+        this.browserTestLog = createTestLogger();
+        this.customCapabilities = customCapabilities;
         initializeJUnitRules();
     }
 
@@ -88,15 +93,15 @@ public class WebDriverBase {
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
      *
-     * @see WebDriverFactory
+     * @see WebDriverParameterFactory
      */
     @DescriptivelyParameterized.Parameters
     public static List<String[]> configureWebDriverTargets() throws IOException {
-        return new WebDriverFactory().getDriverTargets();
+        return new WebDriverParameterFactory().getDriverTargets();
     }
 
     @Before
-    public void getDriverFromProvider() {
+    public void loadDriverFromProvider() {
         driver = getDriverProviderRule().getDriver();
     }
 
@@ -107,11 +112,11 @@ public class WebDriverBase {
 
     /**
      * This is the target browser/version for this test. The values are a bit
-     * different with Selenium 2/ WebDriver. See the WebDriverFactory and
+     * different with Selenium 2/ WebDriver. See the WebDriverParameterFactory and
      * WebDriverLauncher for more details.
      */
     public final TargetWebBrowser getTargetWebBrowser() {
-        return testDriverConfiguration.getTargetWebBrowser();
+        return targetWebBrowser;
     }
 
     /**
@@ -126,14 +131,6 @@ public class WebDriverBase {
      */
     public final String getJobId() {
         return getDriverProviderRule().getJobId();
-    }
-
-    /**
-     * The name of the job, as reported to SauceLabs. Includes the user name and
-     * the name of the class.
-     */
-    public final String getJobName() {
-        return WebDriverLauncher.getJobName(this.getClass());
     }
 
     /**
@@ -155,6 +152,17 @@ public class WebDriverBase {
     public Logger getLogger() {
         return browserTestLog;
     }
+
+
+    /**
+     * The name of the job, as reported to SauceLabs. Includes the user name and
+     * the name of the class.
+     */
+    public String getJobName() {
+        return SystemName.getSystemName() + "-"
+                + this.getClass().getSimpleName();
+    }
+
     private Logger createTestLogger() {
         String logName = String.format("%s-%s",
                 this.getClass().getName(),
@@ -170,15 +178,15 @@ public class WebDriverBase {
         return testWatcherChain.get();
     }
 
-    private void setDriverProviderRule(DriverProviderRule driverProviderRule) {
-        WebDriverBase.driverProviderRule.set(driverProviderRule);
+    private void setDriverProviderRule(WebDriverProvider driverProviderRule) {
+        WebDriverBase.webDriverProvider.set(driverProviderRule);
     }
 
-    private DriverProviderRule getDriverProviderRule() {
-        return driverProviderRule.get();
+    private WebDriverProvider getDriverProviderRule() {
+        return webDriverProvider.get();
     }
 
-    private void initializeJUnitRules() {
+    private final void initializeJUnitRules() {
         localTestWatcherChain = getTestWatcherChain();
         if (localTestWatcherChain == null) {
             localTestWatcherChain = createTestWatcherChain();
@@ -197,12 +205,14 @@ public class WebDriverBase {
     }
 
     private RuleChain createStandardRuleChain() {
-        //DriverProviderRule is created first and executed last, so that driver is available first and removed last.
-        DriverProviderRule newDriverProviderRule = new DriverProviderRule(testDriverConfiguration, getLogger());
-        setDriverProviderRule(newDriverProviderRule);
+        //RemoteWebDriverProvider is created first and executed last, so that driver is available first and removed last.
+        WebDriverProviderFactory providerFactory = new WebDriverProviderFactory(getLogger());
+
+        WebDriverProvider provider = providerFactory.getProvider(getJobName(), targetWebBrowser, customCapabilities);
+        setDriverProviderRule(provider);
         TimerRule timerRule = new TimerRule();
 
-        return RuleChain.outerRule(newDriverProviderRule)   //Outer rule is executed last.
+        return RuleChain.outerRule(provider)   //Outer rule is executed last.
                 .around(timerRule);
     }
 
@@ -212,7 +222,10 @@ public class WebDriverBase {
      * @param chain
      */
     private RuleChain attachRemoteReportingRules(RuleChain chain) {
-        FinalTestStatusRule finalTestStatusRule = new FinalTestStatusRule(getJobId());
+        String sauceUser = SauceLabsCredentials.getUser();
+        String sauceKey = SauceLabsCredentials.getKey();
+
+        FinalTestStatusRule finalTestStatusRule = new FinalTestStatusRule(getJobId(), sauceUser, sauceKey);
         SauceLabsContextReportRule sauceLabsContextReportRule =
                 new SauceLabsContextReportRule(getDriverProviderRule().getDriver());
 
