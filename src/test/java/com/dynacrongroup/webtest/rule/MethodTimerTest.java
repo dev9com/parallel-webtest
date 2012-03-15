@@ -33,8 +33,8 @@ public class MethodTimerTest {
 
         rule.finished(mockDescription);
 
-        assertNotNull(rule.timer.duration);
-        assertThat(rule.timer.duration, greaterThan(Long.valueOf(499)));
+        assertNotNull(rule.timer.getDuration());
+        assertThat(rule.timer.getDuration(), greaterThan(Long.valueOf(499)));
 
     }
 }

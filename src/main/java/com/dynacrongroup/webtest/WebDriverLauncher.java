@@ -1,7 +1,9 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import com.dynacrongroup.webtest.driver.CapturingRemoteWebDriver;
 import com.dynacrongroup.webtest.util.ConfigurationValue;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -30,7 +32,9 @@ public class WebDriverLauncher {
      */
     protected static final String uniqueId = String.valueOf(UUID.randomUUID());
 
-    private Logger log;
+    private Logger log = null;
+
+    private WebDriver driver = null;
 
 
     public WebDriverLauncher(Logger log) {
@@ -43,60 +47,86 @@ public class WebDriverLauncher {
      * @return
      */
     public WebDriver getHtmlUnitDriver() {
-        return new HtmlUnitDriver(true);
+        driver = new HtmlUnitDriver(true);
+        return driver;
     }
 
-    public WebDriver getClassLoadedDriver(String driverClass) {
-        log.trace("Initializing WebDriver by specified class: {}", driverClass);
-        WebDriver driver;
+    /**
+     * Returns a driver for a local, class-loaded browser.
+     * @param targetWebBrowser
+     * @return
+     */
+    public WebDriver getClassLoadedDriver(TargetWebBrowser targetWebBrowser) {
+        log.trace("Initializing WebDriver by specified class: {}", targetWebBrowser.humanReadable());
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(targetWebBrowser.getCustomCapabilities());
         try {
-            driver = (WebDriver) Class.forName(driverClass).newInstance();
+            driver = (WebDriver) Class.forName(targetWebBrowser.getBrowser())
+                    .getDeclaredConstructor(Capabilities.class)
+                    .newInstance(desiredCapabilities);
         } catch (Exception e) {
-            log.error("Unable to load target WebDriver class: {}", e.getMessage());     //Sometimes caused by port locking in FF
             if (e.getMessage().contains("Unable to bind to locking port")) {
                 log.error("Locking port error may be caused by ephemeral port exhaustion.  Try reducing the number of threads.");
             }
-            driver = null;
+            throw new WebDriverException("Unable to load target WebDriver class: " + targetWebBrowser.getBrowser(), e);
         }
+        verifyDriverNotNull(driver);
         return driver;
     }
 
-    public WebDriver getRemoteDriver(String jobName, TargetWebBrowser target, Map<String, Object> customCapabilities) {
-        WebDriver driver = null;
-        String server = SauceLabsCredentials.getServer();
+    /**
+     * Returns a driver for a remote driver.
+     * @param jobName   Name of the job as it will appear in the remote server
+     * @param target
+     * @return
+     */
+    public WebDriver getRemoteDriver(String jobName, TargetWebBrowser target) {
+        verifyHostNameIsSpecified();
+        getRemoteDriverFromSauceLabs(jobName, target);
+        verifyDriverNotNull(driver);
+        return driver;
+    }
 
+    private void verifyHostNameIsSpecified() {
+        String webTestHostName = ConfigurationValue.getConfigurationValue(SystemName.WEBTEST_HOSTNAME, null);
+        if (webTestHostName == null) {
+            throw new WebDriverException(
+                    "No hostname is specified for remote test. Please specify a WEBTEST_HOSTNAME value.");
+        }
+    }
+
+    private void verifyDriverNotNull(WebDriver driver) {
+        if (driver == null) {
+            throw new WebDriverException("Failed to provision WebDriver.");
+        }
+    }
+
+    private void getRemoteDriverFromSauceLabs(String jobName, TargetWebBrowser target) {
         for (int attempt = 1; attempt <= MAX_RETRIES && driver == null; attempt++) {
+            log.trace("RemoteWebDriver provisioning attempt {} for job {}", attempt, jobName);
             try {
-                log.trace("RemoteWebDriver provisioning attempt {} for job {}", attempt, jobName);
-                DesiredCapabilities capabilities = constructDefaultCapabilities(jobName, target);
-                addCustomCapabilities(capabilities, customCapabilities);
-                driver = new CapturingRemoteWebDriver(
-                        SauceLabsCredentials.getConnectionString(),
-                        capabilities);
+                buildDriverWithCapabilities(jobName, target);
                 verifyDriverIsValid(driver);
             }
             catch (Exception e) {
-                log.error("Unable to launch RemoteWebDriver for [{}]: {}", server, e.getMessage());
+                log.error("Unable to launch RemoteWebDriver: {}", e.getMessage());
                 driver = null;
             }
         }
-
-        return driver;
     }
 
-    private void verifyDriverIsValid(WebDriver driver) throws WebDriverException {
-        if (driver.getWindowHandle() != null) {
-            log.debug("Successfully launched RemoteWebDriver");
-        } else {
-            throw new WebDriverException("driver.getWindowHandle() returned null.");
-        }
+    private void buildDriverWithCapabilities(String jobName, TargetWebBrowser target) {
+        DesiredCapabilities capabilities = constructDefaultCapabilities(jobName, target);
+        capabilities = mergeDefaultAndCustomCapabilities(capabilities, target.getCustomCapabilities());
+        driver = new CapturingRemoteWebDriver(
+                SauceLabsCredentials.getConnectionString(),
+                capabilities);
     }
 
     private DesiredCapabilities constructDefaultCapabilities(String jobName, TargetWebBrowser target) {
         String seleniumVersion = ConfigurationValue.getConfigurationValue("REMOTE_SERVER_VERSION", "2.19.0");
 
         DesiredCapabilities capabilities = new DesiredCapabilities(
-                target.browser, target.version, getPlatform(target));
+                target.getBrowser(), target.getVersion(), getPlatform(target));
         capabilities.setCapability("name", jobName);
         capabilities.setCapability("tags", SystemName.getSystemName());
         capabilities.setCapability("build", uniqueId);
@@ -109,18 +139,27 @@ public class WebDriverLauncher {
         Platform platform = Platform.WINDOWS;
 
         /** TODO SauceLabs-specific. May need to update in future. */
-        if (target.isInternetExplorer() && target.version.contains("9")) {
+        if (target.isInternetExplorer() && target.getVersion().equalsIgnoreCase("9")) {
             platform = Platform.VISTA;
         }
 
         return platform;
     }
 
-    private void addCustomCapabilities(DesiredCapabilities capabilities, Map<String, Object> customCapabilities) {
+    private DesiredCapabilities mergeDefaultAndCustomCapabilities(DesiredCapabilities capabilities, Map<String, Object> customCapabilities) {
         if (customCapabilities != null) {
             for (String customCapability : customCapabilities.keySet()) {
                 capabilities.setCapability(customCapability, customCapabilities.get(customCapability));
             }
+        }
+        return capabilities;
+    }
+
+    private void verifyDriverIsValid(WebDriver driver) throws WebDriverException {
+        if (driver.getWindowHandle() != null) {
+            log.debug("Successfully launched RemoteWebDriver");
+        } else {
+            throw new WebDriverException("driver.getWindowHandle() returned null.");
         }
     }
 

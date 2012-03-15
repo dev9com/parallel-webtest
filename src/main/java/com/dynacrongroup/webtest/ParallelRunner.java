@@ -41,6 +41,12 @@ public class ParallelRunner extends DescriptivelyParameterized {
         }
     }
 
+    /**
+     * Creates ParallelRunner.  Shouldn't be called by classes directly; instead should be used
+     * with JUnit annotations: @RunWith(ParallelRunner.class)
+     * @param klass
+     * @throws Throwable
+     */
     public ParallelRunner(@SuppressWarnings("rawtypes") Class klass)
             throws Throwable {
         super(klass);

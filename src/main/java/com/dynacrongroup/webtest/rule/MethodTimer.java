@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest.rule;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
@@ -12,6 +13,7 @@ import org.junit.runner.Description;
  */
 public class MethodTimer extends TestWatcher {
 
+    @VisibleForTesting
     Timing timer;
 
     public MethodTimer() {
@@ -20,7 +22,7 @@ public class MethodTimer extends TestWatcher {
     @Override
     protected void starting(Description description) {
         String timerName = String.format("%s.%s",
-                description.getClassName(),
+        description.getClassName(),
                 description.getMethodName());
         timer = new Timing(timerName);
         timer.start();

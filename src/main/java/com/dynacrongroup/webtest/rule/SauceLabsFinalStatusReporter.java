@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.rule;
 
 import com.dynacrongroup.webtest.sauce.SauceREST;
+import com.google.common.annotations.VisibleForTesting;
 import org.junit.runner.Description;
 
 /**
@@ -12,8 +13,10 @@ import org.junit.runner.Description;
  */
 public class SauceLabsFinalStatusReporter extends ClassFinishRule {
 
-    Boolean allTestsPassed = true;
+    @VisibleForTesting
     SauceREST sauceREST = null;
+
+    private Boolean allTestsPassed = true;
 
     private final String jobId;
 
@@ -34,11 +37,15 @@ public class SauceLabsFinalStatusReporter extends ClassFinishRule {
     }
 
     private void sendFinalTestStatusForJobId(String jobId) {
-        if (allTestsPassed) {
+        if (getAllTestsPassed()) {
             sauceREST.jobPassed(jobId);
         }
         else {
             sauceREST.jobFailed(jobId);
         }
+    }
+
+    public Boolean getAllTestsPassed() {
+        return allTestsPassed;
     }
 }

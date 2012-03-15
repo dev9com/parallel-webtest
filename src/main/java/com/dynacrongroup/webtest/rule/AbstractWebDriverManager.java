@@ -13,7 +13,7 @@ import org.openqa.selenium.WebDriver;
  */
 abstract class AbstractWebDriverManager extends ClassFinishRule implements WebDriverManager {
 
-    WebDriver driver;
+    private WebDriver driver;
 
     public AbstractWebDriverManager(WebDriver driver) {
         this.driver = driver;

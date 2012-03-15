@@ -22,13 +22,21 @@ public final class SauceLabsCredentials {
 
 	private SauceLabsCredentials() {
         throw new IllegalAccessError("Utility class should not be constructed");
-	};
+	}
 
+    /**
+     * Get the Sauce Labs user from the configuration.
+     * @return
+     */
 	public static String getUser() {
 		return ConfigurationValue.getConfigurationValue(SAUCELABS_USER,
 				"No User Set");
 	}
 
+    /**
+     * Get the Sauce Labs api key from the configuration.
+     * @return
+     */
 	public static String getKey() {
 		return ConfigurationValue.getConfigurationValue(SAUCELABS_KEY,
 				"No Configuration Key Set");
@@ -40,6 +48,10 @@ public final class SauceLabsCredentials {
 				"ondemand.saucelabs.com/wd/hub");
 	}
 
+    /**
+     * Gets the appropriate URL string for the configured credentials, as used by RemoteWebDriver.
+     * @return
+     */
 	public static URL getConnectionString() {
 		try {
 			return new URL("http://" + getUser() + ":" + getKey() + "@"

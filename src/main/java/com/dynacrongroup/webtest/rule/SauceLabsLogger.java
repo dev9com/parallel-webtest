@@ -16,7 +16,7 @@ import org.openqa.selenium.WebDriver;
  */
 public class SauceLabsLogger extends TestWatcher {
 
-    WebDriver driver;
+    private WebDriver driver;
 
     public SauceLabsLogger(WebDriver driver) {
         this.driver = driver;

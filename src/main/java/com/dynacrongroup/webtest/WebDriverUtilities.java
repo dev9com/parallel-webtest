@@ -3,12 +3,12 @@ package com.dynacrongroup.webtest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.dynacrongroup.webtest.util.ConfigurationValue.getConfigurationValue;
-import static java.lang.String.format;
-import static org.junit.Assert.fail;
 
 /**
  * Utility class that provides methods commonly used but missing from the WebDriver api.
@@ -51,18 +51,7 @@ public final class WebDriverUtilities {
      * @param locator Element to wait for.
      */
     public static void waitForElement(WebDriver driver, By locator) {
-        for (int i = 0; i < MAX_WAIT_SECONDS; i++) {
-            if (isElementPresent(driver, locator)) {
-                return;
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                LOG.error(ex.getMessage());
-            }
-        }
-        fail(format("Locator [%s] not found in [%s] seconds.",
-                locator.toString(), MAX_WAIT_SECONDS));
+        waitForElement(driver, locator, MAX_WAIT_SECONDS);
     }
 
     /**
@@ -73,20 +62,17 @@ public final class WebDriverUtilities {
      * @param locator Element to wait for.
      * @param seconds Amount of time in seconds to wait for an element to appear.
      */
-    public static void waitForElement(WebDriver driver, By locator, Integer seconds) {
-        for (int i = 0; i < seconds; i++) {
-            if (isElementPresent(driver, locator)) {
-                return;
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                LOG.error(ex.getMessage());
-            }
-        }
-        fail(format("Locator [%s] not found in [%s] seconds.",
-                locator.toString(), seconds));
+    public static void waitForElement(WebDriver driver, final By locator, Integer seconds) {
+        WebDriverWait wait = new WebDriverWait(driver, seconds);
+        wait.until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(final WebDriver webDriver) {
+                webDriver.findElement(locator);
+                return true; }
+        });
     }
+
+
 
     /**
      * Utility that tries to find a new window handle and switch to it.
@@ -95,16 +81,9 @@ public final class WebDriverUtilities {
      */
     public static void switchToNewPopUp(WebDriver driver) {
         String initialHandle = driver.getWindowHandle();
-        LOG.debug("Current window handle: [{}]", driver.getWindowHandle());
+        LOG.trace("Current window handle: [{}]", driver.getWindowHandle());
         Integer handles = driver.getWindowHandles().size();
-        LOG.debug("found {} handles; switching to first new one", handles);
-
-        // Integer handles = driver.getWindowHandles().size();
-        // LOG.debug("found {} handles; switching to last one", handles);
-        // driver.switchTo().window((String)driver.getWindowHandles().toArray()[handles
-        // - 1]);
-        //
-        // LOG.debug("New window handle: [{}]", driver.getWindowHandle());
+        LOG.trace("found {} handles; switching to first new one", handles);
 
         // This code checks for any windows opened other than the current window
         // and switches to them. Will end up on the last window in list.
@@ -117,7 +96,7 @@ public final class WebDriverUtilities {
         }
 
         if (initialHandle.equals(driver.getWindowHandle())) {
-            LOG.info("Call to switchToPopUp failed to find new window handle -"
+            LOG.warn("Call to switchToPopUp failed to find new window handle -"
                     + " staying on current window.");
         }
     }
@@ -170,7 +149,6 @@ public final class WebDriverUtilities {
      */
     public static Boolean isTextPresentInElement(WebElement webElement,
                                                  String text) {
-
         return webElement.getText().contains(text);
     }
 

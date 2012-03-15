@@ -17,11 +17,18 @@ public final class ConnectionValidator {
         throw new UnsupportedOperationException("Class is utility class; should not be instantiated.");
     }
 
+    /**
+     * Silently verifies that the connection path is valid.
+     *
+     * @param path
+     * @return
+     */
     public static boolean verifyConnection(String path) {
         return verifyConnection(path, false);
     }
 
-    /** Simple utility method, attempts to connect to the specified path and read a line of text.
+    /**
+     * Simple utility method, attempts to connect to the specified path and read a line of text.
      */
     public static boolean verifyConnection(String path, boolean silent) {
         Boolean success = false;

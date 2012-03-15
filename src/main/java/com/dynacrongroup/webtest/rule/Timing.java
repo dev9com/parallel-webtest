@@ -9,10 +9,6 @@ import org.slf4j.LoggerFactory;
  */
 public class Timing {
 
-    /**
-     * Duration between timer start/stop.
-     */
-    public Long duration = null;
 
     private final static Logger log = LoggerFactory.getLogger(Timing.class);
     /**
@@ -20,6 +16,11 @@ public class Timing {
      */
     private final String timerName;
     private long startTime;
+
+    /**
+     * Duration between timer start/stop.
+     */
+    private Long duration = null;
 
     /**
      * Creates new timer which is logged with the given name.
@@ -42,5 +43,9 @@ public class Timing {
     public void stop() {
         duration = System.currentTimeMillis() - startTime;
         log.trace(timerName + "," + duration);
+    }
+
+    public Long getDuration() {
+        return duration;
     }
 }

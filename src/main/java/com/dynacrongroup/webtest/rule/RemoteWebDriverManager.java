@@ -37,7 +37,7 @@ public class RemoteWebDriverManager extends AbstractWebDriverManager implements 
      */
     @Override
     public final String getJobId() {
-        return ((RemoteWebDriver) driver).getSessionId().toString();
+        return ((RemoteWebDriver) getDriver()).getSessionId().toString();
     }
 
     void reportStartUp() {

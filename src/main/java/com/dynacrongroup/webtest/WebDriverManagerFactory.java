@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import com.dynacrongroup.webtest.rule.ClassLoadedWebDriverManager;
 import com.dynacrongroup.webtest.rule.HtmlUnitWebDriverManager;
 import com.dynacrongroup.webtest.rule.RemoteWebDriverManager;
@@ -15,29 +16,32 @@ import java.util.Map;
  * Date: 3/13/12
  * Time: 2:55 PM
  */
-public class WebDriverManagerFactory {
+class WebDriverManagerFactory {
 
     private WebDriverLauncher launcher;
+    private Logger log;
 
 
-    public WebDriverManagerFactory(Logger log) {
+    WebDriverManagerFactory(Logger log) {
         this.launcher = new WebDriverLauncher(log);
+        this.log = log;
     }
 
-    public WebDriverManager getManager(String jobName, TargetWebBrowser targetWebBrowser, Map<String, Object> customCapabilities) {
+    WebDriverManager getManager(String jobName, TargetWebBrowser targetWebBrowser) {
 
-        WebDriverManager manager = null;
+        log.debug("building {}", targetWebBrowser.humanReadable());
+        WebDriverManager manager;
 
         if (targetWebBrowser.isHtmlUnit()) {
             WebDriver driver = launcher.getHtmlUnitDriver();
             manager = new HtmlUnitWebDriverManager(driver);
         }
         else if (targetWebBrowser.isClassLoaded()) {
-            WebDriver driver = launcher.getClassLoadedDriver(targetWebBrowser.version);
+            WebDriver driver = launcher.getClassLoadedDriver(targetWebBrowser);
             manager = new ClassLoadedWebDriverManager(driver);
         }
         else if (targetWebBrowser.isRemote()) {
-            WebDriver driver = launcher.getRemoteDriver(jobName, targetWebBrowser, customCapabilities);
+            WebDriver driver = launcher.getRemoteDriver(jobName, targetWebBrowser);
             manager = new RemoteWebDriverManager(driver);
         }
         else {

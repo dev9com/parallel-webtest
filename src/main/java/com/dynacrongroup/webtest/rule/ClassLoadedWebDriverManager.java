@@ -30,7 +30,7 @@ public class ClassLoadedWebDriverManager extends AbstractWebDriverManager implem
      */
     @Override
     public final String getJobId() {
-        return ((RemoteWebDriver) driver).getSessionId().toString();
+        return ((RemoteWebDriver) getDriver()).getSessionId().toString();
     }
 
     void reportStartUp() {

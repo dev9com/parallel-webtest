@@ -53,15 +53,15 @@ public class TidyVerifier {
         this.tidy = builder.getTidy();
     }
 
-    public void verifyHtml(WebDriver driver) throws Exception {
+    public void verifyHtml(WebDriver driver) {
         verifyHtml(driver.getPageSource());
     }
 
-    public void verifyHtml(String html) throws Exception {
+    public void verifyHtml(String html) {
         verifyHtml(new ByteArrayInputStream(html.getBytes()));
     }
 
-    public void verifyHtml(InputStream stream) throws Exception {
+    public void verifyHtml(InputStream stream) {
         LOG.trace("Verifying html with JTidy");
         tidy.parse(stream, new NullOutputStream());
         listener.verify();

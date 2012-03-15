@@ -1,8 +1,10 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.browser.TargetWebBrowser;
+import com.dynacrongroup.webtest.browser.TargetWebBrowserFactory;
+import com.dynacrongroup.webtest.rule.MethodTimer;
 import com.dynacrongroup.webtest.rule.SauceLabsFinalStatusReporter;
 import com.dynacrongroup.webtest.rule.SauceLabsLogger;
-import com.dynacrongroup.webtest.rule.MethodTimer;
 import com.dynacrongroup.webtest.rule.WebDriverManager;
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +54,7 @@ public class WebDriverBase {
     private static ThreadLocal<TestRule> testWatcherChain = new ThreadLocal<TestRule>();
 
     /**
-     * Stores all rules for this class in the correct order of operation.
+     * Stores the driver manager for this class in the correct order of operation.
      */
     private static ThreadLocal<WebDriverManager> webDriverManager =
             new ThreadLocal<WebDriverManager>();
@@ -67,29 +70,23 @@ public class WebDriverBase {
     private final TargetWebBrowser targetWebBrowser;
 
     /**
-     * Custom capabilities for this test (if a remote web driver test).
-     */
-    private final Map<String, Object> customCapabilities;
-
-    /**
      * Used by the JUnit parameterized options to configure the parameterized
      * configuration options.
      */
     public WebDriverBase(String browser, String version) {
-        this(browser, version, null);
+        this(browser, version, new HashMap<String, Object>());
     }
 
     /**
      * Alternate parameterized constructor for supplying custom capabilities.
      */
     public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
-        this.targetWebBrowser = new TargetWebBrowser(browser, version);
+        this.targetWebBrowser = TargetWebBrowserFactory.getTargetWebBrowser(browser, version, customCapabilities);
         this.browserTestLog = createTestLogger();
-        this.customCapabilities = customCapabilities;
         initializeJUnitRules();
     }
 
-    /**
+    /**`
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
      *
@@ -240,7 +237,7 @@ public class WebDriverBase {
      */
     private WebDriverManager createDriverManager() {
         WebDriverManagerFactory managerFactory = new WebDriverManagerFactory(getLogger());
-        WebDriverManager manager = managerFactory.getManager(getJobName(), targetWebBrowser, customCapabilities);
+        WebDriverManager manager = managerFactory.getManager(getJobName(), targetWebBrowser);
         setDriverManager(manager);
         return  manager;
     }

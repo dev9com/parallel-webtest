@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Sample WebDriver test case.
- * 
+ *
  */
 @RunWith(ParallelRunner.class)
 public class DefaultLocalSystemAccess2Test extends WebDriverBase {
@@ -47,8 +47,7 @@ public class DefaultLocalSystemAccess2Test extends WebDriverBase {
 
 	@Test
 	public void browserCheck() throws Exception {
-		getLogger().info("Browser: " + this.getTargetWebBrowser().browser);
-		getLogger().info("Version: " + this.getTargetWebBrowser().version);
+        getLogger().info("Browser: " + getTargetWebBrowser().humanReadable());
 	}
 
 	@Test

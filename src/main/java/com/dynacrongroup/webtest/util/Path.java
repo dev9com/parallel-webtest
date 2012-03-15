@@ -140,10 +140,12 @@ public class Path {
     }
 
     /**
-     * Used to determine whether the current path is local.  Can be useful for adding branching
+     * Used to determine whether the current path maps to the localhost.  Can be useful for adding branching
      * logic to code based on the currently configured server.
      *
-     * @return True if the host matches the system name or localhost.
+     * TODO: Add ipv6 support for method.
+     *
+     * @return True if the host maps to 127.0.0.1
      */
     public Boolean isLocal() {
         Boolean local = null;

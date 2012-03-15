@@ -11,12 +11,14 @@ import com.dynacrongroup.webtest.util.ConfigurationValue;
  */
 public final class SystemName {
 
-	static private String systemName = null;
+    public static final String WEBTEST_HOSTNAME = "WEBTEST_HOSTNAME";
 
-	static private final String WEBTEST_HOSTNAME = "WEBTEST_HOSTNAME";
+	private static String systemName = null;
+
 
 	/** Makes checkstyle happy */
 	private SystemName() {
+        throw new IllegalAccessError("Utility class should not be constructed");
 	}
 
 	/**
@@ -28,16 +30,9 @@ public final class SystemName {
 	}
 
 	private static void init() {
-		if (systemName != null) {
-			return;
+		if (systemName == null) {
+            systemName = ConfigurationValue.getConfigurationValue(
+                    WEBTEST_HOSTNAME, "127.0.0.1");
 		}
-		String result = ConfigurationValue.getConfigurationValue(
-				WEBTEST_HOSTNAME, null);
-		if (result != null) {
-			systemName = result;
-			return;
-		}
-		throw new IllegalArgumentException(
-				"No hostname is specified. Please specify a WEBTEST_HOSTNAME value.");
 	}
 }
