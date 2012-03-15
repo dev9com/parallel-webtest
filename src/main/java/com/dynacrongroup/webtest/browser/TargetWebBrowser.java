@@ -9,11 +9,11 @@ import java.util.Map;
  */
 public interface TargetWebBrowser {
 
-    static final String INTERNET_EXPLORER = "iexplore";
-    static final String FIREFOX = "firefox";
-    static final String GOOGLE_CHROME = "chrome";
-    static final String SAFARI = "safari";
-    static final String BYCLASS = "byclass";
+    String INTERNET_EXPLORER = "iexplore";
+    String FIREFOX = "firefox";
+    String GOOGLE_CHROME = "chrome";
+    String SAFARI = "safari";
+    String BYCLASS = "byclass";
 
     String getBrowser();
 

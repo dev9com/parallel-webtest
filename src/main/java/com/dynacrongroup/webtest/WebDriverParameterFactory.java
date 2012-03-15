@@ -1,7 +1,6 @@
 package com.dynacrongroup.webtest;
 
 import com.dynacrongroup.webtest.util.ConfigurationValue;
-import com.google.common.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,48 +17,38 @@ public class WebDriverParameterFactory {
     public static final String BY_CLASS = "byclass";
     public static final String NO_DEFAULT_SPECIFIED_TARGETS = "firefox:5,iexplore:7,iexplore:8,iexplore:9,chrome:*";
 
-    @VisibleForTesting
-    static List<String[]> TARGETS;
+    public static List<String[]> TARGETS;
 
-    @VisibleForTesting
-    String classDriver;
+    private static final String CONFIGURED_CLASS_DRIVER = ConfigurationValue.getConfigurationValue(
+            WEBDRIVER_DRIVER, null);
 
-    @VisibleForTesting
-    String singleSauce;
+    private static final String CONFIGURED_SINGLE_SAUCE = ConfigurationValue.getConfigurationValue(
+            SINGLE_SAUCE, null);
 
-    public List<String[]> getDriverTargets() {
+    public static List<String[]> getDriverTargets() {
 
         if (TARGETS == null) {
-            getConfigurationValues();
             createDriverTargets();
         }
         return TARGETS;
     }
 
-    @VisibleForTesting
-    void createDriverTargets() {
-        if (classDriver != null) {
-            TARGETS = getClassDriverTargets();
-        } else if (singleSauce != null) {
-            TARGETS = getSingleSauceTargets();
+    private static final void createDriverTargets() {
+        if (CONFIGURED_CLASS_DRIVER != null) {
+            createClassDriverTarget();
+        } else if (CONFIGURED_SINGLE_SAUCE != null) {
+            createSingleSauceTarget();
         } else {
-            TARGETS = getStandardSauceLabsTargets();
+            createStandardSauceTargets();
         }
     }
 
-    private void getConfigurationValues() {
-        classDriver = ConfigurationValue.getConfigurationValue(
-                WEBDRIVER_DRIVER, null);
-        singleSauce = ConfigurationValue.getConfigurationValue(
-                SINGLE_SAUCE, null);
+    private static void createClassDriverTarget() {
+        createSingleTarget(BY_CLASS, CONFIGURED_CLASS_DRIVER);
     }
 
-    private List<String[]> getClassDriverTargets() {
-        return getSingleDriverList(BY_CLASS, classDriver);
-    }
-
-    private List<String[]> getSingleSauceTargets() {
-        return getSingleDriverList(convertToParameters(singleSauce));
+    private static void createSingleSauceTarget() {
+        createSingleTarget(convertToParameters(CONFIGURED_SINGLE_SAUCE));
     }
 
 
@@ -69,7 +58,7 @@ public class WebDriverParameterFactory {
      *
      * @return A list of string arrays; each list element is a paired browser/version.
      */
-    private List<String[]> getStandardSauceLabsTargets() {
+    private static void createStandardSauceTargets() {
         List<String[]> result = new ArrayList<String[]>();
         String[] targets = ConfigurationValue.getConfigurationValue(DEFAULT_TARGETS,
                 NO_DEFAULT_SPECIFIED_TARGETS).split(",");
@@ -78,11 +67,11 @@ public class WebDriverParameterFactory {
             result.add(convertToParameters(target));
         }
 
-        return result;
+        TARGETS = result;
     }
 
-    private List<String[]> getSingleDriverList(String... parameters) {
-        return Arrays.asList(new String[][]{parameters});
+    private static void createSingleTarget(String... parameters) {
+        TARGETS = Arrays.asList(new String[][]{parameters});
     }
 
     /**
@@ -92,7 +81,7 @@ public class WebDriverParameterFactory {
      * @param target a browser:version string (iexplore:8, for example)
      * @return target split into separate strings for browser and version.
      */
-    private String[] convertToParameters(String target) {
+    private static String[] convertToParameters(String target) {
         String[] items = target.split(":");
         if (items.length != 2) {
             throw new IllegalArgumentException("Target " + target + " should have one colon in browser:version format." );

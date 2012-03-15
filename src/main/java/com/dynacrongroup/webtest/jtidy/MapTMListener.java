@@ -64,18 +64,22 @@ public class MapTMListener extends AbstractTMListener {
                     new TreeMap<TidyMessage.Level, List<TidyMessage>>(messages);
 
             //Error Header
-            String description = format("JTidy has reported messages with level [%s] or greater\n", threshold);
+            StringBuilder descriptionBuilder = new StringBuilder(
+                    format("JTidy has reported messages with level [%s] or greater\n", threshold));
+
             for(TidyMessage.Level currentLevel : sortedMessages.descendingKeySet()) {
 
                 //Error Subheader: level
-                description += (format("\n%s %s messages:\n", sortedMessages.get(currentLevel).size(), currentLevel));
+                descriptionBuilder.append(
+                        format("\n%s %s messages:\n", sortedMessages.get(currentLevel).size(), currentLevel));
+
                 for (TidyMessage tidyMessage : sortedMessages.get(currentLevel)) {
 
                     //Error Entry
-                    description += (format("  %s\n", formatTidyMessage(tidyMessage)));
+                    descriptionBuilder.append(format("  %s\n", formatTidyMessage(tidyMessage)));
                 }
             }
-            throw new AssertionError(description);
+            throw new AssertionError(descriptionBuilder.toString());
         }
     }
 

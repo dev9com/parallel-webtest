@@ -148,8 +148,8 @@ public class WebDriverLauncher {
 
     private DesiredCapabilities mergeDefaultAndCustomCapabilities(DesiredCapabilities capabilities, Map<String, Object> customCapabilities) {
         if (customCapabilities != null) {
-            for (String customCapability : customCapabilities.keySet()) {
-                capabilities.setCapability(customCapability, customCapabilities.get(customCapability));
+            for (Map.Entry<String, Object> customCapability : customCapabilities.entrySet()) {
+                capabilities.setCapability(customCapability.getKey(), customCapability.getValue());
             }
         }
         return capabilities;

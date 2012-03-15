@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest.util;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,21 +34,27 @@ public final class ConnectionValidator {
     public static boolean verifyConnection(String path, boolean silent) {
         Boolean success = false;
 
+        InputStreamReader isr = null;
+        BufferedReader contents = null;
+
         try {
             URL url = new URL(path);
-            BufferedReader contents;
 
-            InputStreamReader isr = new InputStreamReader(url.openStream());
+            isr = new InputStreamReader(url.openStream());
 
             contents = new BufferedReader(isr);
 
             String readLine = contents.readLine();
-            success =  !readLine.isEmpty();
+            success =  (readLine != null && !readLine.isEmpty());
 
         } catch (Exception ex) {
             if (!silent) {
                 LOG.error("Unable to connect to " + path, ex);
             }
+        }
+        finally {
+            IOUtils.closeQuietly(contents);
+            IOUtils.closeQuietly(isr);
         }
         return success;
     }

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * Date: 3/11/12
  * Time: 9:56 AM
  */
-public class RemoteWebDriverManager extends AbstractWebDriverManager implements WebDriverManager {
+public class RemoteWebDriverManager extends AbstractWebDriverManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteWebDriverManager.class);
 

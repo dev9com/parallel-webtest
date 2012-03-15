@@ -94,7 +94,7 @@ public class WebDriverBase {
      */
     @DescriptivelyParameterized.Parameters
     public static List<String[]> configureWebDriverTargets() throws IOException {
-        return new WebDriverParameterFactory().getDriverTargets();
+        return WebDriverParameterFactory.getDriverTargets();
     }
 
     @Before
@@ -194,7 +194,7 @@ public class WebDriverBase {
     /**
      * Sets the local test watcher chain, initializing if necessary.
      */
-    private final void initializeJUnitRules() {
+    private void initializeJUnitRules() {
         localTestWatcherChain = getTestWatcherChain();
         if (localTestWatcherChain == null) {
             localTestWatcherChain = createTestWatcherChain();

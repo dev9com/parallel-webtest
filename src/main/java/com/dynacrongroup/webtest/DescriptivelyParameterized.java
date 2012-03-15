@@ -31,6 +31,8 @@ import java.util.List;
  * To back out the inclusion of this class, you'll need to change the extension for ParallelRunner
  * back to "Parameterized" and change the annotation in WebDriverBase back to "Parameterized".
  */
+
+@SuppressWarnings("all")
 public class DescriptivelyParameterized extends Suite {
     /**
      * Annotation for a method which provides parameters to be injected into the

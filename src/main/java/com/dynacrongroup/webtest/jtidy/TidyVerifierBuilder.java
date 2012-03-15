@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.jtidy;
 
 import com.google.common.io.NullOutputStream;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
@@ -17,7 +18,7 @@ import java.util.TreeMap;
  * Used to construct a TidyVerifier by building an instance of Tidy and an instance of a TidyMessageListener.
  * A property file can be used to configure most of the build process; if configuration is presented here instead,
  * it will override the property file.
- *
+ * <p/>
  * This class is currently experimental.
  */
 public class TidyVerifierBuilder {
@@ -39,10 +40,11 @@ public class TidyVerifierBuilder {
 
     /**
      * Sets the minimum TidyMessage.Level that should generate an exception.
+     *
      * @param threshold
      * @return
      */
-    public TidyVerifierBuilder setThreshold( TidyMessage.Level threshold) {
+    public TidyVerifierBuilder setThreshold(TidyMessage.Level threshold) {
         this.threshold = threshold;
         return this;
     }
@@ -51,6 +53,7 @@ public class TidyVerifierBuilder {
      * Sets the name of the property file (located in /src/test/resources/) that
      * should be used to configure JTidy.  Used to override the default value:
      * "jtidy.properties".
+     *
      * @param propertyFileName
      * @return
      */
@@ -61,6 +64,7 @@ public class TidyVerifierBuilder {
 
     /**
      * Sets the MessageListener to be used by JTidy to track errors
+     *
      * @param messageListener
      * @return
      */
@@ -71,6 +75,7 @@ public class TidyVerifierBuilder {
 
     /**
      * Sets the list of codes that are to be ignored.
+     *
      * @param codes
      * @return
      */
@@ -81,6 +86,7 @@ public class TidyVerifierBuilder {
 
     /**
      * Sets whether codes should be displayed by the listener.
+     *
      * @param display False if codes should not be displayed in output
      * @return
      */
@@ -92,6 +98,7 @@ public class TidyVerifierBuilder {
     /**
      * Builds the TidyVerifier, which wraps calls to verify that a given piece of html
      * is valid through JTidy.
+     *
      * @return
      */
     public TidyVerifier build() {
@@ -104,6 +111,7 @@ public class TidyVerifierBuilder {
      * Called by TidyVerifier during construction; configures and returns the MessageListener.  This
      * has the final configuration of the listener; properties are set and then overridden if
      * specified during the build process.
+     *
      * @return
      */
     protected AbstractTMListener getListener() {
@@ -124,6 +132,7 @@ public class TidyVerifierBuilder {
 
     /**
      * Called by TidyVerifier during construction; configures and returns a Tidy instance
+     *
      * @return
      */
     protected Tidy getTidy() {
@@ -137,16 +146,18 @@ public class TidyVerifierBuilder {
 
     private Properties getProperties() {
         Properties newProperties = new Properties();
+        InputStream stream = null;
         try {
-            InputStream stream = this.getClass().getResourceAsStream(propertyFileName);
+            stream = this.getClass().getResourceAsStream(propertyFileName);
             if (stream != null) {
                 newProperties.load(stream);
-            }
-            else {
+            } else {
                 LOG.info("Property file [{}] not found.  Using default settings.", propertyFileName);
             }
         } catch (IOException e) {
             LOG.warn("Unable to load property file [{}], using default settings.", propertyFileName);
+        } finally {
+            IOUtils.closeQuietly(stream);
         }
         return newProperties;
     }
