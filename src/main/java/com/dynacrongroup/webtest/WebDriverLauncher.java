@@ -107,7 +107,7 @@ public class WebDriverLauncher {
                 buildDriverWithCapabilities(jobName, target);
                 verifyDriverIsValid(driver);
             }
-            catch (Exception e) {
+            catch (WebDriverException e) {
                 log.error("Unable to launch RemoteWebDriver: {}", e.getMessage());
                 driver = null;
             }

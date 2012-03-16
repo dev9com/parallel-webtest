@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
@@ -46,16 +47,18 @@ public final class ConnectionValidator {
 
             String readLine = contents.readLine();
             success =  (readLine != null && !readLine.isEmpty());
-
-        } catch (Exception ex) {
-            if (!silent) {
-                LOG.error("Unable to connect to " + path, ex);
-            }
-        }
-        finally {
+        } catch (IOException ex) {
+            logError(path, ex, silent);
+        } finally {
             IOUtils.closeQuietly(contents);
             IOUtils.closeQuietly(isr);
         }
         return success;
+    }
+
+    private static void logError(String path, IOException exception, boolean silent) {
+        if (!silent) {
+            LOG.error("Unable to connect to " + path, exception);
+        }
     }
 }

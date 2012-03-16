@@ -9,7 +9,11 @@ import java.util.List;
 /**
  * This class figures out which WebDriver(s) to set up.
  */
-public class WebDriverParameterFactory {
+public final class WebDriverParameterFactory {
+
+    private WebDriverParameterFactory() {
+        throw new IllegalAccessError("utility class should not be constructed");
+    }
 
     public static final String WEBDRIVER_DRIVER = "WEBDRIVER_DRIVER";
     public static final String SINGLE_SAUCE = "SINGLE_SAUCE";
@@ -17,23 +21,24 @@ public class WebDriverParameterFactory {
     public static final String BY_CLASS = "byclass";
     public static final String NO_DEFAULT_SPECIFIED_TARGETS = "firefox:5,iexplore:7,iexplore:8,iexplore:9,chrome:*";
 
-    public static List<String[]> TARGETS;
-
     private static final String CONFIGURED_CLASS_DRIVER = ConfigurationValue.getConfigurationValue(
             WEBDRIVER_DRIVER, null);
 
     private static final String CONFIGURED_SINGLE_SAUCE = ConfigurationValue.getConfigurationValue(
             SINGLE_SAUCE, null);
 
+    private static List<String[]> driverTargets;
+
+
     public static List<String[]> getDriverTargets() {
 
-        if (TARGETS == null) {
+        if (driverTargets == null) {
             createDriverTargets();
         }
-        return TARGETS;
+        return driverTargets;
     }
 
-    private static final void createDriverTargets() {
+    private static void createDriverTargets() {
         if (CONFIGURED_CLASS_DRIVER != null) {
             createClassDriverTarget();
         } else if (CONFIGURED_SINGLE_SAUCE != null) {
@@ -67,11 +72,11 @@ public class WebDriverParameterFactory {
             result.add(convertToParameters(target));
         }
 
-        TARGETS = result;
+        driverTargets = result;
     }
 
     private static void createSingleTarget(String... parameters) {
-        TARGETS = Arrays.asList(new String[][]{parameters});
+        driverTargets = Arrays.asList(new String[][]{parameters});
     }
 
     /**
