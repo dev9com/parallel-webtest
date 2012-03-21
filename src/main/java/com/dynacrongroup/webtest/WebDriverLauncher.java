@@ -11,6 +11,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.UUID;
 
@@ -58,17 +59,24 @@ public class WebDriverLauncher {
      */
     public WebDriver getClassLoadedDriver(TargetWebBrowser targetWebBrowser) {
         log.trace("Initializing WebDriver by specified class: {}", targetWebBrowser.humanReadable());
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(targetWebBrowser.getCustomCapabilities());
+
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        if (targetWebBrowser.getCustomCapabilities() != null) {
+            desiredCapabilities = new DesiredCapabilities(targetWebBrowser.getCustomCapabilities());
+        }
+
         try {
-            driver = (WebDriver) Class.forName(targetWebBrowser.getBrowser())
-                    .getDeclaredConstructor(Capabilities.class)
-                    .newInstance(desiredCapabilities);
+            Class browserClass = Class.forName(targetWebBrowser.getBrowser());
+            Constructor constructorWithCapabilities = browserClass.getDeclaredConstructor(Capabilities.class);
+            driver = (WebDriver) constructorWithCapabilities.newInstance(desiredCapabilities);
         } catch (Exception e) {
-            if (e.getMessage().contains("Unable to bind to locking port")) {
+            log.error("Exception while loading class-loaded driver", e);
+            if (e.getMessage() != null && e.getMessage().contains("Unable to bind to locking port")) {
                 log.error("Locking port error may be caused by ephemeral port exhaustion.  Try reducing the number of threads.");
             }
             throw new WebDriverException("Unable to load target WebDriver class: " + targetWebBrowser.getBrowser(), e);
         }
+
         verifyDriverNotNull(driver);
         return driver;
     }
