@@ -2,10 +2,12 @@ package com.dynacrongroup.webtest;
 
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import com.dynacrongroup.webtest.browser.TargetWebBrowserFactory;
+import com.dynacrongroup.webtest.driver.WebDriverWrapper;
+import com.dynacrongroup.webtest.rule.ClassFinishDriverCloser;
+import com.dynacrongroup.webtest.rule.CrashedBrowserChecker;
 import com.dynacrongroup.webtest.rule.MethodTimer;
 import com.dynacrongroup.webtest.rule.SauceLabsFinalStatusReporter;
 import com.dynacrongroup.webtest.rule.SauceLabsLogger;
-import com.dynacrongroup.webtest.rule.WebDriverManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.dynacrongroup.webtest.WebDriverUtilities.createJobName;
 import static com.dynacrongroup.webtest.WebDriverUtilities.reduceToOneWindow;
 
 /**
@@ -53,11 +56,7 @@ public class WebDriverBase {
      */
     private static ThreadLocal<TestRule> testWatcherChain = new ThreadLocal<TestRule>();
 
-    /**
-     * Stores the driver manager for this class in the correct order of operation.
-     */
-    private static ThreadLocal<WebDriverManager> webDriverManager =
-            new ThreadLocal<WebDriverManager>();
+    private static ThreadLocal<WebDriverWrapper> threadLocalWebDriverWrapper = new ThreadLocal<WebDriverWrapper>();
 
     /**
      * The logger associated with this specific browser test execution
@@ -83,10 +82,12 @@ public class WebDriverBase {
     public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
         this.targetWebBrowser = TargetWebBrowserFactory.getTargetWebBrowser(browser, version, customCapabilities);
         this.browserTestLog = createTestLogger();
+
         initializeJUnitRules();
     }
 
-    /**`
+    /**
+     * `
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
      *
@@ -99,7 +100,7 @@ public class WebDriverBase {
 
     @Before
     public void loadDriverFromProvider() {
-        driver = getDriverManager().getDriver();
+        driver = getDriver();
     }
 
     @After
@@ -120,14 +121,14 @@ public class WebDriverBase {
      * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
      */
     public final String getJobURL() {
-        return getDriverManager().getJobURL();
+        return WebDriverUtilities.getJobUrl(targetWebBrowser, driver);
     }
 
     /**
      * Returns the SauceLabs job id (if there is one).
      */
     public final String getJobId() {
-        return getDriverManager().getJobId();
+        return WebDriverUtilities.getJobId(driver);
     }
 
     /**
@@ -156,8 +157,7 @@ public class WebDriverBase {
      * the name of the class.
      */
     public String getJobName() {
-        return SystemName.getSystemName() + "-"
-                + this.getClass().getSimpleName();
+        return createJobName(this.getClass());
     }
 
     private Logger createTestLogger() {
@@ -167,9 +167,11 @@ public class WebDriverBase {
         return LoggerFactory.getLogger(logName);
     }
 
-    /***************************************
+    /**
+     * ************************************
      * static ThreadLocal Accessors
-     ***************************************/
+     * *************************************
+     */
 
     private void setTestWatcherChain(TestRule rule) {
         testWatcherChain.set(rule);
@@ -179,12 +181,30 @@ public class WebDriverBase {
         return testWatcherChain.get();
     }
 
-    private void setDriverManager(WebDriverManager driverManager) {
-        WebDriverBase.webDriverManager.set(driverManager);
+    private WebDriver getDriver() {
+        return getDriverWrapper().getDriver();
     }
 
-    private WebDriverManager getDriverManager() {
-        return webDriverManager.get();
+    private WebDriverWrapper getDriverWrapper() {
+        WebDriverWrapper wrapper;
+
+        if (WebDriverSuite.inSuiteRun()) {
+            wrapper = WebDriverSuite.getDriverWrapper(targetWebBrowser);
+        }
+        else {
+            wrapper = getTestClassDriverWrapper(); threadLocalWebDriverWrapper.get();
+        }
+
+        return wrapper;
+    }
+
+    private WebDriverWrapper getTestClassDriverWrapper() {
+        WebDriverWrapper wrapper = threadLocalWebDriverWrapper.get();
+        if (wrapper == null) {
+            wrapper = new WebDriverWrapper(getJobName(), targetWebBrowser);
+            threadLocalWebDriverWrapper.set(wrapper);
+        }
+        return wrapper;
     }
 
     /***************************************
@@ -204,6 +224,7 @@ public class WebDriverBase {
 
     /**
      * Creates the rule chain that will be used for all tests
+     *
      * @return
      */
     private TestRule createTestWatcherChain() {
@@ -218,28 +239,20 @@ public class WebDriverBase {
 
     /**
      * Creates the standard rule chain, which only tracks the driver and times test methods.
+     *
      * @return
      */
     private RuleChain createStandardRuleChain() {
 
-        //WebDriverManager is created first and executed last, so that driver is available first and removed last.
-        WebDriverManager manager = createDriverManager();
-        MethodTimer methodTimer = new MethodTimer();
+        RuleChain ruleChain = RuleChain.outerRule(new MethodTimer())
+                .around(new CrashedBrowserChecker(getDriverWrapper()));   //After all methods are run, check if the browser has crashed.
 
-        return RuleChain.outerRule(manager)   //Outer rule is executed last.
-                .around(methodTimer);
-    }
+        if (!WebDriverSuite.inSuiteRun()) {
+            getLogger().info("Attaching ClassFinishDriverCloser");
+            ruleChain = ruleChain.around(new ClassFinishDriverCloser(getDriverWrapper()));    //In suite runs, driver lifecycle is managed using suite rule.
+        }
 
-    /**
-     * Creates the driver manager with a new WebDriver driver.
-     * @return A WebDriverManager, which provides the manager to the tests and handles cleanup
-     *              after the tests have completed.
-     */
-    private WebDriverManager createDriverManager() {
-        WebDriverManagerFactory managerFactory = new WebDriverManagerFactory(getLogger());
-        WebDriverManager manager = managerFactory.getManager(getJobName(), targetWebBrowser);
-        setDriverManager(manager);
-        return  manager;
+        return ruleChain;
     }
 
     /**
@@ -251,9 +264,10 @@ public class WebDriverBase {
         String sauceUser = SauceLabsCredentials.getUser();
         String sauceKey = SauceLabsCredentials.getKey();
 
-        SauceLabsFinalStatusReporter sauceLabsFinalStatusReporter = new SauceLabsFinalStatusReporter(getJobId(), sauceUser, sauceKey);
+        SauceLabsFinalStatusReporter sauceLabsFinalStatusReporter =
+                new SauceLabsFinalStatusReporter(getJobId(), sauceUser, sauceKey);
         SauceLabsLogger sauceLabsLogger =
-                new SauceLabsLogger(getDriverManager().getDriver());
+                new SauceLabsLogger(getDriverWrapper());
 
         return chain
                 .around(sauceLabsFinalStatusReporter)

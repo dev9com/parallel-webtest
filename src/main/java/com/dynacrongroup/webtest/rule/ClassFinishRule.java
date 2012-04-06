@@ -31,6 +31,8 @@ public class ClassFinishRule extends TestWatcher {
      */
     @Override
     protected void finished(Description description) {
+        LOG.info("finished {}", this.getClass());
+
         if (methodsRemaining == null) {
             methodsRemaining = countTestMethods(description.getTestClass());
         }
@@ -40,6 +42,7 @@ public class ClassFinishRule extends TestWatcher {
         // Test class is complete.  Check less than, since it's possible that there were no methods to start with.
         if (methodsRemaining <= 0) {
             LOG.trace("Class {} has no methods remaining", description.getTestClass().getSimpleName());
+            LOG.info("this class {} done.", this.getClass());
             classFinished(description);
         }
     }

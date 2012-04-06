@@ -1,8 +1,10 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -163,6 +165,28 @@ public final class WebDriverUtilities {
             }
             driver.switchTo().window(firstHandle);
         }
+    }
+
+    public static String createJobName(Class testClass) {
+        return SystemName.getSystemName() + "-" + testClass.getSimpleName();
+    }
+
+    public static String getJobId(WebDriver driver) {
+        String jobId = null;
+        if (RemoteWebDriver.class.isAssignableFrom(driver.getClass())) {
+            jobId = ((RemoteWebDriver) driver).getSessionId().toString();
+        }
+        return jobId;
+    }
+
+    public static String getJobUrl(TargetWebBrowser target, WebDriver driver) {
+        String url = null;
+
+        if (target.isRemote()) {
+            url = String.format("https://saucelabs.com/jobs/%s", getJobId(driver));
+        }
+
+        return url;
     }
 
 }

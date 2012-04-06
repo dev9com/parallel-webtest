@@ -1,25 +1,23 @@
 package com.dynacrongroup.webtest.rule;
 
+import com.dynacrongroup.webtest.driver.WebDriverWrapper;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 
 /**
  * This TestWatcher reports on test progress in Sauce Labs using the JavascriptExecutor.
- *
+ * <p/>
  * User: yurodivuie
  * Date: 3/9/12
  * Time: 8:52 AM
- *
- *
  */
 public class SauceLabsLogger extends TestWatcher {
 
-    private WebDriver driver;
+    WebDriverWrapper wrapper;
 
-    public SauceLabsLogger(WebDriver driver) {
-        this.driver = driver;
+    public SauceLabsLogger(WebDriverWrapper wrapper) {
+        this.wrapper = wrapper;
     }
 
     @Override
@@ -39,10 +37,11 @@ public class SauceLabsLogger extends TestWatcher {
 
     /**
      * Sends a message to Sauce Labs that will be visible in the logs.
+     *
      * @param message
      */
     void sendContextMessage(String message) {
-        ((JavascriptExecutor) driver).executeScript("sauce:context=// " + message);
+        ((JavascriptExecutor) wrapper.getDriver()).executeScript("sauce:context=// " + message);
     }
 
 }

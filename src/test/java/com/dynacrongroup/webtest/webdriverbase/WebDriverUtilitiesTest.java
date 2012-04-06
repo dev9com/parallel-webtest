@@ -94,7 +94,6 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
         getLogger().info("Starting test [{}]", name.getMethodName());
         String testUrl = "http://www.google.com/";
 
-        getLogger().info("Starting test [{}]", name.getMethodName());
         ((JavascriptExecutor)driver).executeScript("window.open(\"" + testUrl + "\")");
         assertThat(driver.getWindowHandles().size(), equalTo(2));
         WebDriverUtilities.switchToNewPopUp(driver);

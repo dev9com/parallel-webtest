@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -33,13 +34,12 @@ public class WebDriverLauncher {
      */
     protected static final String uniqueId = String.valueOf(UUID.randomUUID());
 
-    private Logger log = null;
+    private Logger LOG = LoggerFactory.getLogger(WebDriverLauncher.class);
 
     private WebDriver driver = null;
 
 
-    public WebDriverLauncher(Logger log) {
-        this.log = log;
+    public WebDriverLauncher() {
     }
 
     /**
@@ -58,7 +58,7 @@ public class WebDriverLauncher {
      * @return
      */
     public WebDriver getClassLoadedDriver(TargetWebBrowser targetWebBrowser) {
-        log.trace("Initializing WebDriver by specified class: {}", targetWebBrowser.humanReadable());
+        LOG.trace("Initializing WebDriver by specified class: {}", targetWebBrowser.humanReadable());
 
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (targetWebBrowser.getCustomCapabilities() != null) {
@@ -70,9 +70,9 @@ public class WebDriverLauncher {
             Constructor constructorWithCapabilities = browserClass.getDeclaredConstructor(Capabilities.class);
             driver = (WebDriver) constructorWithCapabilities.newInstance(desiredCapabilities);
         } catch (Exception e) {
-            log.error("Exception while loading class-loaded driver", e);
+            LOG.error("Exception while loading class-loaded driver", e);
             if (e.getMessage() != null && e.getMessage().contains("Unable to bind to locking port")) {
-                log.error("Locking port error may be caused by ephemeral port exhaustion.  Try reducing the number of threads.");
+                LOG.error("Locking port error may be caused by ephemeral port exhaustion.  Try reducing the number of threads.");
             }
             throw new WebDriverException("Unable to load target WebDriver class: " + targetWebBrowser.getBrowser(), e);
         }
@@ -110,13 +110,13 @@ public class WebDriverLauncher {
 
     private void getRemoteDriverFromSauceLabs(String jobName, TargetWebBrowser target) {
         for (int attempt = 1; attempt <= MAX_RETRIES && driver == null; attempt++) {
-            log.trace("RemoteWebDriver provisioning attempt {} for job {}", attempt, jobName);
+            LOG.trace("RemoteWebDriver provisioning attempt {} for job {}", attempt, jobName);
             try {
                 buildDriverWithCapabilities(jobName, target);
                 verifyDriverIsValid(driver);
             }
             catch (WebDriverException e) {
-                log.error("Unable to launch RemoteWebDriver: {}", e.getMessage());
+                LOG.error("Unable to launch RemoteWebDriver: {}", e.getMessage());
                 driver = null;
             }
         }
@@ -164,9 +164,7 @@ public class WebDriverLauncher {
     }
 
     private void verifyDriverIsValid(WebDriver driver) throws WebDriverException {
-        if (driver.getWindowHandle() != null) {
-            log.debug("Successfully launched RemoteWebDriver");
-        } else {
+        if (driver.getWindowHandle() == null ) {
             throw new WebDriverException("driver.getWindowHandle() returned null.");
         }
     }
