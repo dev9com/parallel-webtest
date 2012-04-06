@@ -77,19 +77,12 @@
         <url>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</url>
     </scm>
 
+    <!-- needed for sauce-rest -->
     <repositories>
-        <!-- needed for sauce-rest -->
         <repository>
             <id>dynacrongroup-repository</id>
             <url>https://repository-dynacrongroup.forge.cloudbees.com/release</url>
         </repository>
-
-        <!-- needed for cpsuite-->
-        <repository>
-            <id>http://maven.xwiki.org</id>
-            <url>http://maven.xwiki.org/externals</url>
-        </repository>
-
     </repositories>
 
 
@@ -139,13 +132,6 @@
             <groupId>net.sf.jtidy</groupId>
             <artifactId>jtidy</artifactId>
             <version>r938</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>cpsuite</groupId>
-            <artifactId>cpsuite</artifactId>
-            <version>1.2.5</version>
         </dependency>
 
         <!-- provides SauceREST -->
@@ -219,6 +205,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
 
     </dependencies>
     <build>
@@ -363,22 +350,6 @@
                             <systemPropertyVariables>
                                 <WEBDRIVER_DRIVER>null</WEBDRIVER_DRIVER>
                             </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>suite-driven</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <includes>
-                                <include>**/SampleSingleBrowserSuite.java</include>
-                            </includes>
                         </configuration>
                     </plugin>
                 </plugins>
