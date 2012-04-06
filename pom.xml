@@ -369,6 +369,25 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>suite-driven</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <parallel></parallel>
+                            <threadCount>1</threadCount>
+                            <perCoreThreadCount>false</perCoreThreadCount>
+                            <includes>
+                                <include>**/SampleSingleBrowserSuite</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
     <ciManagement>
         <system>CloudBees</system>
