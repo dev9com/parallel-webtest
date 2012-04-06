@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Test was added to verify that using native mouse events would not crash the
@@ -32,6 +33,8 @@ public class MouseOverTest extends WebDriverBase {
 
 	@Test
 	public void nativeEventTest() throws Exception {
+
+        assumeTrue(!getTargetWebBrowser().isHtmlUnit());
 
         driver.get(new Path("www.google.com", 80)._(""));
 		WebElement search = driver.findElement(By.name("q"));

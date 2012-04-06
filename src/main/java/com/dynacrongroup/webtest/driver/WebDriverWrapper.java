@@ -62,7 +62,7 @@ public class WebDriverWrapper {
     }
 
     public void killDriver() {
-        LOG.debug("Killing driver for {}:{}.");
+        LOG.debug("Killing driver for {}:{}.", jobName, targetWebBrowser.humanReadable());
         driver.quit();
         driver = null;
     }
