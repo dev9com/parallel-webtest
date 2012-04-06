@@ -377,11 +377,11 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <parallel></parallel>
+                            <parallel>false</parallel>
                             <threadCount>1</threadCount>
                             <perCoreThreadCount>false</perCoreThreadCount>
                             <includes>
-                                <include>SampleSingleBrowserSuite.java</include>
+                                <include>**/SampleSingleBrowserSuite.java</include>
                             </includes>
                         </configuration>
                     </plugin>
