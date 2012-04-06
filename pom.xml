@@ -381,7 +381,7 @@
                             <threadCount>1</threadCount>
                             <perCoreThreadCount>false</perCoreThreadCount>
                             <includes>
-                                <include>**/SampleSingleBrowserSuite</include>
+                                <include>SampleSingleBrowserSuite.java</include>
                             </includes>
                         </configuration>
                     </plugin>
