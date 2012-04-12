@@ -63,18 +63,18 @@ public abstract class AbstractTMListener implements TidyMessageListener {
     }
 
     public void setProperties(PropertiesConfiguration properties) {
-        setIgnoredCodes(getIgnoredCodesFromProps(properties));
-        setIgnoredMessages(getIgnoredMessagesFromProps(properties));
+        addIgnoredCodes(getIgnoredCodesFromProps(properties));
+        addIgnoredMessages(getIgnoredMessagesFromProps(properties));
         setDisplayErrorCodes(getErrorCodeDisplayFromProps(properties));
         setThreshold(getThresholdLevelFromProps(properties));
     }
 
-    public void setIgnoredCodes(List<Integer> codes) {
-        this.ignoredCodes = codes;
+    public void addIgnoredCodes(List<Integer> codes) {
+        this.ignoredCodes.addAll(codes);
     }
 
-    public void setIgnoredMessages(List<String> ignoredMessages) {
-        this.ignoredMessages = ignoredMessages;
+    public void addIgnoredMessages(List<String> ignoredMessages) {
+        this.ignoredMessages.addAll(ignoredMessages);
     }
 
     public void setDisplayErrorCodes(Boolean display) {
@@ -118,12 +118,11 @@ public abstract class AbstractTMListener implements TidyMessageListener {
             }
         }
 
-        return (codes.isEmpty()) ? ignoredCodes : codes;
+        return ignoredCodes;
     }
 
     private List<String> getIgnoredMessagesFromProps(PropertiesConfiguration properties) {
-        List<String> messages = properties.getList(IGNORED_MESSAGES_PROP, new ArrayList<String>());
-        return (messages.isEmpty()) ? ignoredMessages : messages;
+        return properties.getList(IGNORED_MESSAGES_PROP, new ArrayList<String>());
     }
 
     private Boolean getErrorCodeDisplayFromProps(PropertiesConfiguration properties) {

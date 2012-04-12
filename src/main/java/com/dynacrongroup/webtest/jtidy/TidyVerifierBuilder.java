@@ -93,7 +93,7 @@ public class TidyVerifierBuilder {
      * @param messages
      * @return
      */
-    public TidyVerifierBuilder setIgnoredMessages(List<String> messages) {
+    public TidyVerifierBuilder ignoredMessages(List<String> messages) {
         this.ignoredMessages = messages;
         return this;
     }
@@ -136,10 +136,10 @@ public class TidyVerifierBuilder {
             this.listener.setThreshold(threshold);
         }
         if (ignoredCodes != null) {
-            this.listener.setIgnoredCodes(ignoredCodes);
+            this.listener.addIgnoredCodes(ignoredCodes);
         }
         if (ignoredMessages != null) {
-            this.listener.setIgnoredMessages(ignoredMessages);
+            this.listener.addIgnoredMessages(ignoredMessages);
         }
         if (displayErrorCodes != null) {
             this.listener.setDisplayErrorCodes(displayErrorCodes);
