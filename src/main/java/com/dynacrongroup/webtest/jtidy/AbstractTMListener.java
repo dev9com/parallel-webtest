@@ -1,6 +1,9 @@
 package com.dynacrongroup.webtest.jtidy;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.TidyMessageListener;
 
@@ -22,6 +25,8 @@ public abstract class AbstractTMListener implements TidyMessageListener {
 
     TidyMessage.Level threshold;
     Boolean displayErrorCodes = this.DEFAULT_ERROR_CODE_DISPLAY;
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractTMListener.class);
 
     AbstractTMListener(TidyMessage.Level level) {
         threshold = level;
@@ -70,10 +75,12 @@ public abstract class AbstractTMListener implements TidyMessageListener {
     }
 
     public void addIgnoredCodes(List<Integer> codes) {
+        LOG.info("Adding ignored codes: {}", ArrayUtils.toString(codes));
         this.ignoredCodes.addAll(codes);
     }
 
     public void addIgnoredMessages(List<String> ignoredMessages) {
+        LOG.info("Adding ignored messages: {}", ArrayUtils.toString(ignoredMessages));
         this.ignoredMessages.addAll(ignoredMessages);
     }
 
@@ -118,7 +125,7 @@ public abstract class AbstractTMListener implements TidyMessageListener {
             }
         }
 
-        return ignoredCodes;
+        return codes;
     }
 
     private List<String> getIgnoredMessagesFromProps(PropertiesConfiguration properties) {

@@ -33,7 +33,7 @@ public class TidyVerifierBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(TidyVerifierBuilder.class);
 
     private TidyMessage.Level threshold = null;
-    private String propertyFileName = this.DEFAULT_PROP_FILE;
+    private String propertyFileName = DEFAULT_PROP_FILE;
     private AbstractTMListener listener = new MapTMListener(new TreeMap<TidyMessage.Level, List<TidyMessage>>());
     private Tidy tidy = new Tidy();
     private PropertiesConfiguration properties = null;
@@ -133,16 +133,16 @@ public class TidyVerifierBuilder {
             listener.setProperties(properties);
         }
         if (threshold != null) {
-            this.listener.setThreshold(threshold);
+            listener.setThreshold(threshold);
         }
         if (ignoredCodes != null) {
-            this.listener.addIgnoredCodes(ignoredCodes);
+            listener.addIgnoredCodes(ignoredCodes);
         }
         if (ignoredMessages != null) {
-            this.listener.addIgnoredMessages(ignoredMessages);
+            listener.addIgnoredMessages(ignoredMessages);
         }
         if (displayErrorCodes != null) {
-            this.listener.setDisplayErrorCodes(displayErrorCodes);
+            listener.setDisplayErrorCodes(displayErrorCodes);
         }
         return this.listener;
     }
