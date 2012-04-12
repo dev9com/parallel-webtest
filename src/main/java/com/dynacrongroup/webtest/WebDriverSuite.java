@@ -1,13 +1,12 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.annotation.Experimental;
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import com.dynacrongroup.webtest.driver.WebDriverWrapper;
 import com.dynacrongroup.webtest.rule.SuiteFinishDriverCloser;
 import com.dynacrongroup.webtest.util.ConfigurationValue;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.extensions.cpsuite.ClasspathSuite;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,8 @@ import java.util.Date;
  * Time: 4:54 PM
  */
 
-@RunWith(ClasspathSuite.class)
+// TODO: Figure out how to parallelize this.
+@Experimental
 public class WebDriverSuite {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebDriverSuite.class);

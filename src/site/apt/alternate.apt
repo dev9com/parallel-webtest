@@ -9,7 +9,9 @@
 Overview
 
  parallel_webtest was originally designed to parallelize tests sent to Sauce
- Labs, but it can be used to send tests to any Selenium server.
+ Labs, but it can be used to send tests to any Selenium server or to run a
+ single browser in serial for an entire test suite.  The driver can also be
+ modified using Desired Capabilities.
 
 * Running tests against an alternate remote server
 
@@ -29,6 +31,15 @@ Overview
  The library was designed for use with Sauce Labs, so the logging displayed
  may still contain references to Sauce Labs.  In addition, the "getJobUrl"
  function of WebDriverBase will return an invalid value.
+
+* Running tests using a single browser per suite.
+
+ Tests can be driven in serial using a single browser per suite.  This method
+ is not intended for use with multiple browsers simultaneously, but can be useful
+ for running acceptance tests against a single reference browser locally or
+ in Sauce Labs.  See com.dynacrongroup.webtest.webdriverbase.SampleSingleBrowserSuite
+ for an example of a suite exercising this capability.  Suites should extend
+ WebDriverSuite.
 
 * Adding/modifying desired capabilities.
 

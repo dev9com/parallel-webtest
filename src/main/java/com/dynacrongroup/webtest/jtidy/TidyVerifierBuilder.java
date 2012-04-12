@@ -1,15 +1,17 @@
 package com.dynacrongroup.webtest.jtidy;
 
 import com.google.common.io.NullOutputStream;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
 import org.w3c.tidy.TidyMessage;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -34,8 +36,9 @@ public class TidyVerifierBuilder {
     private String propertyFileName = this.DEFAULT_PROP_FILE;
     private AbstractTMListener listener = new MapTMListener(new TreeMap<TidyMessage.Level, List<TidyMessage>>());
     private Tidy tidy = new Tidy();
-    private Properties properties = null;
+    private PropertiesConfiguration properties = null;
     private List<Integer> ignoredCodes = null;
+    private List<String> ignoredMessages = null;
     private Boolean displayErrorCodes = null;
 
     /**
@@ -85,6 +88,17 @@ public class TidyVerifierBuilder {
     }
 
     /**
+     * Sets the list of messages that are to be ignored.
+     *
+     * @param messages
+     * @return
+     */
+    public TidyVerifierBuilder setIgnoredMessages(List<String> messages) {
+        this.ignoredMessages = messages;
+        return this;
+    }
+
+    /**
      * Sets whether codes should be displayed by the listener.
      *
      * @param display False if codes should not be displayed in output
@@ -103,7 +117,7 @@ public class TidyVerifierBuilder {
      */
     public TidyVerifier build() {
         //Construct properties from file, if any, to be used in constructing the TidyVerifier
-        this.properties = getProperties();
+        getPropertiesConfiguration();
         return new TidyVerifier(this);
     }
 
@@ -124,6 +138,9 @@ public class TidyVerifierBuilder {
         if (ignoredCodes != null) {
             this.listener.setIgnoredCodes(ignoredCodes);
         }
+        if (ignoredMessages != null) {
+            this.listener.setIgnoredMessages(ignoredMessages);
+        }
         if (displayErrorCodes != null) {
             this.listener.setDisplayErrorCodes(displayErrorCodes);
         }
@@ -137,15 +154,16 @@ public class TidyVerifierBuilder {
      */
     protected Tidy getTidy() {
         if (properties != null) {
-            this.tidy.setConfigurationFromProps(properties);
+            this.tidy.setConfigurationFromProps(getJTidyProperties());
         }
         this.tidy.setErrout(new PrintWriter(new NullOutputStream()));
         this.tidy.setMessageListener(listener);
         return this.tidy;
     }
 
-    private Properties getProperties() {
-        Properties newProperties = new Properties();
+    private void getPropertiesConfiguration() {
+        PropertiesConfiguration newProperties = new PropertiesConfiguration();
+        newProperties.setListDelimiter('\t');
         InputStream stream = null;
         try {
             stream = this.getClass().getResourceAsStream(propertyFileName);
@@ -154,11 +172,29 @@ public class TidyVerifierBuilder {
             } else {
                 LOG.info("Property file [{}] not found.  Using default settings.", propertyFileName);
             }
-        } catch (IOException e) {
+        } catch (ConfigurationException e) {
             LOG.warn("Unable to load property file [{}], using default settings.", propertyFileName);
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        return newProperties;
+        properties = newProperties;
+    }
+
+    private Properties getJTidyProperties() {
+        Properties jtidyProperties = new Properties();
+        for ( Iterator iterator = properties.getKeys(); iterator.hasNext();) {
+            String key = (String) iterator.next();
+            if (notACustomKey(key)) {
+                jtidyProperties.put(key, properties.getString(key));
+            }
+        }
+        return jtidyProperties;
+    }
+
+    private boolean notACustomKey(String key) {
+        return !(AbstractTMListener.DISPLAY_CODES_PROP.equals(key) ||
+                AbstractTMListener.IGNORED_CODES_PROP.equals(key) ||
+                AbstractTMListener.IGNORED_MESSAGES_PROP.equals(key) ||
+                AbstractTMListener.THRESHOLD_LEVEL_PROP.equals(key));
     }
 }

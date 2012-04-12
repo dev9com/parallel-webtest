@@ -22,17 +22,17 @@ public class SauceLabsLogger extends TestWatcher {
 
     @Override
     protected void starting(Description description) {
-        sendContextMessage(description.getMethodName() + " started.");
+        sendContextMessage(getTestName(description) + " started.");
     }
 
     @Override
     protected void failed(Throwable e, Description description) {
-        sendContextMessage(description.getMethodName() + " failed. " + e.getMessage());
+        sendContextMessage(getTestName(description) + " failed. " + e.getMessage());
     }
 
     @Override
     protected void succeeded(Description description) {
-        sendContextMessage(description.getMethodName() + " passed.");
+        sendContextMessage(getTestName(description) + " passed.");
     }
 
     /**
@@ -42,6 +42,10 @@ public class SauceLabsLogger extends TestWatcher {
      */
     void sendContextMessage(String message) {
         ((JavascriptExecutor) wrapper.getDriver()).executeScript("sauce:context=// " + message);
+    }
+
+    String getTestName(Description description) {
+        return description.getClassName() + "." + description.getMethodName();
     }
 
 }

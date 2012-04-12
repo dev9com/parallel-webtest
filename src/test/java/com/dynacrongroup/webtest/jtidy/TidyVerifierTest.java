@@ -65,5 +65,39 @@ public class TidyVerifierTest {
         tidyVerifier.verifyHtml(testHtml);
     }
 
+    @Test
+    public void verifyIgnoredMessageIsIgnored() throws Throwable {
+        String testHtml = "<!DOCTYPE html>" +
+                "<head>" +
+                "<title>title</title>" +
+                "</head>" +
+                "<body>" +
+                "<a href=/somewhere tabindex=-1>link</a>" +
+                "</body>" +
+                "</html>";
+
+        TidyVerifier tidyVerifier = new TidyVerifierBuilder().setThreshold(TidyMessage.Level.WARNING).build();
+        tidyVerifier.verifyHtml(testHtml);
+    }
+
+    @Test
+    public void verifyNotIgnoredMessageIsNotIgnored() throws Throwable {
+        String testHtml = "<!DOCTYPE html>" +
+                "<head>" +
+                "<title>title</title>" +
+                "</head>" +
+                "<body>" +
+                "<a href=/somewhere tabindex=-2>link</a>" +
+                "</body>" +
+                "</html>";
+
+        thrown.expect(AssertionError.class);
+        thrown.expectMessage(startsWith("JTidy has reported messages with level [WARNING] or greater"));
+        thrown.expectMessage(containsString("attribute \"tabindex\" has invalid value \"-2\""));
+
+        TidyVerifier tidyVerifier = new TidyVerifierBuilder().setThreshold(TidyMessage.Level.WARNING).build();
+        tidyVerifier.verifyHtml(testHtml);
+    }
+
 
 }

@@ -9,6 +9,7 @@ import com.dynacrongroup.webtest.rule.MethodTimer;
 import com.dynacrongroup.webtest.rule.SauceLabsFinalStatusReporter;
 import com.dynacrongroup.webtest.rule.SauceLabsLogger;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestName;
@@ -81,7 +82,6 @@ public class WebDriverBase {
     public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
         this.targetWebBrowser = TargetWebBrowserFactory.getTargetWebBrowser(browser, version, customCapabilities);
         this.browserTestLog = createTestLogger();
-        this.driver = getDriver();
         initializeJUnitRules();
     }
 
@@ -95,6 +95,11 @@ public class WebDriverBase {
     @DescriptivelyParameterized.Parameters
     public static List<String[]> configureWebDriverTargets() throws IOException {
         return WebDriverParameterFactory.getDriverTargets();
+    }
+
+    @Before
+    public void provideDriverForTests() {
+        this.driver = getDriver();
     }
 
     @After

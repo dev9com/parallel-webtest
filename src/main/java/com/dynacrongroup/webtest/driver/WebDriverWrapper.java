@@ -55,8 +55,9 @@ public class WebDriverWrapper {
                 driver.getCurrentUrl();
             }
             catch (Exception exception) {
-                LOG.warn("Driver failed health check.");
+                LOG.warn("Driver failed health check.  Rebuilding.");
                 killDriver();
+                getNewDriver();
             }
         }
     }

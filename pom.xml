@@ -141,6 +141,12 @@
             <version>r938</version>
         </dependency>
 
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.6</version>
+        </dependency>
+
 
         <dependency>
             <groupId>cpsuite</groupId>
@@ -240,12 +246,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.11</version>
+                    <version>2.12</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.11</version>
+                    <version>2.12</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -276,6 +282,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+
                 <configuration>
                     <parallel>${parallelrun}</parallel>
                     <threadCount>${threadcount}</threadCount>
