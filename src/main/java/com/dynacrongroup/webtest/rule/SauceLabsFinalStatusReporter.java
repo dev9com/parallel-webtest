@@ -1,8 +1,11 @@
 package com.dynacrongroup.webtest.rule;
 
 import com.dynacrongroup.webtest.sauce.SauceREST;
+import com.dynacrongroup.webtest.util.Path;
 import com.google.common.annotations.VisibleForTesting;
 import org.junit.runner.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Rule interacts with the SauceREST interface to report job pass/fail results.
@@ -16,9 +19,10 @@ public class SauceLabsFinalStatusReporter extends ClassFinishRule {
     @VisibleForTesting
     SauceREST sauceREST = null;
 
-    private Boolean allTestsPassed = true;
-
+    private static final Logger LOG = LoggerFactory.getLogger(SauceLabsFinalStatusReporter.class);
     private final String jobId;
+
+    private Boolean allTestsPassed = true;
 
     public SauceLabsFinalStatusReporter(String jobId, String user, String key) {
         this.jobId = jobId;
@@ -41,11 +45,20 @@ public class SauceLabsFinalStatusReporter extends ClassFinishRule {
             sauceREST.jobPassed(jobId);
         }
         else {
+            checkTunnel();
             sauceREST.jobFailed(jobId);
         }
     }
 
     public Boolean getAllTestsPassed() {
         return allTestsPassed;
+    }
+
+
+    private void checkTunnel() {
+        if ( new Path().isLocal() && !sauceREST.isTunnelPresent()) {
+            LOG.warn("Tests appear to be running against local target, " +
+                    "but sauce connect tunnel is not active for user.");
+        }
     }
 }

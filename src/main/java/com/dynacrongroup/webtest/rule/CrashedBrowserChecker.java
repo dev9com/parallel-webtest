@@ -26,7 +26,9 @@ public class CrashedBrowserChecker extends TestWatcher {
 
     @Override
     protected void starting(Description description) {
-        wrapper.checkState();
+        if (wrapper.isCrashed()) {
+            wrapper.rebuildDriver();
+        }
     }
 
 }

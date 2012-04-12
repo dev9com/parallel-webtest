@@ -3,19 +3,25 @@ package com.dynacrongroup.webtest.driver;
 import com.dynacrongroup.webtest.WebDriverFactory;
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Provides a consistent reference as drivers are created and destroyed by rules.
- *
+ * <p/>
  * User: yurodivuie
  * Date: 4/6/12
  * Time: 1:48 PM
  */
 public class WebDriverWrapper {
 
+    public static final Integer MAX_ALLOWABLE_CRASHES = 4;
+    public static Boolean TOO_MANY_CRASHES = false;
+
     private static final Logger LOG = LoggerFactory.getLogger(WebDriverWrapper.class);
+
+    private static Integer crashCount = 0;
 
     private final String jobName;
     private final TargetWebBrowser targetWebBrowser;
@@ -46,30 +52,62 @@ public class WebDriverWrapper {
     }
 
     /**
-     * If we can't make a simple call for the url, the driver is toast, so quit and null it.
+     * Check if we can make a simple call to the url.
      */
-    public void checkState() {
+    public Boolean isCrashed() {
+
+        Boolean crashed = false;
 
         if (driver != null) {
             try {
-                driver.getCurrentUrl();
-            }
-            catch (Exception exception) {
-                LOG.warn("Driver failed health check.  Rebuilding.");
-                killDriver();
-                getNewDriver();
+                crashed = driver.getCurrentUrl() == null;
+            } catch (Exception exception) {
+                LOG.debug("Driver crashed - {}:{}.", jobName, targetWebBrowser.humanReadable());
+                crashed = true;
             }
         }
+
+        if (crashed) {
+            recordCrash();
+        }
+
+        return crashed;
     }
 
+    /**
+     * Generally used after driver has crashed.
+     */
+    public void rebuildDriver() {
+        killDriver();
+        getNewDriver();
+    }
+
+    /**
+     * Quit the driver if it exists.
+     */
     public void killDriver() {
-        LOG.debug("Killing driver for {}:{}.", jobName, targetWebBrowser.humanReadable());
-        driver.quit();
+        if (driver != null) {
+            LOG.debug("Killing driver for {}:{}.", jobName, targetWebBrowser.humanReadable());
+            driver.quit();
+        }
         driver = null;
     }
 
     private void getNewDriver() {
-        driver = WebDriverFactory.getDriver(jobName, targetWebBrowser);
+        if (! TOO_MANY_CRASHES) {
+            driver = WebDriverFactory.getDriver(jobName, targetWebBrowser);
+        }
+        else {
+            throw new WebDriverException("Giving up on provisioning driver; crashed [" + crashCount + "] times.");
+        }
     }
+
+    private void recordCrash() {
+        crashCount++;
+        if (crashCount > MAX_ALLOWABLE_CRASHES) {
+            TOO_MANY_CRASHES = true;
+        }
+    }
+
 
 }
