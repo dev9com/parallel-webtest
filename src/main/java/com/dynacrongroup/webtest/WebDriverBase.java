@@ -104,7 +104,7 @@ public class WebDriverBase {
 
     @After
     public void cleanUpDriverWindows() {
-        reduceToOneWindow(driver);
+        reduceToOneWindow(getDriver());
     }
 
     /**
@@ -120,14 +120,14 @@ public class WebDriverBase {
      * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
      */
     public final String getJobURL() {
-        return WebDriverUtilities.getJobUrl(targetWebBrowser, driver);
+        return WebDriverUtilities.getJobUrl(targetWebBrowser, getDriver());
     }
 
     /**
      * Returns the SauceLabs job id (if there is one).
      */
     public final String getJobId() {
-        return WebDriverUtilities.getJobId(driver);
+        return WebDriverUtilities.getJobId(getDriver());
     }
 
     /**
