@@ -16,7 +16,10 @@ import org.openqa.selenium.By;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -69,6 +72,8 @@ public class CustomCapabilitiesTest extends WebDriverBase {
 
         JSONObject status = new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey()).getJobStatus(this.getJobId());
 
+        assertNotNull("Status should not be null", status);
+        assertThat(status.get("name"), not(nullValue()));
         assertThat(status.get("name"), equalTo(customCapabilities.get("name")));
     }
 

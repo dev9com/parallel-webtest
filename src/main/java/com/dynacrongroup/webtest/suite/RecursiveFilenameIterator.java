@@ -5,9 +5,6 @@
  */
 package com.dynacrongroup.webtest.suite;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,8 +17,6 @@ import java.util.NoSuchElementException;
  * not considered to be files.
  */
 public class RecursiveFilenameIterator implements Iterator<String>, Iterable<String> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RecursiveFilenameIterator.class);
 
 	private List<RecursiveFilenameIterator> innerIterators;
 
@@ -50,7 +45,6 @@ public class RecursiveFilenameIterator implements Iterator<String>, Iterable<Str
 	}
 
 	private List<RecursiveFilenameIterator> getInnerIterators(File root) {
-        LOG.info("inner");
 		List<RecursiveFilenameIterator> iterators = new ArrayList<RecursiveFilenameIterator>();
 		for (File each : root.listFiles()) {
 			iterators.add(new RecursiveFilenameIterator(each, prefixLength));
@@ -82,7 +76,6 @@ public class RecursiveFilenameIterator implements Iterator<String>, Iterable<Str
 				throw new NoSuchElementException();
 			}
 			alreadyUsed = true;
-            LOG.info("{} - {}", root.getAbsolutePath(), prefixLength);
 			return root.getAbsolutePath().substring(prefixLength);
 		}
 		if (hasNext()) {

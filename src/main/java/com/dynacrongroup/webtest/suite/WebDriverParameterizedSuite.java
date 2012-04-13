@@ -175,7 +175,6 @@ public class WebDriverParameterizedSuite extends Suite {
 
     private static List<Class<?>> findClassesInClasspath() {
         String classPath = System.getProperty("java.class.path");
-        System.out.println(classPath);
         return findClassesInRoots(splitClassPath(classPath));
     }
 
