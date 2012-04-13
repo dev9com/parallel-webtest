@@ -2,17 +2,11 @@ package com.dynacrongroup.webtest.suite;
 
 import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.WebDriverParameterFactory;
-import org.apache.commons.lang.StringUtils;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Suite;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.Statement;
 
 import java.io.File;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,106 +31,7 @@ public class WebDriverParameterizedSuite extends Suite {
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
 
-    private class TestClassRunnerForParameters extends
-            BlockJUnit4ClassRunner {
-        private final int fParameterSetNumber;
 
-        private final List<String[]> fParameterList;
-
-        private final String fParameterDescription;
-
-        private final Class<?> type;
-
-        TestClassRunnerForParameters(Class<?> type,
-                                     List<String[]> parameterList, int i) throws InitializationError {
-            super(type);
-            this.type = type;
-            fParameterList = parameterList;
-            fParameterSetNumber = i;
-            fParameterDescription = describeParams();
-        }
-
-        @Override
-        public Object createTest() throws Exception {
-            return getTestClass().getOnlyConstructor().newInstance(
-                    computeParams());
-        }
-
-        private Object[] computeParams() throws Exception {
-            try {
-                return fParameterList.get(fParameterSetNumber);
-            } catch (ClassCastException e) {
-                throw new Exception(String.format(
-                        "%s must provide a Collection of arrays.",
-                        this.getClass().getName()));
-            }
-        }
-
-        /* Try to describe the parameters by converting to String; if this
-         *  fails, fall back to describing using fParameterSetNumber
-         */
-        private String describeParams() {
-            String returnValue;
-
-            try {
-                Object[] params = computeParams();
-                returnValue = formatParams(params);
-            } catch (Exception e) {
-                returnValue = null;
-            }
-
-            if (returnValue == null) {
-                returnValue = ((Integer) fParameterSetNumber).toString();
-            }
-
-            return returnValue;
-        }
-
-        /**
-         * Override this method to provide custom parameter formatting.
-         *
-         * @param params
-         * @return A formatted string to be appended to the test name.
-         */
-        public String formatParams(Object[] params) {
-            String formattedParams;
-            String[] stringParams = (String[]) params;
-            if (stringParams[1].contains("Driver")) {
-                String driver = stringParams[1];
-                formattedParams = driver.substring(driver.lastIndexOf(".") + 1, driver.lastIndexOf("Driver"));
-            } else {
-
-                formattedParams = StringUtils.join(stringParams, "|");
-            }
-            return formattedParams;
-        }
-
-        @Override
-        protected String getName() {
-            return String.format("%s[%s]", type.getSimpleName(), fParameterDescription);
-        }
-
-        @Override
-        protected String testName(final FrameworkMethod method) {
-            return String.format("%s[%s]", method.getName(),
-                    fParameterDescription);
-        }
-
-        @Override
-        protected void validateConstructor(List<Throwable> errors) {
-            validateOnlyOneConstructor(errors);
-        }
-
-        @Override
-        protected Statement classBlock(RunNotifier notifier) {
-            return childrenInvoker(notifier);
-        }
-
-        @Override
-        protected Annotation[] getRunnerAnnotations() {
-            return new Annotation[0];
-        }
-    }
 
 
     /**
@@ -145,11 +40,10 @@ public class WebDriverParameterizedSuite extends Suite {
     public WebDriverParameterizedSuite(Class<?> suiteClass) throws InitializationError {
         super(suiteClass, Collections.<Runner>emptyList());
         List<String[]> parametersList = WebDriverParameterFactory.getDriverTargets();
+        Class<?>[] sortedTestClasses = getSortedTestClasses();
+
         for (int i = 0; i < parametersList.size(); i++) {
-            for (Class testClass : getSortedTestClasses()) {
-                runners.add(new TestClassRunnerForParameters(testClass,
-                        parametersList, i));
-            }
+            runners.add( new SingleBrowserSuite(parametersList.get(i) , sortedTestClasses ) );
         }
     }
 

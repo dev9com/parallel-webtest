@@ -45,7 +45,7 @@ public class SauceLabsFinalStatusReporter extends ClassFinishRule {
             sauceREST.jobPassed(jobId);
         }
         else {
-            checkTunnel();
+            //checkTunnel();
             sauceREST.jobFailed(jobId);
         }
     }
@@ -55,6 +55,9 @@ public class SauceLabsFinalStatusReporter extends ClassFinishRule {
     }
 
 
+    /**
+     * Currently not smart enough to recognize that it's not in Sauce Labs.
+     */
     private void checkTunnel() {
         if ( new Path().isLocal() && !sauceREST.isTunnelPresent()) {
             LOG.warn("Tests appear to be running against local target, " +

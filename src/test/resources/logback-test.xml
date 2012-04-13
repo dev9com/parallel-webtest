@@ -39,6 +39,9 @@
     <logger name="uk.org.lidalia.sysoutslf4j"
             level="WARN" />
 
+    <logger name="org.apache.commons.httpclient"
+            level="WARN" />
+
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>

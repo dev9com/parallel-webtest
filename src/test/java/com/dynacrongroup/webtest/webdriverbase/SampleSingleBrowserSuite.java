@@ -1,7 +1,6 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
-import com.dynacrongroup.webtest.WebDriverSuiteBase;
-import com.dynacrongroup.webtest.suite.WebDriverParameterizedSuite;
+import com.dynacrongroup.webtest.suite.WebDriverSuiteParallelRunner;
 import org.junit.runner.RunWith;
 
 /**
@@ -10,8 +9,8 @@ import org.junit.runner.RunWith;
  * Time: 3:54 PM
  */
 
-@RunWith(WebDriverParameterizedSuite.class)
-public class SampleSingleBrowserSuite extends WebDriverSuiteBase {
+@RunWith(WebDriverSuiteParallelRunner.class)
+public class SampleSingleBrowserSuite  {
 
     //Suite runs all tests extending WebDriverBase using a single browser instance per parameter
 
