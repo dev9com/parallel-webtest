@@ -48,7 +48,7 @@ public class SingleBrowserSuite extends Suite {
 
     @Override
     public void run(RunNotifier notifier) {
-        super.run(notifier);    //To change body of overridden methods use File | Settings | File Templates.
+        super.run(notifier);
         wrappers.get(TargetWebBrowserFactory.getTargetWebBrowser(parameters[0], parameters[1], null).humanReadable()).killDriver();
     }
 

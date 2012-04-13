@@ -2,9 +2,16 @@ package com.dynacrongroup.webtest.suite;
 
 import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.WebDriverParameterFactory;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.internal.runners.statements.RunAfters;
+import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,9 +37,7 @@ public class WebDriverParameterizedSuite extends Suite {
     private static final String DEFAULT_CLASSPATH_PROPERTY = "java.class.path";
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
-
-
-
+    private final Class<?>[] testClasses;
 
     /**
      * Used by JUnit
@@ -40,16 +45,36 @@ public class WebDriverParameterizedSuite extends Suite {
     public WebDriverParameterizedSuite(Class<?> suiteClass) throws InitializationError {
         super(suiteClass, Collections.<Runner>emptyList());
         List<String[]> parametersList = WebDriverParameterFactory.getDriverTargets();
-        Class<?>[] sortedTestClasses = getSortedTestClasses();
+        testClasses = getSortedTestClasses();
 
         for (int i = 0; i < parametersList.size(); i++) {
-            runners.add( new SingleBrowserSuite(parametersList.get(i) , sortedTestClasses ) );
+            runners.add( new SingleBrowserSuite(parametersList.get(i) , testClasses ) );
         }
     }
 
     @Override
     protected List<Runner> getChildren() {
         return runners;
+    }
+
+    @Override
+    protected Statement withBeforeClasses(Statement statement) {
+        List<FrameworkMethod> befores =  new ArrayList<FrameworkMethod>();
+        for (Class testClass : testClasses) {
+            befores.addAll(new TestClass(testClass).getAnnotatedMethods(BeforeClass.class));
+        }
+        return befores.isEmpty() ? statement :
+                new RunBefores(statement, befores, null);
+    }
+
+    @Override
+    protected Statement withAfterClasses(Statement statement) {
+        List<FrameworkMethod> afters= new ArrayList<FrameworkMethod>();
+        for (Class testClass : testClasses) {
+            afters.addAll(new TestClass(testClass).getAnnotatedMethods(AfterClass.class));
+        }
+        return afters.isEmpty() ? statement :
+                new RunAfters(statement, afters, null);
     }
 
     private static Class<?>[] getSortedTestClasses() {
@@ -68,7 +93,7 @@ public class WebDriverParameterizedSuite extends Suite {
     }
 
     private static List<Class<?>> findClassesInClasspath() {
-        String classPath = System.getProperty("java.class.path");
+        String classPath = System.getProperty(DEFAULT_CLASSPATH_PROPERTY);
         return findClassesInRoots(splitClassPath(classPath));
     }
 

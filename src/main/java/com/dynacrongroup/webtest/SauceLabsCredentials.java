@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest;
 
 import com.dynacrongroup.webtest.util.ConfigurationValue;
+import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public final class SauceLabsCredentials {
      */
 	public static String getUser() {
 		return ConfigurationValue.getConfigurationValue(SAUCELABS_USER,
-				"No User Set");
+				null);
 	}
 
     /**
@@ -39,7 +40,7 @@ public final class SauceLabsCredentials {
      */
 	public static String getKey() {
 		return ConfigurationValue.getConfigurationValue(SAUCELABS_KEY,
-				"No Configuration Key Set");
+				null);
 	}
 
 	/** This almost never changes, but it can be used to send tests to any selenium server */
@@ -53,6 +54,14 @@ public final class SauceLabsCredentials {
      * @return
      */
 	public static URL getConnectionString() {
+        String user = getUser();
+        String key = getKey();
+
+        if (user == null || key == null) {
+            throw new WebDriverException("SAUCELABS_USER or SAUCELABS_KEY missing and required " +
+                    "for Sauce Labs connection.  See README.txt for parallel-webtest library.");
+        }
+
 		try {
 			return new URL("http://" + getUser() + ":" + getKey() + "@"
 					+ getServer());
