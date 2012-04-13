@@ -20,9 +20,9 @@ import java.util.Date;
 
 // TODO: Figure out how to parallelize this.
 @Experimental
-public class WebDriverSuite {
+public class WebDriverSuiteBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WebDriverSuite.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebDriverSuiteBase.class);
 
     private static WebDriverWrapper WEBDRIVER_WRAPPER;
 

@@ -83,13 +83,6 @@
             <id>dynacrongroup-repository</id>
             <url>https://repository-dynacrongroup.forge.cloudbees.com/release</url>
         </repository>
-
-        <!-- needed for cpsuite-->
-        <repository>
-            <id>http://maven.xwiki.org</id>
-            <url>http://maven.xwiki.org/externals</url>
-        </repository>
-
     </repositories>
 
 
@@ -145,13 +138,6 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.6</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>cpsuite</groupId>
-            <artifactId>cpsuite</artifactId>
-            <version>1.2.5</version>
         </dependency>
 
         <!-- provides SauceREST -->

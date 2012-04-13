@@ -187,8 +187,8 @@ public class WebDriverBase {
     private WebDriverWrapper getDriverWrapper() {
         WebDriverWrapper wrapper;
 
-        if (WebDriverSuite.inSuiteRun()) {
-            wrapper = WebDriverSuite.getDriverWrapper(targetWebBrowser);
+        if (WebDriverSuiteBase.inSuiteRun()) {
+            wrapper = WebDriverSuiteBase.getDriverWrapper(targetWebBrowser);
         }
         else {
             wrapper = getTestClassDriverWrapper(); threadLocalWebDriverWrapper.get();
@@ -246,7 +246,7 @@ public class WebDriverBase {
         RuleChain ruleChain = RuleChain.outerRule(new MethodTimer())
                 .around(new CrashedBrowserChecker(getDriverWrapper()));   //After all methods are run, check if the browser has crashed.
 
-        if (!WebDriverSuite.inSuiteRun()) {
+        if (!WebDriverSuiteBase.inSuiteRun()) {
             getLogger().info("Attaching ClassFinishDriverCloser");
             ruleChain = ruleChain.around(new ClassFinishDriverCloser(getDriverWrapper()));    //In suite runs, driver lifecycle is managed using suite rule.
         }

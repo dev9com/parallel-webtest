@@ -1,7 +1,7 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
-import com.dynacrongroup.webtest.WebDriverSuite;
-import org.junit.extensions.cpsuite.ClasspathSuite;
+import com.dynacrongroup.webtest.WebDriverSuiteBase;
+import com.dynacrongroup.webtest.suite.WebDriverParameterizedSuite;
 import org.junit.runner.RunWith;
 
 /**
@@ -10,10 +10,9 @@ import org.junit.runner.RunWith;
  * Time: 3:54 PM
  */
 
-@RunWith(ClasspathSuite.class)
-@ClasspathSuite.ClassnameFilters(".*Test")
-public class SampleSingleBrowserSuite extends WebDriverSuite {
+@RunWith(WebDriverParameterizedSuite.class)
+public class SampleSingleBrowserSuite extends WebDriverSuiteBase {
 
-    //Suite runs all tests ending in "Test" using a single browser.
+    //Suite runs all tests extending WebDriverBase using a single browser instance per parameter
 
 }
