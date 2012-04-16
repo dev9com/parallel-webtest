@@ -183,10 +183,14 @@ public final class WebDriverUtilities {
         String url = null;
 
         if (target.isRemote()) {
-            url = String.format("https://saucelabs.com/jobs/%s", getJobId(driver));
+            url = getJobUrlFromId(getJobId(driver));
         }
 
         return url;
+    }
+
+    public static String getJobUrlFromId(String jobId) {
+        return String.format("https://saucelabs.com/jobs/%s", jobId);
     }
 
 }

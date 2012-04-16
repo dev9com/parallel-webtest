@@ -27,7 +27,7 @@ public class SauceLabsLogger extends TestWatcher {
 
     @Override
     protected void failed(Throwable e, Description description) {
-        sendContextMessage(getTestName(description) + " failed. " + e.getMessage());
+        sendContextMessage(getTestName(description) + " failed: " + e.getMessage());
     }
 
     @Override
@@ -45,7 +45,7 @@ public class SauceLabsLogger extends TestWatcher {
     }
 
     String getTestName(Description description) {
-        return description.getClassName() + "." + description.getMethodName();
+        return description.getTestClass().getSimpleName() + "." + description.getMethodName();
     }
 
 }

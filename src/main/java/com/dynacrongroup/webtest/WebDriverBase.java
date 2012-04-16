@@ -248,7 +248,6 @@ public class WebDriverBase {
                 .around(new CrashedBrowserChecker(getDriverWrapper()));   //After all methods are run, check if the browser has crashed.
 
         if (!SingleBrowserSuite.inSuiteRun()) {
-            getLogger().info("Attaching ClassFinishDriverCloser");
             ruleChain = ruleChain.around(new ClassFinishDriverCloser(getDriverWrapper()));    //In suite runs, driver lifecycle is managed using suite rule.
         }
 
@@ -265,7 +264,7 @@ public class WebDriverBase {
         String sauceKey = SauceLabsCredentials.getKey();
 
         SauceLabsFinalStatusReporter sauceLabsFinalStatusReporter =
-                new SauceLabsFinalStatusReporter(getJobId(), sauceUser, sauceKey);
+                new SauceLabsFinalStatusReporter(getLogger(), getJobId(), sauceUser, sauceKey);
         SauceLabsLogger sauceLabsLogger =
                 new SauceLabsLogger(getDriverWrapper());
 

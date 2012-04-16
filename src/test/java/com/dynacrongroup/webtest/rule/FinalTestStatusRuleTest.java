@@ -4,6 +4,8 @@ import com.dynacrongroup.webtest.sauce.SauceREST;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -15,12 +17,14 @@ import static org.mockito.Mockito.verify;
  */
 public class FinalTestStatusRuleTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FinalTestStatusRuleTest.class);
+
     String testJobId = "1234";
     SauceLabsFinalStatusReporter rule;
 
     @Before
     public void prepareRuleWithMock() {
-        rule = new SauceLabsFinalStatusReporter(testJobId, "fakeUser", "fakeKey");
+        rule = new SauceLabsFinalStatusReporter(LOG, testJobId, "fakeUser", "fakeKey");
         rule.sauceREST = mock(SauceREST.class);
     }
 
