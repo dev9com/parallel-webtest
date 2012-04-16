@@ -88,16 +88,19 @@ public class WebDriverWrapper {
     public void killDriver() {
         if (driver != null) {
             LOG.debug("Killing driver for {}:{}.", jobName, targetWebBrowser.humanReadable());
-            driver.quit();
+            try {
+                driver.quit();
+            } catch (WebDriverException exception) {
+                LOG.warn("Failed to kill driver; likely cause is crashed driver: {}", exception.getMessage());
+            }
         }
         driver = null;
     }
 
     private void getNewDriver() {
-        if (! TOO_MANY_CRASHES) {
+        if (!TOO_MANY_CRASHES) {
             driver = WebDriverFactory.getDriver(jobName, targetWebBrowser);
-        }
-        else {
+        } else {
             throw new WebDriverException("Giving up on provisioning driver; crashed [" + crashCount + "] times.");
         }
     }

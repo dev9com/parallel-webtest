@@ -57,7 +57,7 @@ public class SauceLabsFinalStatusReporter extends ClassFinishRule {
                     WebDriverUtilities.getJobUrlFromId(jobId)};
 
             log.error("Test {} failed roughly {} seconds into job execution.  View job on Sauce Labs at {}", logArgs);
-        } catch (NullPointerException exception) {
+        } catch (Exception exception) {
             log.error("Failed to report test failure time: {}", exception.getMessage());
         }
 

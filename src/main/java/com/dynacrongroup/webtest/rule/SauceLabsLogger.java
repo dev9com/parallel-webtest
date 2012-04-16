@@ -4,6 +4,9 @@ import com.dynacrongroup.webtest.driver.WebDriverWrapper;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriverException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This TestWatcher reports on test progress in Sauce Labs using the JavascriptExecutor.
@@ -15,6 +18,8 @@ import org.openqa.selenium.JavascriptExecutor;
 public class SauceLabsLogger extends TestWatcher {
 
     WebDriverWrapper wrapper;
+
+    private static final Logger LOG = LoggerFactory.getLogger(SauceLabsLogger.class);
 
     public SauceLabsLogger(WebDriverWrapper wrapper) {
         this.wrapper = wrapper;
@@ -41,7 +46,11 @@ public class SauceLabsLogger extends TestWatcher {
      * @param message
      */
     void sendContextMessage(String message) {
-        ((JavascriptExecutor) wrapper.getDriver()).executeScript("sauce:context=// " + message);
+        try {
+            ((JavascriptExecutor) wrapper.getDriver()).executeScript("sauce:context=// " + message);
+        } catch (WebDriverException exception) {
+            LOG.warn("Failed to update sauce labs context: {}", exception.getMessage());
+        }
     }
 
     String getTestName(Description description) {
