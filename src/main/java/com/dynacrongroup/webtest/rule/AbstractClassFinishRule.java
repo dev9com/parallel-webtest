@@ -19,11 +19,11 @@ import java.lang.reflect.Method;
  * Time: 8:52 AM
  *
  */
-public class ClassFinishRule extends TestWatcher {
+abstract class AbstractClassFinishRule extends TestWatcher {
 
     @VisibleForTesting
     Integer methodsRemaining = null;
-    private static final Logger LOG = LoggerFactory.getLogger(ClassFinishRule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractClassFinishRule.class);
 
     /**
      * Tracks the number of test methods remaining and calls "classFinished" if none are left.
@@ -46,12 +46,10 @@ public class ClassFinishRule extends TestWatcher {
     }
 
     /**
-     * Override this rule to provide custom behavior for when a test class has finished running.
+     * Implement this rule to provide custom behavior for when a test class has finished running.
      * @param description
      */
-    protected void classFinished(Description description) {
-        LOG.debug("Test class {} finished running all test methods.", description.getTestClass().getName());
-    }
+    protected abstract void classFinished(Description description);
 
     /**
      * This method counts the number of test methods. This counter is used to

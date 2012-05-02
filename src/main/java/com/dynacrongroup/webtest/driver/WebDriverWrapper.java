@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WebDriverWrapper {
 
-    public static final Integer MAX_ALLOWABLE_CRASHES = 4;
-    public static Boolean TOO_MANY_CRASHES = false;
+    public static final Integer MAX_ALLOWABLE_CRASHES = 5;
 
     private static final Logger LOG = LoggerFactory.getLogger(WebDriverWrapper.class);
 
@@ -98,7 +97,7 @@ public class WebDriverWrapper {
     }
 
     private void getNewDriver() {
-        if (!TOO_MANY_CRASHES) {
+        if (!tooManyCrashes()) {
             driver = WebDriverFactory.getDriver(jobName, targetWebBrowser);
         } else {
             throw new WebDriverException("Giving up on provisioning driver; crashed [" + crashCount + "] times.");
@@ -107,9 +106,10 @@ public class WebDriverWrapper {
 
     private void recordCrash() {
         crashCount++;
-        if (crashCount > MAX_ALLOWABLE_CRASHES) {
-            TOO_MANY_CRASHES = true;
-        }
+    }
+
+    private boolean tooManyCrashes() {
+        return crashCount > MAX_ALLOWABLE_CRASHES;
     }
 
 

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
  */
 public class ClassFinishedRuleTest {
 
-    class TestableClassFinishRule extends ClassFinishRule {
+    class TestableClassFinishRule extends AbstractClassFinishRule {
 
         Boolean classIsFinished = false;
 

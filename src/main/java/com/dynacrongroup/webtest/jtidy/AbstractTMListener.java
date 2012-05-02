@@ -75,12 +75,12 @@ public abstract class AbstractTMListener implements TidyMessageListener {
     }
 
     public void addIgnoredCodes(List<Integer> codes) {
-        LOG.info("Adding ignored codes: {}", ArrayUtils.toString(codes));
+        LOG.trace("Adding ignored codes: {}", ArrayUtils.toString(codes));
         this.ignoredCodes.addAll(codes);
     }
 
     public void addIgnoredMessages(List<String> ignoredMessages) {
-        LOG.info("Adding ignored messages: {}", ArrayUtils.toString(ignoredMessages));
+        LOG.trace("Adding ignored messages: {}", ArrayUtils.toString(ignoredMessages));
         this.ignoredMessages.addAll(ignoredMessages);
     }
 

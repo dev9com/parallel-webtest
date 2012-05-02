@@ -8,7 +8,6 @@ import com.dynacrongroup.webtest.rule.CrashedBrowserChecker;
 import com.dynacrongroup.webtest.rule.MethodTimer;
 import com.dynacrongroup.webtest.rule.SauceLabsFinalStatusReporter;
 import com.dynacrongroup.webtest.rule.SauceLabsLogger;
-import com.dynacrongroup.webtest.suite.SingleBrowserSuite;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -186,19 +185,6 @@ public class WebDriverBase {
     }
 
     private WebDriverWrapper getDriverWrapper() {
-        WebDriverWrapper wrapper;
-
-        if (SingleBrowserSuite.inSuiteRun()) {
-            wrapper = SingleBrowserSuite.getWrapper(targetWebBrowser);
-        }
-        else {
-            wrapper = getTestClassDriverWrapper(); threadLocalWebDriverWrapper.get();
-        }
-
-        return wrapper;
-    }
-
-    private WebDriverWrapper getTestClassDriverWrapper() {
         WebDriverWrapper wrapper = threadLocalWebDriverWrapper.get();
         if (wrapper == null) {
             wrapper = new WebDriverWrapper(getJobName(), targetWebBrowser);
@@ -244,12 +230,9 @@ public class WebDriverBase {
      */
     private RuleChain createStandardRuleChain() {
 
-        RuleChain ruleChain = RuleChain.outerRule(new MethodTimer())
-                .around(new CrashedBrowserChecker(getDriverWrapper()));   //After all methods are run, check if the browser has crashed.
-
-        if (!SingleBrowserSuite.inSuiteRun()) {
-            ruleChain = ruleChain.around(new ClassFinishDriverCloser(getDriverWrapper()));    //In suite runs, driver lifecycle is managed using suite rule.
-        }
+        RuleChain ruleChain = RuleChain.outerRule(new MethodTimer())      //Timer is wrapped around all other rules
+                .around(new CrashedBrowserChecker(getDriverWrapper()))   //After all rules using the driver are run, check if the browser has crashed.
+                .around(new ClassFinishDriverCloser(getDriverWrapper()));
 
         return ruleChain;
     }
@@ -270,7 +253,7 @@ public class WebDriverBase {
 
         return chain
                 .around(sauceLabsFinalStatusReporter)
-                .around(sauceLabsLogger);
+                .around(sauceLabsLogger);               //The innermost rule logs test results, if possible.
     }
 
 

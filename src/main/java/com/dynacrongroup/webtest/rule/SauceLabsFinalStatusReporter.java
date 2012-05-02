@@ -16,7 +16,7 @@ import java.util.Date;
  * Date: 3/11/12
  * Time: 9:47 AM
  */
-public class SauceLabsFinalStatusReporter extends ClassFinishRule {
+public class SauceLabsFinalStatusReporter extends AbstractClassFinishRule {
 
     @VisibleForTesting
     SauceREST sauceREST = null;

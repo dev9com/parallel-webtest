@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * Date: 3/11/12
  * Time: 9:56 AM
  */
-public class ClassFinishDriverCloser extends ClassFinishRule {
+public class ClassFinishDriverCloser extends AbstractClassFinishRule {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClassFinishDriverCloser.class);
 
@@ -24,7 +24,7 @@ public class ClassFinishDriverCloser extends ClassFinishRule {
 
     @Override
     protected void classFinished(Description description) {
-        LOG.debug("Test class finished.");
+        LOG.trace("Test class finished.");
         wrapper.killDriver();
     }
 }
