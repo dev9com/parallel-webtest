@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest.browser;
 
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -19,6 +20,8 @@ public class ClassLoadedTargetWebBrowser implements TargetWebBrowser {
      */
     private String browser;
 
+    private Platform platform;
+
     private Map<String, Object> customCapabilities;
 
     /**
@@ -28,6 +31,7 @@ public class ClassLoadedTargetWebBrowser implements TargetWebBrowser {
      */
     public ClassLoadedTargetWebBrowser(String className, Map<String, Object> customCapabilities) {
         this.browser = className;
+        this.platform = Platform.getCurrent();
         this.customCapabilities = customCapabilities;
     }
 
@@ -49,6 +53,16 @@ public class ClassLoadedTargetWebBrowser implements TargetWebBrowser {
     @Override
     public String getVersion() {
         return null;
+    }
+
+    /**
+     * Class loaded driver is always run on the current platform.  In the future, may try to detect this.
+     *
+     * @return Always null.
+     */
+    @Override
+    public Platform getPlatform() {
+        return platform;
     }
 
     /**

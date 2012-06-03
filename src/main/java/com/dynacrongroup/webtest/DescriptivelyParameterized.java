@@ -9,14 +9,18 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +38,9 @@ import java.util.List;
 
 @SuppressWarnings("all")
 public class DescriptivelyParameterized extends Suite {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DescriptivelyParameterized.class);
+
     /**
      * Annotation for a method which provides parameters to be injected into the
      * test class constructor by <code>DescriptivelyParameterized</code>
@@ -59,10 +66,31 @@ public class DescriptivelyParameterized extends Suite {
             fParameterDescription = describeParams();
         }
 
+        /**
+         * Modified version from Parameterized to pad with nulls if list is short.
+         * @return
+         * @throws Exception
+         */
         @Override
         public Object createTest() throws Exception {
-            return getTestClass().getOnlyConstructor().newInstance(
-                    computeParams());
+            Constructor<?> testConstructor = getTestClass().getOnlyConstructor();
+            List<Object> params = new ArrayList<Object>();
+            params.addAll(Arrays.asList(computeParams()));
+
+            if (params.size() > testConstructor.getParameterTypes().length) {
+                LOG.error("Parameter count exceeds constructor parameters; trimming extra parameters.");
+                LOG.error("For WebDriverBase tests, this likely means the platform was specified, but the test class" +
+                        " did not use a constructor supporting platforms.");
+                while(testConstructor.getParameterTypes().length < params.size()) {
+                    params.remove(params.size() - 1);
+                }
+            }
+
+            while (testConstructor.getParameterTypes().length > params.size()) {
+                params.add(null);
+            }
+
+            return testConstructor.newInstance(params.toArray());
         }
 
         private Object[] computeParams() throws Exception {

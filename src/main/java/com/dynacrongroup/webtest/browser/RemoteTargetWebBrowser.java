@@ -1,5 +1,7 @@
 package com.dynacrongroup.webtest.browser;
 
+import org.openqa.selenium.Platform;
+
 import java.util.Map;
 
 /**
@@ -20,6 +22,11 @@ public class RemoteTargetWebBrowser implements TargetWebBrowser {
      */
     private String version;
 
+    /**
+     * What platform?
+     */
+    private Platform platform;
+
     private Map<String, Object> customCapabilities;
 
     /**
@@ -32,6 +39,27 @@ public class RemoteTargetWebBrowser implements TargetWebBrowser {
         this.browser = browser;
         this.version = version;
         this.customCapabilities = customCapabilities;
+        setDefaultPlatform();
+    }
+
+    /**
+     * Create a new target browser/version combination.
+     *
+     * @param browser
+     * @param version
+     * @param platform
+     * @param customCapabilities
+     */
+    public RemoteTargetWebBrowser(String browser, String version, String platform, Map<String, Object> customCapabilities) {
+        this.browser = browser;
+        this.version = version;
+        if (platform == null) {
+            setDefaultPlatform();
+        }
+        else {
+            this.platform = Platform.valueOf(platform);
+        }
+        this.customCapabilities = customCapabilities;
     }
 
     @Override
@@ -42,6 +70,11 @@ public class RemoteTargetWebBrowser implements TargetWebBrowser {
     @Override
     public String getVersion() {
         return version;
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return platform;
     }
 
     /**
@@ -142,6 +175,17 @@ public class RemoteTargetWebBrowser implements TargetWebBrowser {
      */
     @Override
     public String humanReadable() {
-        return browser + ":" + version;
+        return browser + ":" + version + ":" + platform;
+    }
+
+
+
+    private void setDefaultPlatform() {
+        if (this.isInternetExplorer() && this.getVersion().equalsIgnoreCase("9")) {
+            platform = Platform.VISTA;
+        }
+        else {
+            platform = Platform.WINDOWS;
+        }
     }
 }

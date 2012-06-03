@@ -1,5 +1,7 @@
 package com.dynacrongroup.webtest.browser;
 
+import org.openqa.selenium.Platform;
+
 import java.util.Map;
 
 /**
@@ -18,6 +20,8 @@ public interface TargetWebBrowser {
     String getBrowser();
 
     String getVersion();
+
+    Platform getPlatform();
 
     Map<String, Object> getCustomCapabilities();
 

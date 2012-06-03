@@ -73,14 +73,29 @@ public class WebDriverBase {
      * configuration options.
      */
     public WebDriverBase(String browser, String version) {
-        this(browser, version, new HashMap<String, Object>());
+        this(browser, version, null, new HashMap<String, Object>());
+    }
+
+    /**
+     * Used by the JUnit parameterized options to configure the parameterized
+     * configuration options.
+     */
+    public WebDriverBase(String browser, String version, String platform) {
+        this(browser, version, platform, new HashMap<String, Object>() );
     }
 
     /**
      * Alternate parameterized constructor for supplying custom capabilities.
      */
     public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
-        this.targetWebBrowser = TargetWebBrowserFactory.getTargetWebBrowser(browser, version, customCapabilities);
+        this(browser, version, null, customCapabilities);
+    }
+
+    /**
+     * Alternate parameterized constructor for supplying custom capabilities.
+     */
+    public WebDriverBase(String browser, String version, String platform, Map<String, Object> customCapabilities) {
+        this.targetWebBrowser = TargetWebBrowserFactory.getTargetWebBrowser(browser, version, platform, customCapabilities);
         this.browserTestLog = createTestLogger();
         initializeJUnitRules();
     }

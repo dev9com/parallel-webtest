@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.browser;
 
 import org.junit.Test;
+import org.openqa.selenium.Platform;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -59,7 +60,7 @@ public class TargetWebBrowserTest {
         assertTrue(tar.isFirefox());
         assertFalse(tar.isChrome());
         assertFalse(tar.isClassLoaded());
-        assertThat(tar.humanReadable(), equalTo("firefox:3.6"));
+        assertThat(tar.humanReadable(), equalTo("firefox:3.6:WINDOWS"));
     }
 
     @Test
@@ -68,7 +69,16 @@ public class TargetWebBrowserTest {
         assertTrue(tar.isChrome());
         assertFalse(tar.isFirefox());
         assertFalse(tar.isClassLoaded());
-        assertThat(tar.humanReadable(), equalTo("chrome:"));
+        assertThat(tar.humanReadable(), equalTo("chrome::WINDOWS"));
+    }
+
+    @Test
+    public void testSpecifiedOS() {
+        TargetWebBrowser tar = TargetWebBrowserFactory.getTargetWebBrowser("chrome","", Platform.LINUX.toString(), null );
+        assertTrue(tar.isChrome());
+        assertFalse(tar.isFirefox());
+        assertFalse(tar.isClassLoaded());
+        assertThat(tar.humanReadable(), equalTo("chrome::LINUX"));
     }
 
     @Test

@@ -88,8 +88,9 @@ public final class WebDriverParameterFactory {
      */
     private static String[] convertToParameters(String target) {
         String[] items = target.split(":");
-        if (items.length != 2) {
-            throw new IllegalArgumentException("Target " + target + " should have one colon in browser:version format." );
+        if (items.length != 2 && items.length != 3) {
+            throw new IllegalArgumentException("Target " + target + " should be in browser:version" +
+                    " or browser:version:platform format." );
         }
         items[1] = items[1].replaceAll("\\*", "");  //* used to refer to "any browser".  Now null is used.
         return items;

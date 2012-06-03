@@ -4,7 +4,6 @@ import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import com.dynacrongroup.webtest.driver.CapturingRemoteWebDriver;
 import com.dynacrongroup.webtest.util.ConfigurationValue;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -134,7 +133,7 @@ public class WebDriverLauncher {
         String seleniumVersion = ConfigurationValue.getConfigurationValue("REMOTE_SERVER_VERSION", "2.20.0");
 
         DesiredCapabilities capabilities = new DesiredCapabilities(
-                target.getBrowser(), target.getVersion(), getPlatform(target));
+                target.getBrowser(), target.getVersion(), target.getPlatform());
         capabilities.setCapability("name", jobName);
         capabilities.setCapability("tags", SystemName.getSystemName());
         capabilities.setCapability("build", uniqueId);
@@ -142,17 +141,6 @@ public class WebDriverLauncher {
         capabilities.setCapability("command-timeout", "60");    //default is 300 - may need to revisit.
 
         return capabilities;
-    }
-
-    private Platform getPlatform(TargetWebBrowser target) {
-        Platform platform = Platform.WINDOWS;
-
-        /** TODO SauceLabs-specific. May need to update in future. */
-        if (target.isInternetExplorer() && target.getVersion().equalsIgnoreCase("9")) {
-            platform = Platform.VISTA;
-        }
-
-        return platform;
     }
 
     private DesiredCapabilities mergeDefaultAndCustomCapabilities(DesiredCapabilities capabilities, Map<String, Object> customCapabilities) {

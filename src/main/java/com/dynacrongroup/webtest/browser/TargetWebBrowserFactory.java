@@ -40,4 +40,33 @@ public final class TargetWebBrowserFactory {
 
     }
 
+
+    /**
+     * Get the target web browser object for a given set of test case parameters.
+     *
+     * @param browser   Byclass, for local drivers, or the browser name, for remote browsers.
+     * @param version   The class name, for local drivers, or the browser version, for remote browsers.
+     * @param platform  The platform used by remote drivers.  Null for local drivers.
+     * @param customCapabilities    Custom capabilities (if any).  Can be null.
+     * @return
+     */
+    public static TargetWebBrowser getTargetWebBrowser(String browser,
+                                                       String version,
+                                                       String platform,
+                                                       Map<String, Object> customCapabilities) {
+
+        TargetWebBrowser target;
+
+        if (TargetWebBrowser.BYCLASS.equalsIgnoreCase(browser)) {
+            target = new ClassLoadedTargetWebBrowser(version, customCapabilities);
+        }
+        else {
+            target = new RemoteTargetWebBrowser(browser, version, platform, customCapabilities);
+        }
+
+        return target;
+
+    }
+
+
 }
