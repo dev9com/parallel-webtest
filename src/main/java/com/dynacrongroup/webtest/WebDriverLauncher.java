@@ -49,12 +49,12 @@ public class WebDriverLauncher {
      */
     public WebDriver getHtmlUnitDriver(TargetWebBrowser targetWebBrowser) {
         if (targetWebBrowser.hasCustomCapabilities()) {
-            driver = new HtmlUnitDriver(true);
-        }
-        else {
             DesiredCapabilities capabilities = new DesiredCapabilities(targetWebBrowser.getCustomCapabilities());
             capabilities.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
             driver = new HtmlUnitDriver(capabilities);
+        }
+        else {
+            driver = new HtmlUnitDriver(true);
         }
         driver = new HtmlUnitDriver();
         return driver;
