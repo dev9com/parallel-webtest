@@ -7,7 +7,6 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +49,7 @@ public class WebDriverLauncher {
     public WebDriver getHtmlUnitDriver(TargetWebBrowser targetWebBrowser) {
         if (targetWebBrowser.hasCustomCapabilities()) {
             DesiredCapabilities capabilities = new DesiredCapabilities(targetWebBrowser.getCustomCapabilities());
-            capabilities.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
+            capabilities.setJavascriptEnabled(true);
             driver = new HtmlUnitDriver(capabilities);
         }
         else {
