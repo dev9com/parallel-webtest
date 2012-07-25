@@ -55,7 +55,6 @@ public class WebDriverLauncher {
         else {
             driver = new HtmlUnitDriver(true);
         }
-        driver = new HtmlUnitDriver();
         return driver;
     }
 
