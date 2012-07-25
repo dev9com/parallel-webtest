@@ -29,7 +29,7 @@ public class WebDriverFactory {
         WebDriver driver;
 
         if (targetWebBrowser.isHtmlUnit()) {
-            driver = launcher.getHtmlUnitDriver();
+            driver = launcher.getHtmlUnitDriver(targetWebBrowser);
         }
         else if (targetWebBrowser.isClassLoaded()) {
             driver = launcher.getClassLoadedDriver(targetWebBrowser);
