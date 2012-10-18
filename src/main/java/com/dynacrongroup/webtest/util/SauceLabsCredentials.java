@@ -1,6 +1,5 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.util;
 
-import com.dynacrongroup.webtest.util.ConfigurationValue;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,5 +1,9 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.base;
 
+import com.dynacrongroup.webtest.SauceLabsCredentials;
+import com.dynacrongroup.webtest.WebDriverParameterFactory;
+import com.dynacrongroup.webtest.WebDriverUtilities;
+import com.dynacrongroup.webtest.base.DescriptivelyParameterized;
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import com.dynacrongroup.webtest.browser.TargetWebBrowserFactory;
 import com.dynacrongroup.webtest.driver.WebDriverWrapper;
@@ -105,7 +109,7 @@ public class WebDriverBase {
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
      *
-     * @see WebDriverParameterFactory
+     * @see com.dynacrongroup.webtest.WebDriverParameterFactory
      */
     @DescriptivelyParameterized.Parameters
     public static List<String[]> configureWebDriverTargets() throws IOException {

@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.driver;
 
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import org.openqa.selenium.WebDriver;
@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.dynacrongroup.webtest.WebDriverUtilities.getJobUrl;
+import static com.dynacrongroup.webtest.util.WebDriverUtilities.getJobUrl;
 
 /**
  * User: yurodivuie

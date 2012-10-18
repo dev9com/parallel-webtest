@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.base;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.runner.Runner;

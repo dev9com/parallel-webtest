@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.base;
 
 import org.junit.runners.model.RunnerScheduler;
 

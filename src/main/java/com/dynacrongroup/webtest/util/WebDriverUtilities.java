@@ -1,6 +1,7 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.util;
 
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
+import com.dynacrongroup.webtest.util.SystemName;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

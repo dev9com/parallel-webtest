@@ -1,8 +1,9 @@
-package com.dynacrongroup.webtest;
+package com.dynacrongroup.webtest.driver;
 
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
-import com.dynacrongroup.webtest.driver.CapturingRemoteWebDriver;
 import com.dynacrongroup.webtest.util.ConfigurationValue;
+import com.dynacrongroup.webtest.util.SauceLabsCredentials;
+import com.dynacrongroup.webtest.util.SystemName;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
