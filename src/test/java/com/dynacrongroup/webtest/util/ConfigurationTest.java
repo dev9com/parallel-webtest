@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest.util;
 
+import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.typesafe.config.Config;
 import org.junit.Test;
 
@@ -25,9 +26,15 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testClassConfOverridingPackage() {
+    public void testClassConf() {
         Config config = Configuration.getConfigForClass(ConfigurationTest.class);
         assertThat(config.getBoolean("class")).isTrue();
+    }
+
+    @Test
+    public void testMissingClassConf() {
+        Config config = Configuration.getConfigForClass(WebDriverBase.class);
+        assertThat(config.getString("local.browser")).isEqualToIgnoringCase("chrome");
     }
 
 }

@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: yurodivuie
@@ -20,6 +22,7 @@ public class Configuration {
     private static final String confExtension = ".conf";
     private static final String profile = System.getProperty("config.profile", null);
 
+    private static Map<Class, Config> classConfigs = new HashMap<Class, Config>();
     private static Config config = null;
 
     public static Config getConfig() {
@@ -30,9 +33,25 @@ public class Configuration {
     }
 
     public static Config getConfigForClass(Class klass) {
-        return ConfigFactory.defaultOverrides()
-                .withFallback(addProfileToConfig(ConfigFactory.parseFile(getClassConfigFile(klass))))
-                .withFallback(getConfig());
+        if (!classConfigs.containsKey(klass)) {
+            buildConfigForClass(klass);
+        }
+        return classConfigs.get(klass);
+    }
+
+    private static void buildConfigForClass(Class klass) {
+        File classConfigFile = getClassConfigFile(klass);
+        Config classConfig;
+        if (classConfigFile != null) {
+            classConfig = ConfigFactory.defaultOverrides()
+                    .withFallback(ConfigFactory.parseFile(getClassConfigFile(klass)))
+                    .withFallback(getConfig());
+            classConfig = addProfileToConfig(classConfig);
+        }
+        else {
+            classConfig = getConfig();
+        }
+        classConfigs.put(klass, classConfig);
     }
 
     private static File getClassConfigFile(Class klass) {
@@ -50,7 +69,7 @@ public class Configuration {
     }
 
     private static Config addProfileToConfig(Config config) {
-        if (profile != null && config.hasPath(profile)) {
+        if (profile != null && config != null && config.hasPath(profile)) {
             return config.getConfig(profile).withFallback(config);
         }
         return config;

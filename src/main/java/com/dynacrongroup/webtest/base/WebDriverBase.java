@@ -1,7 +1,6 @@
 package com.dynacrongroup.webtest.base;
 
 import com.dynacrongroup.webtest.util.SauceLabsCredentials;
-import com.dynacrongroup.webtest.base.WebDriverParameterFactory;
 import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import com.dynacrongroup.webtest.browser.TargetWebBrowserFactory;
@@ -108,11 +107,11 @@ public class WebDriverBase {
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
      *
-     * @see WebDriverParameterFactory
+     * @see ParameterFactory
      */
     @DescriptivelyParameterized.Parameters
-    public static List<String[]> configureWebDriverTargets() throws IOException {
-        return WebDriverParameterFactory.getDriverTargets();
+    public static List<String[]> configureWebDriverTargets(Class testClass) throws IOException {
+        return WebDriverParameterFactory.buildParameters();
     }
 
     @Before
@@ -127,7 +126,7 @@ public class WebDriverBase {
 
     /**
      * This is the target browser/version for this test. The values are a bit
-     * different with Selenium 2/ WebDriver. See the WebDriverParameterFactory and
+     * different with Selenium 2/ WebDriver. See the ParameterFactory and
      * WebDriverLauncher for more details.
      */
     public final TargetWebBrowser getTargetWebBrowser() {

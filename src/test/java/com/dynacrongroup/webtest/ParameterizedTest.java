@@ -34,7 +34,7 @@ public class ParameterizedTest {
     }
 
     @DescriptivelyParameterized.Parameters
-    public static List<String[]> parameters() throws IOException {
+    public static List<String[]> parameters(Class klass) throws IOException {
         String[] param1 = new String[] {"1"};
         String[] param2 = new String[] {"2"};
         List<String[]> array = new ArrayList<String[]>();

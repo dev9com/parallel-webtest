@@ -192,7 +192,7 @@ public class DescriptivelyParameterized extends Suite {
     private List<Object[]> getParametersList(TestClass klass)
             throws Throwable {
         return (List<Object[]>) getParametersMethod(klass).invokeExplosively(
-                null);
+                null, klass.getJavaClass());
     }
 
     private FrameworkMethod getParametersMethod(TestClass testClass)

@@ -1,10 +1,13 @@
 package com.dynacrongroup.webtest.base;
 
 import com.dynacrongroup.webtest.util.ConfigurationValue;
+import com.typesafe.config.Config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class figures out which WebDriver(s) to set up.
@@ -29,8 +32,10 @@ public final class WebDriverParameterFactory {
 
     private static List<String[]> driverTargets;
 
+    private static Map<Class, Config> classConfigs = new HashMap<Class, Config>();
 
-    public static List<String[]> getDriverTargets() {
+
+    public static List<String[]> buildParameters() {
 
         if (driverTargets == null) {
             createDriverTargets();
