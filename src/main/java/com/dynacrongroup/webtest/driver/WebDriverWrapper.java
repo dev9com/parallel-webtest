@@ -1,6 +1,5 @@
 package com.dynacrongroup.webtest.driver;
 
-import com.dynacrongroup.webtest.WebDriverFactory;
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;

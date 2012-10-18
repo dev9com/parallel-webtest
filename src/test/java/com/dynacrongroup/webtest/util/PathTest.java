@@ -1,6 +1,5 @@
 package com.dynacrongroup.webtest.util;
 
-import com.dynacrongroup.webtest.SystemName;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

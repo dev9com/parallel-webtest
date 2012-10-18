@@ -1,6 +1,6 @@
 package com.dynacrongroup.webtest.rule;
 
-import com.dynacrongroup.webtest.WebDriverUtilities;
+import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import com.dynacrongroup.webtest.sauce.SauceREST;
 import com.google.common.annotations.VisibleForTesting;
 import org.json.simple.JSONObject;

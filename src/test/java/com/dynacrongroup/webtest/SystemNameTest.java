@@ -2,7 +2,7 @@ package com.dynacrongroup.webtest;
 
 import org.junit.Test;
 
-import com.dynacrongroup.webtest.SystemName;
+import com.dynacrongroup.webtest.util.SystemName;
 
 import static org.junit.Assert.*;
 

@@ -1,9 +1,9 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
-import com.dynacrongroup.webtest.ParallelRunner;
-import com.dynacrongroup.webtest.SauceLabsCredentials;
-import com.dynacrongroup.webtest.WebDriverBase;
-import com.dynacrongroup.webtest.WebDriverUtilities;
+import com.dynacrongroup.webtest.base.ParallelRunner;
+import com.dynacrongroup.webtest.util.SauceLabsCredentials;
+import com.dynacrongroup.webtest.base.WebDriverBase;
+import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import com.dynacrongroup.webtest.sauce.SauceREST;
 import com.dynacrongroup.webtest.util.Path;
 import org.json.simple.JSONObject;

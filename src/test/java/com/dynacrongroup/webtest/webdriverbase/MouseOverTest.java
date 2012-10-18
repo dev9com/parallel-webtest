@@ -1,7 +1,7 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
-import com.dynacrongroup.webtest.ParallelRunner;
-import com.dynacrongroup.webtest.WebDriverBase;
+import com.dynacrongroup.webtest.base.ParallelRunner;
+import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.dynacrongroup.webtest.util.Path;
 import org.junit.Test;
 import org.junit.runner.RunWith;

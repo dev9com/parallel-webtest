@@ -1,5 +1,7 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.base.DescriptivelyParameterized;
+import com.dynacrongroup.webtest.base.ParallelRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

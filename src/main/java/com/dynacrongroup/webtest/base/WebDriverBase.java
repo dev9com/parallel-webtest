@@ -1,9 +1,8 @@
 package com.dynacrongroup.webtest.base;
 
-import com.dynacrongroup.webtest.SauceLabsCredentials;
-import com.dynacrongroup.webtest.WebDriverParameterFactory;
-import com.dynacrongroup.webtest.WebDriverUtilities;
-import com.dynacrongroup.webtest.base.DescriptivelyParameterized;
+import com.dynacrongroup.webtest.util.SauceLabsCredentials;
+import com.dynacrongroup.webtest.base.WebDriverParameterFactory;
+import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import com.dynacrongroup.webtest.browser.TargetWebBrowser;
 import com.dynacrongroup.webtest.browser.TargetWebBrowserFactory;
 import com.dynacrongroup.webtest.driver.WebDriverWrapper;
@@ -27,8 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.dynacrongroup.webtest.WebDriverUtilities.createJobName;
-import static com.dynacrongroup.webtest.WebDriverUtilities.reduceToOneWindow;
+import static com.dynacrongroup.webtest.util.WebDriverUtilities.createJobName;
+import static com.dynacrongroup.webtest.util.WebDriverUtilities.reduceToOneWindow;
 
 /**
  * This is the base class for interfacing with WebDriver. It handles the
@@ -109,7 +108,7 @@ public class WebDriverBase {
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
      *
-     * @see com.dynacrongroup.webtest.WebDriverParameterFactory
+     * @see WebDriverParameterFactory
      */
     @DescriptivelyParameterized.Parameters
     public static List<String[]> configureWebDriverTargets() throws IOException {

@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest;
 
+import com.dynacrongroup.webtest.util.SauceLabsCredentials;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;

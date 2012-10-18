@@ -1,6 +1,5 @@
 package com.dynacrongroup.webtest.util;
 
-import com.dynacrongroup.webtest.SystemName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
