@@ -51,7 +51,7 @@ public class WebDriverConfig {
 
     public Type type;
     public Browser browser;
-    public String version = "*";
+    public String version = "";
     public Platform platform = Platform.getCurrent();
     public Map<String, Object> customCapabilities = new HashMap<String, Object>();
 
@@ -132,8 +132,9 @@ public class WebDriverConfig {
         return customCapabilities;
     }
 
-    public void setCustomCapabilities(Map<String, Object> customCapabilities) {
-        this.customCapabilities = customCapabilities;
+
+    public void setCustomCapabilities(Map<String,Object> customCapabilities) { //TODO: worry about merging.
+        this.customCapabilities.putAll(customCapabilities);
     }
 
     @Override

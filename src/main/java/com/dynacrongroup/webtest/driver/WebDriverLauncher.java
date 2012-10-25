@@ -138,14 +138,14 @@ public class WebDriverLauncher {
     }
 
     private DesiredCapabilities constructDefaultCapabilities(String jobName, WebDriverConfig target) {
-        String seleniumVersion = ConfigurationValue.getConfigurationValue("REMOTE_SERVER_VERSION", "2.20.0");
+        //String seleniumVersion = ConfigurationValue.getConfigurationValue("REMOTE_SERVER_VERSION", "2.25.0");
 
         DesiredCapabilities capabilities = new DesiredCapabilities(
                 target.getBrowser().name().toLowerCase(), target.getVersion(), target.getPlatform());
         capabilities.setCapability("name", jobName);
         capabilities.setCapability("tags", SystemName.getSystemName());
         capabilities.setCapability("build", uniqueId);
-        capabilities.setCapability("selenium-version", seleniumVersion);
+        //capabilities.setCapability("selenium-version", seleniumVersion);
         capabilities.setCapability("command-timeout", "60");    //default is 300 - may need to revisit.
 
         return capabilities;

@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: yurodivuie
@@ -23,6 +25,8 @@ public class ParameterCombination {
     @NotNull
     private String language = DEFAULT_LANGUAGE;
 
+    public Map<String, Object> globalCustomCapabilities = new HashMap<String, Object>();
+
 
     public WebDriverConfig getWebDriverConfig() {
         return webDriverConfig;
@@ -30,6 +34,7 @@ public class ParameterCombination {
 
     public void setWebDriverConfig(WebDriverConfig webDriverConfig) {
         this.webDriverConfig = webDriverConfig;
+        webDriverConfig.customCapabilities.putAll(getGlobalCustomCapabilities());
     }
 
     public String getLanguage() {
@@ -45,5 +50,12 @@ public class ParameterCombination {
         return Joiner.on("|").join(webDriverConfig.toString(), language.toString());
     }
 
+    public Map<String, Object> getGlobalCustomCapabilities() {
+        return globalCustomCapabilities;
+    }
 
+    public void setGlobalCustomCapabilities(Map<String, Object> globalCustomCapabilities) {
+        this.globalCustomCapabilities = globalCustomCapabilities;
+        webDriverConfig.customCapabilities.putAll(globalCustomCapabilities);        //TODO: merge more sensibly.
+    }
 }

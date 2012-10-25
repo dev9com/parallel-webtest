@@ -65,7 +65,7 @@ public final class ParameterCombinationFactory {
 
     private static Map<String, List<ConfigValue>> getParameterLists(Config config) {
         Map<String, List<ConfigValue>> parameterLists = new HashMap<String, List<ConfigValue>>();
-        for (Map.Entry<String, ConfigValue> parameterEntry : config.entrySet()) {
+        for (Map.Entry<String, ConfigValue> parameterEntry : config.root().entrySet()) {
             parameterLists.put(parameterEntry.getKey(), convertToList(parameterEntry.getValue()));
         }
         return parameterLists;
@@ -75,7 +75,8 @@ public final class ParameterCombinationFactory {
         List<ConfigValue> list;
         if (configValue.valueType().equals(ConfigValueType.LIST)) {
             list = (ConfigList) configValue;
-        } else {
+        }
+        else {
             list = Arrays.asList(configValue);
         }
         return list;
@@ -118,7 +119,9 @@ public final class ParameterCombinationFactory {
 
         try {
             Class propertyType = PropertyUtils.getPropertyType(newParameterCombination, currentKey);
+            LOG.info(currentKey + ":" + configValue.render(ConfigRenderOptions.concise()));
             Object newProperty = mapper.readValue(configValue.render(ConfigRenderOptions.concise()), propertyType);
+            LOG.info("about to write to combination");
 /*            PropertyUtils.getWriteMethod(PropertyUtils.getPropertyDescriptor(newParameterCombination, currentKey))
                     .invoke(newParameterCombination,newProperty);*/
             PropertyUtils.setProperty(newParameterCombination, currentKey, newProperty);

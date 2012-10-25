@@ -2,26 +2,20 @@ package com.dynacrongroup.webtest.webdriverbase;
 
 import com.dynacrongroup.webtest.base.ParallelRunner;
 import com.dynacrongroup.webtest.base.ParameterCombination;
-import com.dynacrongroup.webtest.util.SauceLabsCredentials;
 import com.dynacrongroup.webtest.base.WebDriverBase;
-import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import com.dynacrongroup.webtest.sauce.SauceREST;
 import com.dynacrongroup.webtest.util.Path;
+import com.dynacrongroup.webtest.util.SauceLabsCredentials;
+import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import org.json.simple.JSONObject;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -29,31 +23,15 @@ import static org.junit.Assume.assumeTrue;
  */
 @RunWith(ParallelRunner.class)
 public class CustomCapabilitiesTest extends WebDriverBase {
-    public static Map<String, Object> customCapabilities = new HashMap<String, Object>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomCapabilitiesTest.class);
 
     Path p = new Path("www.dynacrongroup.com", 80);
 
 
-    @BeforeClass
-    public static void setCapabilities() {
-        LOGGER.info("Setting capabilities now.");
-
-        customCapabilities.put("name", "veryCustomName");
-        customCapabilities.put("fakeCapability", "What happens if I enter a bad capability?");
-
-        Map<String, String> customData = new HashMap<String, String>();
-        customData.put("release", "experimental");
-
-        customCapabilities.put("custom-data", customData);
-    }
-
-
     public CustomCapabilitiesTest(ParameterCombination parameterCombination) {
         super(parameterCombination);
-        LOGGER.info("name: {}", customCapabilities.get("name"));
-
+        LOGGER.info("name: {}", parameterCombination.getWebDriverConfig().customCapabilities.get("name"));
     }
 
     @Before
@@ -73,12 +51,12 @@ public class CustomCapabilitiesTest extends WebDriverBase {
     public void capabilitySetTest() throws Exception {
 
         getLogger().info("Starting test [{}]", name.getMethodName());
-        assertTrue(WebDriverUtilities.isElementPresent(driver,
-                By.tagName("h2")));
+        assertThat(WebDriverUtilities.isElementPresent(driver,
+                By.tagName("h2"))).isTrue();
 
         JSONObject status = new SauceREST(SauceLabsCredentials.getUser(), SauceLabsCredentials.getKey()).getJobStatus(this.getJobId());
 
-        assertThat((String) status.get("name"), equalTo("veryCustomName"));
+        assertThat((String) status.get("name")).isEqualTo("veryCustomName");
     }
 
 }

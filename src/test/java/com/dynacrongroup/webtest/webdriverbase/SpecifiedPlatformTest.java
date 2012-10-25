@@ -34,6 +34,7 @@ public class SpecifiedPlatformTest extends WebDriverBase {
         platformMap.put(Platform.WINDOWS, "Windows 2003");
         platformMap.put(Platform.VISTA, "Windows 2008");
         platformMap.put(Platform.LINUX, "Linux");
+        platformMap.put(Platform.XP, "Windows 2003");
 	}
 
     @Before
