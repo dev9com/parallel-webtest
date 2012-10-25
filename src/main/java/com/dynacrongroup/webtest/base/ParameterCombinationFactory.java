@@ -17,9 +17,9 @@ import java.util.Map;
 /**
  * This class figures out which WebDriver(s) to set up.
  */
-public final class ParameterFactory {
+public final class ParameterCombinationFactory {
 
-    private ParameterFactory() {
+    private ParameterCombinationFactory() {
         throw new IllegalAccessError("utility class should not be constructed");
     }
 

@@ -18,7 +18,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Date: 10/17/12
  * Time: 10:53 PM
  */
-public class ParameterFactoryTest {
+public class ParameterCombinationFactoryTest {
 
     Map<String, Object> testConfigMap;
     Config testConfig;
@@ -31,7 +31,7 @@ public class ParameterFactoryTest {
     @Test
     public void testWithoutParameters() {
         testConfig = ConfigFactory.parseMap(testConfigMap);
-        List<Map<String,ConfigValue>> parameters = ParameterFactory.convertToParameters(testConfig);
+        List<Map<String,ConfigValue>> parameters = ParameterCombinationFactory.convertToParameters(testConfig);
         assertThat(parameters).hasSize(0);
     }
 
@@ -40,7 +40,7 @@ public class ParameterFactoryTest {
         testConfigMap.put("driver", "firefox");
         testConfig = ConfigFactory.parseMap(testConfigMap);
 
-        List<Map<String,ConfigValue>> parameters = ParameterFactory.convertToParameters(testConfig);
+        List<Map<String,ConfigValue>> parameters = ParameterCombinationFactory.convertToParameters(testConfig);
 
         assertThat(parameters).hasSize(1);
         Map<String, ConfigValue> parameter = parameters.get(0);
@@ -56,7 +56,7 @@ public class ParameterFactoryTest {
         testConfigMap.put("driver", driverList);
         testConfig = ConfigFactory.parseMap(testConfigMap);
 
-        List<Map<String,ConfigValue>> parameters = ParameterFactory.convertToParameters(testConfig);
+        List<Map<String,ConfigValue>> parameters = ParameterCombinationFactory.convertToParameters(testConfig);
 
         assertThat(parameters).hasSize(2);
         Map<String, ConfigValue> parameter = parameters.get(0);
@@ -81,7 +81,7 @@ public class ParameterFactoryTest {
         testConfigMap.put("language", languageList);
         testConfig = ConfigFactory.parseMap(testConfigMap);
 
-        List<Map<String,ConfigValue>> parameters = ParameterFactory.convertToParameters(testConfig);
+        List<Map<String,ConfigValue>> parameters = ParameterCombinationFactory.convertToParameters(testConfig);
 
         assertThat(parameters).hasSize(4);
         Map<String, ConfigValue> parameter = parameters.get(0);
