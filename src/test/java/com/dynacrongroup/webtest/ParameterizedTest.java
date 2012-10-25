@@ -1,15 +1,9 @@
 package com.dynacrongroup.webtest;
 
-import com.dynacrongroup.webtest.base.DescriptivelyParameterized;
-import com.dynacrongroup.webtest.base.ParallelRunner;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * User: yurodivuie
@@ -17,23 +11,25 @@ import java.util.List;
  * Time: 2:05 PM
  */
 
-@RunWith(ParallelRunner.class)
+//@RunWith(ParallelRunner.class)
+    @Ignore
 public class ParameterizedTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParameterizedTest.class);
 
     private String parameter;
 
-    public ParameterizedTest(String parameter) {
+/*    public ParameterizedTest(String parameter) {
         this.parameter = parameter;
-    }
+    }*/
 
     @Test
     public void soEasy() {
         LOG.info("In class: " + parameter);
     }
 
-    @DescriptivelyParameterized.Parameters
+    //TODO: rewrite.  Our parameterized class is no longer string based.
+/*    @DescriptivelyParameterized.Parameters
     public static List<String[]> parameters(Class klass) throws IOException {
         String[] param1 = new String[] {"1"};
         String[] param2 = new String[] {"2"};
@@ -41,6 +37,6 @@ public class ParameterizedTest {
         array.add(param1);
         array.add(param2);
         return array;
-    }
+    }*/
 
 }

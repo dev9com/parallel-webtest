@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
 import com.dynacrongroup.webtest.base.ParallelRunner;
+import com.dynacrongroup.webtest.base.ParameterCombination;
 import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.dynacrongroup.webtest.util.Path;
 import org.junit.Before;
@@ -18,8 +19,8 @@ public class DefaultLocalSystemAccess2Test extends WebDriverBase {
 
 	Path p = new Path("www.dynacrongroup.com", 80);
 
-	public DefaultLocalSystemAccess2Test(String browser, String browserVersion) {
-		super(browser, browserVersion);
+	public DefaultLocalSystemAccess2Test(ParameterCombination parameterCombination) {
+        super(parameterCombination);
 	}
 
     @Before
@@ -47,24 +48,24 @@ public class DefaultLocalSystemAccess2Test extends WebDriverBase {
 
 	@Test
 	public void browserCheck() throws Exception {
-        getLogger().info("Browser: " + getTargetWebBrowser().humanReadable());
+        getLogger().info("Browser: " + getWebDriverConfig().humanReadable());
 	}
 
 	@Test
 	public void flagByBrowser() throws Exception {
-		if (this.getTargetWebBrowser().isInternetExplorer()) {
+		if (this.getWebDriverConfig().isInternetExplorer()) {
 			getLogger().info("This is an Internet Explorer test!");
 		}
-		if (this.getTargetWebBrowser().isChrome()) {
+		if (this.getWebDriverConfig().isChrome()) {
 			getLogger().info("This is a Chrome test!");
 		}
-		if (this.getTargetWebBrowser().isFirefox()) {
+		if (this.getWebDriverConfig().isFirefox()) {
 			getLogger().info("This is a Firefox test!");
 		}
-		if (this.getTargetWebBrowser().isHtmlUnit()) {
+		if (this.getWebDriverConfig().isHtmlUnit()) {
 			getLogger().info("This is a HTMLUnit test!");
 		}
-		if (this.getTargetWebBrowser().isSafari()) {
+		if (this.getWebDriverConfig().isSafari()) {
 			getLogger().info("This is a Safari test!");
 		}
 	}

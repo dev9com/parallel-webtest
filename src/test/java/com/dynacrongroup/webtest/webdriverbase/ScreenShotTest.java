@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
 import com.dynacrongroup.webtest.base.ParallelRunner;
+import com.dynacrongroup.webtest.base.ParameterCombination;
 import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.dynacrongroup.webtest.util.Path;
 import org.apache.commons.io.FileUtils;
@@ -33,13 +34,13 @@ public class ScreenShotTest extends WebDriverBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScreenShotTest.class);
 
-    public ScreenShotTest(String browser, String browserVersion) {
-        super(browser, browserVersion);
+    public ScreenShotTest(ParameterCombination parameterCombination) {
+        super(parameterCombination);
     }
 
     @Before
     public void loadPage() {
-        assumeTrue(this.getTargetWebBrowser().isRemote());
+        assumeTrue(this.getWebDriverConfig().isRemote());
         if (!driver.getTitle().startsWith("Webtest")) {
             driver.get(p._("/webtest.html"));
         }
@@ -48,7 +49,7 @@ public class ScreenShotTest extends WebDriverBase {
 
     @Test
     public void verifyJobUrlContainsSessionID() throws IOException {
-/*        if (!this.getTargetWebBrowser().isChrome()) {
+/*        if (!this.getWebDriverConfig().isChrome()) {
             driver.manage().window().setSize(new Dimension(1024, 768));
         }*/
 

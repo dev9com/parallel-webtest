@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
 import com.dynacrongroup.webtest.base.ParallelRunner;
+import com.dynacrongroup.webtest.base.ParameterCombination;
 import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.dynacrongroup.webtest.util.Path;
 import org.junit.Test;
@@ -27,14 +28,14 @@ public class MouseOverTest extends WebDriverBase {
 	private static final Logger log = LoggerFactory
 			.getLogger(MouseOverTest.class);
 
-    public MouseOverTest(String browser, String browserVersion) {
-        super(browser, browserVersion);
+    public MouseOverTest(ParameterCombination parameterCombination) {
+        super(parameterCombination);
     }
 
 	@Test
 	public void nativeEventTest() throws Exception {
 
-        assumeTrue(!getTargetWebBrowser().isHtmlUnit());
+        assumeTrue(!getWebDriverConfig().isHtmlUnit());
 
         driver.get(new Path("www.google.com", 80)._(""));
 		WebElement search = driver.findElement(By.name("q"));

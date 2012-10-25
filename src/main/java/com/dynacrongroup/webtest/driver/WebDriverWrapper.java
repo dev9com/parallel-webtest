@@ -1,6 +1,6 @@
 package com.dynacrongroup.webtest.driver;
 
-import com.dynacrongroup.webtest.browser.TargetWebBrowser;
+import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
@@ -22,15 +22,15 @@ public class WebDriverWrapper {
     private static Integer crashCount = 0;
 
     private final String jobName;
-    private final TargetWebBrowser targetWebBrowser;
+    private final WebDriverConfig webDriverConfig;
 
     private WebDriver driver;
 
-    public WebDriverWrapper(String jobName, TargetWebBrowser targetWebBrowser) {
+    public WebDriverWrapper(String jobName, WebDriverConfig webDriverConfig) {
         this.jobName = jobName;
-        this.targetWebBrowser = targetWebBrowser;
+        this.webDriverConfig = webDriverConfig;
 
-        LOG.debug("Created WebDriverWrapper for {} - {}", jobName, targetWebBrowser.humanReadable());
+        LOG.debug("Created WebDriverWrapper for {} - {}", jobName, webDriverConfig.humanReadable());
     }
 
     public WebDriver getDriver() {
@@ -45,8 +45,8 @@ public class WebDriverWrapper {
         return jobName;
     }
 
-    public TargetWebBrowser getTargetWebBrowser() {
-        return targetWebBrowser;
+    public WebDriverConfig getWebDriverConfig() {
+        return webDriverConfig;
     }
 
     /**
@@ -60,7 +60,7 @@ public class WebDriverWrapper {
             try {
                 crashed = driver.getCurrentUrl() == null;
             } catch (Exception exception) {
-                LOG.debug("Driver crashed - {}:{}.", jobName, targetWebBrowser.humanReadable());
+                LOG.debug("Driver crashed - {}:{}.", jobName, webDriverConfig.humanReadable());
                 crashed = true;
             }
         }
@@ -85,7 +85,7 @@ public class WebDriverWrapper {
      */
     public void killDriver() {
         if (driver != null) {
-            LOG.debug("Killing driver for {}:{}.", jobName, targetWebBrowser.humanReadable());
+            LOG.debug("Killing driver for {}:{}.", jobName, webDriverConfig.humanReadable());
             try {
                 driver.quit();
             } catch (WebDriverException exception) {
@@ -97,7 +97,7 @@ public class WebDriverWrapper {
 
     private void getNewDriver() {
         if (!tooManyCrashes()) {
-            driver = WebDriverFactory.getDriver(jobName, targetWebBrowser);
+            driver = WebDriverFactory.getDriver(jobName, webDriverConfig);
         } else {
             throw new WebDriverException("Giving up on provisioning driver; crashed [" + crashCount + "] times.");
         }

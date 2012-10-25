@@ -1,7 +1,6 @@
 package com.dynacrongroup.webtest.util;
 
-import com.dynacrongroup.webtest.browser.TargetWebBrowser;
-import com.dynacrongroup.webtest.util.SystemName;
+import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -180,7 +179,7 @@ public final class WebDriverUtilities {
         return jobId;
     }
 
-    public static String getJobUrl(TargetWebBrowser target, WebDriver driver) {
+    public static String getJobUrl(WebDriverConfig target, WebDriver driver) {
         String url = null;
 
         if (target.isRemote()) {

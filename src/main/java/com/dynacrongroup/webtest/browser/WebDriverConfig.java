@@ -1,7 +1,7 @@
 package com.dynacrongroup.webtest.browser;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Joiner;
 import org.openqa.selenium.Platform;
 
 import java.util.HashMap;
@@ -25,32 +25,54 @@ public class WebDriverConfig {
 
     }
 
-    public static final String INTERNET_EXPLORER = "iexplore";
-    public static final String FIREFOX = "firefox";
-    public static final String GOOGLE_CHROME = "chrome";
-    public static final String SAFARI = "safari";
-    public static final String HTMLUNIT = "htmlunit";
+    public enum Browser {
+        IEXPLORE(org.openqa.selenium.ie.InternetExplorerDriver.class),
+        FIREFOX(org.openqa.selenium.firefox.FirefoxDriver.class),
+        CHROME(org.openqa.selenium.chrome.ChromeDriver.class),
+        SAFARI(org.openqa.selenium.safari.SafariDriver.class),
+        OPERA(null),
+        HTMLUNIT(org.openqa.selenium.htmlunit.HtmlUnitDriver.class);
+
+        private Class driverClass;
+
+        public Class getDriverClass() {
+            return driverClass;
+        }
+
+        private Browser(Class driverClass) {
+            this.driverClass = driverClass;
+        }
+
+        @JsonCreator
+        public static Browser fromJson(String text) {
+            return valueOf(text.toUpperCase());
+        }
+    }
 
     public Type type;
-    public String browser;
-    public String version;
-    public Platform platform;
+    public Browser browser;
+    public String version = "*";
+    public Platform platform = Platform.getCurrent();
     public Map<String, Object> customCapabilities = new HashMap<String, Object>();
 
     public boolean isInternetExplorer() {
-        return (this.browser.contains(INTERNET_EXPLORER));
+        return (this.browser.equals(Browser.IEXPLORE));
     }
 
     public boolean isFirefox() {
-        return (this.browser.contains(FIREFOX));
+        return (this.browser.equals(Browser.FIREFOX));
     }
 
     public boolean isChrome() {
-        return (this.browser.contains(GOOGLE_CHROME));
+        return (this.browser.equals(Browser.CHROME));
     }
 
     public boolean isSafari() {
-        return this.browser.contains(SAFARI);
+        return this.browser.equals(Browser.SAFARI);
+    }
+
+    public boolean isOpera() {
+        return this.browser.equals(Browser.OPERA);
     }
 
     public boolean isClassLoaded() {
@@ -62,7 +84,7 @@ public class WebDriverConfig {
     }
 
     public boolean isHtmlUnit() {
-        return HTMLUNIT.equalsIgnoreCase(browser);
+        return this.browser.equals(Browser.HTMLUNIT);
     }
 
     public boolean hasCustomCapabilities() {
@@ -70,8 +92,8 @@ public class WebDriverConfig {
     }
 
     public String humanReadable() {
-        String[] args = {browser,version,platform.toString()};
-        return StringUtils.join(args, '|');
+        String platformString = platform == null ? "" : platform.toString();
+        return Joiner.on('|').join(browser.name().toLowerCase(), version, platformString);
     }
 
     public Type getType() {
@@ -82,11 +104,11 @@ public class WebDriverConfig {
         this.type = type;
     }
 
-    public String getBrowser() {
+    public Browser getBrowser() {
         return browser;
     }
 
-    public void setBrowser(String browser) {
+    public void setBrowser(Browser browser) {
         this.browser = browser;
     }
 
@@ -112,5 +134,10 @@ public class WebDriverConfig {
 
     public void setCustomCapabilities(Map<String, Object> customCapabilities) {
         this.customCapabilities = customCapabilities;
+    }
+
+    @Override
+    public String toString() {
+        return humanReadable();
     }
 }

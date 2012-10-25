@@ -1,15 +1,14 @@
 package com.dynacrongroup.webtest.base;
 
-import com.dynacrongroup.webtest.util.SauceLabsCredentials;
-import com.dynacrongroup.webtest.util.WebDriverUtilities;
-import com.dynacrongroup.webtest.browser.TargetWebBrowser;
-import com.dynacrongroup.webtest.browser.TargetWebBrowserFactory;
+import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import com.dynacrongroup.webtest.driver.WebDriverWrapper;
 import com.dynacrongroup.webtest.rule.ClassFinishDriverCloser;
 import com.dynacrongroup.webtest.rule.CrashedBrowserChecker;
 import com.dynacrongroup.webtest.rule.MethodTimer;
 import com.dynacrongroup.webtest.rule.SauceLabsFinalStatusReporter;
 import com.dynacrongroup.webtest.rule.SauceLabsLogger;
+import com.dynacrongroup.webtest.util.SauceLabsCredentials;
+import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,9 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.dynacrongroup.webtest.util.WebDriverUtilities.createJobName;
 import static com.dynacrongroup.webtest.util.WebDriverUtilities.reduceToOneWindow;
@@ -68,36 +65,10 @@ public class WebDriverBase {
     /**
      * The configuration for the browser used for these tests.
      */
-    private final TargetWebBrowser targetWebBrowser;
+    private final WebDriverConfig webDriverConfig;
 
-    /**
-     * Used by the JUnit parameterized options to configure the parameterized
-     * configuration options.
-     */
-    public WebDriverBase(String browser, String version) {
-        this(browser, version, null, new HashMap<String, Object>());
-    }
-
-    /**
-     * Used by the JUnit parameterized options to configure the parameterized
-     * configuration options.
-     */
-    public WebDriverBase(String browser, String version, String platform) {
-        this(browser, version, platform, new HashMap<String, Object>() );
-    }
-
-    /**
-     * Alternate parameterized constructor for supplying custom capabilities.
-     */
-    public WebDriverBase(String browser, String version, Map<String, Object> customCapabilities) {
-        this(browser, version, null, customCapabilities);
-    }
-
-    /**
-     * Alternate parameterized constructor for supplying custom capabilities.
-     */
-    public WebDriverBase(String browser, String version, String platform, Map<String, Object> customCapabilities) {
-        this.targetWebBrowser = TargetWebBrowserFactory.getTargetWebBrowser(browser, version, platform, customCapabilities);
+    public WebDriverBase(ParameterCombination parameterCombination) {
+        this.webDriverConfig = parameterCombination.getWebDriverConfig();
         this.browserTestLog = createTestLogger();
         initializeJUnitRules();
     }
@@ -107,11 +78,11 @@ public class WebDriverBase {
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
      *
-     * @see ParameterFactory
+     * @see ParameterCombinationFactory
      */
     @DescriptivelyParameterized.Parameters
-    public static List<String[]> configureWebDriverTargets(Class testClass) throws IOException {
-        return WebDriverParameterFactory.buildParameters();
+    public static List<ParameterCombination> configureWebDriverTargets(Class testClass) throws IOException {
+        return new ParameterCombinationFactory(testClass).buildParameters();
     }
 
     @Before
@@ -126,18 +97,18 @@ public class WebDriverBase {
 
     /**
      * This is the target browser/version for this test. The values are a bit
-     * different with Selenium 2/ WebDriver. See the ParameterFactory and
+     * different with Selenium 2/ WebDriver. See the ParameterCombinationFactory and
      * WebDriverLauncher for more details.
      */
-    public final TargetWebBrowser getTargetWebBrowser() {
-        return targetWebBrowser;
+    public final WebDriverConfig getWebDriverConfig() {
+        return webDriverConfig;
     }
 
     /**
      * Returns the SauceLabs job URL (if there is one).  Constructed dynamically.
      */
     public final String getJobURL() {
-        return WebDriverUtilities.getJobUrl(targetWebBrowser, getDriver());
+        return WebDriverUtilities.getJobUrl(webDriverConfig, getDriver());
     }
 
     /**
@@ -179,7 +150,7 @@ public class WebDriverBase {
     private Logger createTestLogger() {
         String logName = String.format("%s-%s",
                 this.getClass().getName(),
-                getTargetWebBrowser().humanReadable());
+                getWebDriverConfig().humanReadable());
         return LoggerFactory.getLogger(logName);
     }
 
@@ -204,7 +175,7 @@ public class WebDriverBase {
     private WebDriverWrapper getDriverWrapper() {
         WebDriverWrapper wrapper = threadLocalWebDriverWrapper.get();
         if (wrapper == null) {
-            wrapper = new WebDriverWrapper(getJobName(), targetWebBrowser);
+            wrapper = new WebDriverWrapper(getJobName(), webDriverConfig);
             threadLocalWebDriverWrapper.set(wrapper);
         }
         return wrapper;
@@ -233,7 +204,7 @@ public class WebDriverBase {
     private TestRule createTestWatcherChain() {
         RuleChain chain = createStandardRuleChain();
 
-        if (getTargetWebBrowser().isRemote()) {
+        if (getWebDriverConfig().isRemote()) {
             chain = attachRemoteReportingRules(chain);
         }
 

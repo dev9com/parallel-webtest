@@ -54,12 +54,12 @@ public class DescriptivelyParameterized extends Suite {
             BlockJUnit4ClassRunner {
         private final int fParameterSetNumber;
 
-        private final List<Object[]> fParameterList;
+        private final List<Object> fParameterList;
 
         private final String fParameterDescription;
 
         TestClassRunnerForParameters(Class<?> type,
-                                     List<Object[]> parameterList, int i) throws InitializationError {
+                                     List<Object> parameterList, int i) throws InitializationError {
             super(type);
             fParameterList = parameterList;
             fParameterSetNumber = i;
@@ -93,7 +93,7 @@ public class DescriptivelyParameterized extends Suite {
             return testConstructor.newInstance(params.toArray());
         }
 
-        private Object[] computeParams() throws Exception {
+        private Object computeParams() throws Exception {
             try {
                 return fParameterList.get(fParameterSetNumber);
             } catch (ClassCastException e) {
@@ -111,8 +111,8 @@ public class DescriptivelyParameterized extends Suite {
             String returnValue;
 
             try {
-                Object[] params = computeParams();
-                returnValue = formatParams(params);
+                Object params = computeParams();
+                returnValue = params.toString();
             } catch (Exception e) {
                 returnValue = null;
             }
@@ -129,7 +129,7 @@ public class DescriptivelyParameterized extends Suite {
          * @param params
          * @return A formatted string to be appended to the test name.
          */
-        public String formatParams(Object[] params) {
+        public String formatParams(Object params) {
             String formattedParams;
             String[] stringParams = (String[]) params;
             if (stringParams[1].contains("Driver")) {
@@ -177,7 +177,7 @@ public class DescriptivelyParameterized extends Suite {
      */
     public DescriptivelyParameterized(Class<?> klass) throws Throwable {
         super(klass, Collections.<Runner>emptyList());
-        List<Object[]> parametersList = getParametersList(getTestClass());
+        List<Object> parametersList = getParametersList(getTestClass());
         for (int i = 0; i < parametersList.size(); i++)
             runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
                     parametersList, i));
@@ -189,9 +189,9 @@ public class DescriptivelyParameterized extends Suite {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Object[]> getParametersList(TestClass klass)
+    private List<Object> getParametersList(TestClass klass)
             throws Throwable {
-        return (List<Object[]>) getParametersMethod(klass).invokeExplosively(
+        return (List<Object>) getParametersMethod(klass).invokeExplosively(
                 null, klass.getJavaClass());
     }
 

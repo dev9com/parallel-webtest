@@ -1,6 +1,6 @@
 package com.dynacrongroup.webtest.driver;
 
-import com.dynacrongroup.webtest.browser.TargetWebBrowser;
+import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
@@ -21,25 +21,25 @@ public class WebDriverFactory {
         //utility class
     }
 
-    public static WebDriver getDriver(String jobName, TargetWebBrowser targetWebBrowser) {
+    public static WebDriver getDriver(String jobName, WebDriverConfig webDriverConfig) {
 
-        LOG.debug("procuring {}", targetWebBrowser.humanReadable());
+        LOG.debug("procuring {}", webDriverConfig.humanReadable());
 
         WebDriverLauncher launcher = new WebDriverLauncher();
         WebDriver driver;
 
-        if (targetWebBrowser.isHtmlUnit()) {
-            driver = launcher.getHtmlUnitDriver(targetWebBrowser);
+        if (webDriverConfig.isHtmlUnit()) {
+            driver = launcher.getHtmlUnitDriver(webDriverConfig);
         }
-        else if (targetWebBrowser.isClassLoaded()) {
-            driver = launcher.getClassLoadedDriver(targetWebBrowser);
+        else if (webDriverConfig.isClassLoaded()) {
+            driver = launcher.getClassLoadedDriver(webDriverConfig);
         }
-        else if (targetWebBrowser.isRemote()) {
-            driver = launcher.getRemoteDriver(jobName, targetWebBrowser);
-            LOG.info("View on Sauce Labs at {}", getJobUrl(targetWebBrowser, driver));
+        else if (webDriverConfig.isRemote()) {
+            driver = launcher.getRemoteDriver(jobName, webDriverConfig);
+            LOG.info("View on Sauce Labs at {}", getJobUrl(webDriverConfig, driver));
         }
         else {
-            throw new WebDriverException(targetWebBrowser.humanReadable() + " not a valid driver.");
+            throw new WebDriverException(webDriverConfig.humanReadable() + " not a valid driver.");
         }
 
         return driver;

@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
 import com.dynacrongroup.webtest.base.ParallelRunner;
+import com.dynacrongroup.webtest.base.ParameterCombination;
 import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.dynacrongroup.webtest.util.Path;
 import org.junit.Before;
@@ -24,8 +25,8 @@ public class JobUrlTest extends WebDriverBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobUrlTest.class);
 
-	public JobUrlTest(String browser, String browserVersion) {
-		super(browser, browserVersion);
+	public JobUrlTest(ParameterCombination parameterCombination) {
+        super(parameterCombination);
 	}
 
     @Before
@@ -35,7 +36,7 @@ public class JobUrlTest extends WebDriverBase {
 
 	@Test
     public void verifyJobUrlContainsSessionID() {
-        if (this.getTargetWebBrowser().isRemote()) {
+        if (this.getWebDriverConfig().isRemote()) {
             assertThat(this.getJobURL(), containsString(((RemoteWebDriver) driver).getSessionId().toString()));
         }
         else {

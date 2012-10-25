@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
 import com.dynacrongroup.webtest.base.ParallelRunner;
+import com.dynacrongroup.webtest.base.ParameterCombination;
 import com.dynacrongroup.webtest.util.SauceLabsCredentials;
 import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.dynacrongroup.webtest.util.WebDriverUtilities;
@@ -49,15 +50,15 @@ public class CustomCapabilitiesTest extends WebDriverBase {
     }
 
 
-    public CustomCapabilitiesTest(String browser, String browserVersion) {
-        super(browser, browserVersion, customCapabilities);
+    public CustomCapabilitiesTest(ParameterCombination parameterCombination) {
+        super(parameterCombination);
         LOGGER.info("name: {}", customCapabilities.get("name"));
 
     }
 
     @Before
     public void loadPage() {
-        assumeTrue(this.getTargetWebBrowser().isRemote());
+        assumeTrue(this.getWebDriverConfig().isRemote());
         if (!driver.getTitle().startsWith("Webtest")) {
             driver.get(p._("/webtest.html"));
         }

@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
 import com.dynacrongroup.webtest.base.ParallelRunner;
+import com.dynacrongroup.webtest.base.ParameterCombination;
 import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import com.dynacrongroup.webtest.util.Path;
@@ -24,8 +25,8 @@ import static org.junit.Assert.assertTrue;
 public class WebDriverUtilitiesTest extends WebDriverBase {
 	Path p = new Path("www.dynacrongroup.com", 80);
 
-	public WebDriverUtilitiesTest(String browser, String browserVersion) {
-		super(browser, browserVersion);
+	public WebDriverUtilitiesTest(ParameterCombination parameterCombination) {
+		super(parameterCombination);
 	}
 
     @Before
