@@ -1,6 +1,6 @@
 package com.dynacrongroup.webtest.util;
 
-import com.dynacrongroup.webtest.base.WebDriverBase;
+import com.dynacrongroup.webtest.WebDriverBase;
 import com.typesafe.config.Config;
 import org.junit.Test;
 

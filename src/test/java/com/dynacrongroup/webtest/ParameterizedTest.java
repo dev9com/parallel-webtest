@@ -29,7 +29,7 @@ public class ParameterizedTest {
     }
 
     //TODO: rewrite.  Our parameterized class is no longer string based.
-/*    @DescriptivelyParameterized.Parameters
+/*    @ParameterCombinationRunner.Parameters
     public static List<String[]> parameters(Class klass) throws IOException {
         String[] param1 = new String[] {"1"};
         String[] param2 = new String[] {"2"};
