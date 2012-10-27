@@ -1,6 +1,9 @@
-package com.dynacrongroup.webtest.base;
+package com.dynacrongroup.webtest.parameter;
 
+import com.dynacrongroup.webtest.base.WebDriverBase;
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
+import com.dynacrongroup.webtest.parameter.ParameterCombination;
+import com.dynacrongroup.webtest.parameter.ParameterCombinationFactory;
 import com.rits.cloning.Cloner;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;

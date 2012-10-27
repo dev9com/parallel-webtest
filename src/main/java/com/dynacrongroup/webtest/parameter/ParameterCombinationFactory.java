@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.base;
+package com.dynacrongroup.webtest.parameter;
 
 import com.dynacrongroup.webtest.util.Configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;

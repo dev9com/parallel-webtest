@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.base;
+package com.dynacrongroup.webtest.parameter;
 
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import com.google.common.base.Joiner;

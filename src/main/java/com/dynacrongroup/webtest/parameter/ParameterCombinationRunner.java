@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.base;
+package com.dynacrongroup.webtest.parameter;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.runner.Runner;
@@ -37,13 +37,13 @@ import java.util.List;
  */
 
 @SuppressWarnings("all")
-public class DescriptivelyParameterized extends Suite {
+public class ParameterCombinationRunner extends Suite {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DescriptivelyParameterized.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterCombinationRunner.class);
 
     /**
      * Annotation for a method which provides parameters to be injected into the
-     * test class constructor by <code>DescriptivelyParameterized</code>
+     * test class constructor by <code>ParameterCombinationRunner</code>
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
@@ -175,7 +175,7 @@ public class DescriptivelyParameterized extends Suite {
     /**
      * Only called reflectively. Do not use programmatically.
      */
-    public DescriptivelyParameterized(Class<?> klass) throws Throwable {
+    public ParameterCombinationRunner(Class<?> klass) throws Throwable {
         super(klass, Collections.<Runner>emptyList());
         List<Object> parametersList = getParametersList(getTestClass());
         for (int i = 0; i < parametersList.size(); i++)

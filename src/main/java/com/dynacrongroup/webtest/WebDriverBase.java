@@ -1,7 +1,10 @@
-package com.dynacrongroup.webtest.base;
+package com.dynacrongroup.webtest;
 
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import com.dynacrongroup.webtest.driver.WebDriverWrapper;
+import com.dynacrongroup.webtest.parameter.ParameterCombination;
+import com.dynacrongroup.webtest.parameter.ParameterCombinationFactory;
+import com.dynacrongroup.webtest.parameter.ParameterCombinationRunner;
 import com.dynacrongroup.webtest.rule.ClassFinishDriverCloser;
 import com.dynacrongroup.webtest.rule.CrashedBrowserChecker;
 import com.dynacrongroup.webtest.rule.MethodTimer;
@@ -67,6 +70,10 @@ public class WebDriverBase {
      */
     private final WebDriverConfig webDriverConfig;
 
+    /**
+     *
+     * @param parameterCombination
+     */
     public WebDriverBase(ParameterCombination parameterCombination) {
         this.webDriverConfig = parameterCombination.getWebDriverConfig();
         this.browserTestLog = createTestLogger();
@@ -78,9 +85,9 @@ public class WebDriverBase {
      * Feeds in the list of target browsers. This might be a single local
      * browser, HTMLUnit, or one or more remote SauceLabs instances.
      *
-     * @see ParameterCombinationFactory
+     * @see com.dynacrongroup.webtest.parameter.ParameterCombinationFactory
      */
-    @DescriptivelyParameterized.Parameters
+    @ParameterCombinationRunner.Parameters
     public static List<ParameterCombination> configureWebDriverTargets(Class testClass) throws IOException {
         return new ParameterCombinationFactory(testClass).buildParameters();
     }

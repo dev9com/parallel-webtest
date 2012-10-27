@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.base;
+package com.dynacrongroup.webtest.parameter;
 
 import org.junit.runners.model.RunnerScheduler;
 
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * http ://hwellmann.blogspot.com/2009/12/running-parameterized-junit-tests-in
  * .html
  */
-public class ParallelRunner extends DescriptivelyParameterized {
+public class ParallelRunner extends ParameterCombinationRunner {
 
     private static class ThreadPoolScheduler implements RunnerScheduler {
 
