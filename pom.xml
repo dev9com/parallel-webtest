@@ -364,11 +364,9 @@
         </plugins>
     </reporting>
 
-    <!-- This is an example of launching a Firefox instance for local testing
-         (i.e. not on the CI system) -->
     <profiles>
         <profile>
-            <id>ci-default-targets</id>
+            <id>ci</id>
             <build>
                 <plugins>
                     <plugin>
