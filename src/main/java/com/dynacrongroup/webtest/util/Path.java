@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest.util;
 
+import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +21,9 @@ public class Path {
     /**
      * These system properties can be used to override defaults
      */
-    public static final String WEBDRIVER_PROTOCOL = "WEBDRIVER_PROTOCOL";
-    public static final String WEBDRIVER_SERVER = "WEBDRIVER_SERVER";
-    public static final String WEBDRIVER_PORT = "WEBDRIVER_PORT";
-    public static final String WEBDRIVER_CONTEXT = "WEBDRIVER_CONTEXT";
+    public static final String WEBTEST_PROTOCOL = "webtest.protocol";
+    public static final String WEBTEST_PORT = "webtest.port";
+    public static final String WEBTEST_CONTEXT = "webtest.context";
 
     private static final Logger LOG = LoggerFactory.getLogger(Path.class);
 
@@ -153,7 +153,8 @@ public class Path {
             try {
                 InetAddress address = InetAddress.getByName(server);
                 LOG.trace("Address is {}", address.getAddress());
-                local = Arrays.equals(address.getAddress(), new byte[]{127, 0, 0, 1});
+                local = Arrays.equals(address.getAddress(), new byte[]{127, 0, 0, 1}) ||
+                        Arrays.equals(address.getAddress(), new byte[]{0, 0, 0, 0});
             } catch (UnknownHostException e) {
                 LOG.error(e.getMessage());
             }
@@ -165,21 +166,19 @@ public class Path {
 
     private void init() {
 
-        protocol = ConfigurationValue.getConfigurationValue(
-                WEBDRIVER_PROTOCOL, "http");
+        Config config = Configuration.getConfig();
+
+        protocol = config.getString(WEBTEST_PROTOCOL);
 
         if (protocol.equalsIgnoreCase("https")) {
             port = 443;
         }
 
-        port = Integer.parseInt(ConfigurationValue.getConfigurationValue(
-                WEBDRIVER_PORT, String.valueOf(port)));
+        port = config.hasPath(WEBTEST_PORT) ? config.getInt(WEBTEST_PORT) : port;
 
-        server = ConfigurationValue.getConfigurationValue(WEBDRIVER_SERVER,
-                SystemName.getSystemName());
+        server = SystemName.getSystemName();
 
-        context = ConfigurationValue.getConfigurationValue(
-                WEBDRIVER_CONTEXT, "");
+        context = config.getString(WEBTEST_CONTEXT);
     }
 
     /**

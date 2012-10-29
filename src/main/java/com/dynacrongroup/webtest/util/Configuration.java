@@ -20,7 +20,7 @@ public class Configuration {
 
     private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
     private static final String confExtension = ".conf";
-    private static final String profile = System.getProperty("config.profile", null);
+    private static final String profile = System.getProperty("webtest.profile", null);
 
     private static Map<Class, Config> classConfigs = new HashMap<Class, Config>();
     private static Config config = null;

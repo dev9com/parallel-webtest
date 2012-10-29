@@ -17,13 +17,13 @@ import java.util.Map;
 public class ParameterCombination {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParameterCombination.class);
-    private static final String DEFAULT_LANGUAGE = "en";
+    private static final String DEFAULT_BROWSER_LOCALE = "en-us";
 
     @NotNull
     private WebDriverConfig webDriverConfig = new WebDriverConfig();
 
     @NotNull
-    private String language = DEFAULT_LANGUAGE;
+    private String browserLocale = DEFAULT_BROWSER_LOCALE;
 
     public Map<String, Object> globalCustomCapabilities = new HashMap<String, Object>();
 
@@ -37,17 +37,17 @@ public class ParameterCombination {
         webDriverConfig.customCapabilities.putAll(getGlobalCustomCapabilities());
     }
 
-    public String getLanguage() {
-        return language;
+    public String getBrowserLocale() {
+        return browserLocale;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setBrowserLocale(String browserLocale) {
+        this.browserLocale = browserLocale;
     }
 
     @Override
     public String toString() {
-        return Joiner.on("|").join(webDriverConfig.toString(), language.toString());
+        return Joiner.on("|").join(webDriverConfig.toString(), browserLocale.toString());
     }
 
     public Map<String, Object> getGlobalCustomCapabilities() {

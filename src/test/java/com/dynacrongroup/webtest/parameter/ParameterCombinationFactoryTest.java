@@ -2,8 +2,6 @@ package com.dynacrongroup.webtest.parameter;
 
 import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
-import com.dynacrongroup.webtest.parameter.ParameterCombination;
-import com.dynacrongroup.webtest.parameter.ParameterCombinationFactory;
 import com.rits.cloning.Cloner;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -104,7 +102,7 @@ public class ParameterCombinationFactoryTest {
         assertThat(parameters).hasSize(4);
         for (ParameterCombination parameterCombination : parameters ) {
             assertThat(driverList).contains(parameterCombination.getWebDriverConfig().getBrowser().name().toLowerCase());
-            assertThat(languageList).contains(parameterCombination.getLanguage());
+            assertThat(languageList).contains(parameterCombination.getBrowserLocale());
         }
     }
 

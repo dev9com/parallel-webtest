@@ -373,7 +373,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <config.profile>default-targets</config.profile>
+                                <webtest.profile>default-targets</webtest.profile>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

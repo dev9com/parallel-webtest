@@ -1,9 +1,10 @@
 package com.dynacrongroup.webtest.driver;
 
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
-import com.dynacrongroup.webtest.util.ConfigurationValue;
+import com.dynacrongroup.webtest.util.Configuration;
 import com.dynacrongroup.webtest.util.SauceLabsCredentials;
 import com.dynacrongroup.webtest.util.SystemName;
+import com.typesafe.config.Config;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.dynacrongroup.webtest.util.WebDriverUtilities.getJobUrl;
 
 /**
  * This class is responsible for launching single WebDriver instances. Note that
@@ -37,6 +40,8 @@ public class WebDriverLauncher {
     private Logger LOG = LoggerFactory.getLogger(WebDriverLauncher.class);
 
     private WebDriver driver = null;
+
+    private Config globalConfig = Configuration.getConfig();
 
 
     public WebDriverLauncher() {
@@ -98,20 +103,21 @@ public class WebDriverLauncher {
         verifyHostNameIsSpecified();
         getRemoteDriverFromSauceLabs(jobName, target);
         verifyDriverNotNull(driver);
+        LOG.info("View on Sauce Labs at {}", getJobUrl(target, driver));
         return driver;
     }
 
     private void verifyHostNameIsSpecified() {
-        String webTestHostName = ConfigurationValue.getConfigurationValue(SystemName.WEBTEST_HOSTNAME, null);
+        String webTestHostName = globalConfig.getString(SystemName.WEBTEST_HOSTNAME);
         if (webTestHostName == null) {
             throw new WebDriverException(
-                    "No hostname is specified for remote test. Please specify a WEBTEST_HOSTNAME value.");
+                    "No hostname is specified for remote test. Please specify a webtest.hostname value.");
         }
     }
 
     private void verifyDriverNotNull(WebDriver driver) {
         if (driver == null) {
-            throw new WebDriverException("Failed to provision WebDriver.");
+            throw new WebDriverException("Failed to initialize WebDriver.");
         }
     }
 

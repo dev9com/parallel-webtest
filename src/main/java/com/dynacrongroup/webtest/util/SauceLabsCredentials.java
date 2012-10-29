@@ -13,9 +13,9 @@ import java.net.URL;
  */
 public final class SauceLabsCredentials {
 
-	private static final String SAUCELABS_USER = "SAUCELABS_USER";
-	private static final String SAUCELABS_KEY = "SAUCELABS_KEY";
-	private static final String SAUCELABS_SERVER = "SAUCELABS_SERVER";
+	private static final String SAUCELABS_USER = "saucelabs.user";
+	private static final String SAUCELABS_KEY = "saucelabs.key";
+	private static final String SAUCELABS_SERVER = "saucelabs.server";
 
 	private static final Logger log = LoggerFactory
 			.getLogger(SauceLabsCredentials.class);
@@ -29,8 +29,7 @@ public final class SauceLabsCredentials {
      * @return
      */
 	public static String getUser() {
-		return ConfigurationValue.getConfigurationValue(SAUCELABS_USER,
-				null);
+		return Configuration.getConfig().getString(SAUCELABS_USER);
 	}
 
     /**
@@ -38,14 +37,12 @@ public final class SauceLabsCredentials {
      * @return
      */
 	public static String getKey() {
-		return ConfigurationValue.getConfigurationValue(SAUCELABS_KEY,
-				null);
+        return Configuration.getConfig().getString(SAUCELABS_KEY);
 	}
 
 	/** This almost never changes, but it can be used to send tests to any selenium server */
 	public static String getServer() {
-		return ConfigurationValue.getConfigurationValue(SAUCELABS_SERVER,
-				"ondemand.saucelabs.com/wd/hub");
+        return Configuration.getConfig().getString(SAUCELABS_SERVER);
 	}
 
     /**
@@ -57,7 +54,7 @@ public final class SauceLabsCredentials {
         String key = getKey();
 
         if (user == null || key == null) {
-            throw new WebDriverException("SAUCELABS_USER or SAUCELABS_KEY missing and required " +
+            throw new WebDriverException("saucelabs.user or saucelabs.key missing and required " +
                     "for Sauce Labs connection.  See README.txt for parallel-webtest library.");
         }
 

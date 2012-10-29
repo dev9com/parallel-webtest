@@ -23,7 +23,7 @@ public class WebDriverFactory {
 
     public static WebDriver getDriver(String jobName, WebDriverConfig webDriverConfig) {
 
-        LOG.debug("procuring {}", webDriverConfig.humanReadable());
+        LOG.debug("initializing {}", webDriverConfig.humanReadable());
 
         WebDriverLauncher launcher = new WebDriverLauncher();
         WebDriver driver;
@@ -36,7 +36,6 @@ public class WebDriverFactory {
         }
         else if (webDriverConfig.isRemote()) {
             driver = launcher.getRemoteDriver(jobName, webDriverConfig);
-            LOG.info("View on Sauce Labs at {}", getJobUrl(webDriverConfig, driver));
         }
         else {
             throw new WebDriverException(webDriverConfig.humanReadable() + " not a valid driver.");

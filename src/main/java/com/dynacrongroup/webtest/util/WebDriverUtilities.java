@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.dynacrongroup.webtest.util.ConfigurationValue.getConfigurationValue;
 
 /**
  * Utility class that provides methods commonly used but missing from the WebDriver api.
@@ -22,7 +21,7 @@ public final class WebDriverUtilities {
     /**
      * Maximum number of seconds to wait when using waitForElement()
      */
-    public final static Integer MAX_WAIT_SECONDS = Integer.valueOf(getConfigurationValue("MAX_WAIT_SECONDS", "5"));
+    public final static Integer MAX_WAIT_SECONDS = 10;
     private final static Logger LOG = LoggerFactory
             .getLogger(WebDriverUtilities.class);
 
