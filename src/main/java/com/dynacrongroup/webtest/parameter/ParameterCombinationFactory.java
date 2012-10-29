@@ -45,7 +45,7 @@ public final class ParameterCombinationFactory {
     }
 
     private Class inferParameterCombinationClass() {
-        List<Constructor<?>> constructors = Arrays.asList(testClass.getDeclaredConstructors());
+        List<Constructor> constructors = Arrays.asList(testClass.getDeclaredConstructors());
         for (Constructor constructor : constructors) {
             for (Class constructorArgumentClass : constructor.getParameterTypes()) {
                 if (ParameterCombination.class.isAssignableFrom(constructorArgumentClass)) {
