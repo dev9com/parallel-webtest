@@ -27,7 +27,9 @@ public class Configuration {
 
     public static Config getConfig() {
         if (config == null) {
-            config = addProfileToConfig(ConfigFactory.load());
+            config = addProfileToConfig(ConfigFactory.defaultOverrides()
+                    .withFallback(ConfigFactory.systemEnvironment())
+                    .withFallback(ConfigFactory.load()));
         }
         return config;
     }
@@ -44,6 +46,7 @@ public class Configuration {
         Config classConfig;
         if (classConfigFile != null) {
             classConfig = ConfigFactory.defaultOverrides()
+                    .withFallback(ConfigFactory.systemEnvironment())
                     .withFallback(ConfigFactory.parseFile(getClassConfigFile(klass)))
                     .withFallback(ConfigFactory.load());
             classConfig = addProfileToConfig(classConfig);
