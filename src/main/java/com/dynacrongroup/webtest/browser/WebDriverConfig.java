@@ -52,7 +52,7 @@ public class WebDriverConfig {
     public Type type;
     public Browser browser;
     public String version = "";
-    public String browserLocal = "";
+    public String browserLocale = "";
     public Platform platform = Platform.getCurrent();
     public Map<String, Object> customCapabilities = new HashMap<String, Object>();
 
@@ -138,12 +138,12 @@ public class WebDriverConfig {
         this.customCapabilities.putAll(customCapabilities);
     }
 
-    public String getBrowserLocal() {
-        return browserLocal;
+    public String getBrowserLocale() {
+        return browserLocale;
     }
 
-    public void setBrowserLocal(String browserLocal) {
-        this.browserLocal = browserLocal;
+    public void setBrowserLocale(String browserLocale) {
+        this.browserLocale = browserLocale;
     }
 
     @Override

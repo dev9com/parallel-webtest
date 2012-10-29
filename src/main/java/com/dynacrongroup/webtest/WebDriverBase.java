@@ -45,7 +45,7 @@ public class WebDriverBase {
      * This is a special bit of JUnit magic to get the name of the test
      */
     @Rule
-    public TestName name = new TestName();
+    public TestName testName = new TestName();
 
     /**
      * public version of the testWatcherChain, to satisfy annotation requirements.
@@ -88,7 +88,7 @@ public class WebDriverBase {
      * @see com.dynacrongroup.webtest.parameter.ParameterCombinationFactory
      */
     @ParameterCombinationRunner.Parameters
-    public static List<ParameterCombination> configureWebDriverTargets(Class testClass) throws IOException {
+    public static <T extends ParameterCombination> List<T> configureParameters(Class testClass) throws IOException {
         return new ParameterCombinationFactory(testClass).buildParameters();
     }
 

@@ -38,7 +38,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 
 	@Test
 	public void isElementPresentTest() throws Exception {
-        getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("Starting test [{}]", testName.getMethodName());
 		assertTrue(WebDriverUtilities.isElementPresent(driver,
                 By.tagName("h2")));
 		assertFalse(WebDriverUtilities.isElementPresent(driver,
@@ -47,14 +47,14 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 
 	@Test
 	public void waitForElementTest() throws Exception {
-        getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("Starting test [{}]", testName.getMethodName());
         driver.navigate().refresh();
 		WebDriverUtilities.waitForElement(driver, By.tagName("h2"));
 	}
 
 	@Test
 	public void isTextPresentTest() throws Exception {
-        getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("Starting test [{}]", testName.getMethodName());
 		assertTrue(WebDriverUtilities.isTextPresent(driver, "Dynacron Group"));
 		assertFalse(WebDriverUtilities.isTextPresent(driver,
 				"ponies in a field"));
@@ -62,14 +62,14 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 
     @Test
     public void isTestPresentInElementUsingDriverTest() throws Exception {
-        getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("Starting test [{}]", testName.getMethodName());
         assertTrue(WebDriverUtilities.isTextPresentInElement(driver, By.tagName("h1"), "Header"));
         assertFalse(WebDriverUtilities.isTextPresentInElement(driver, By.tagName("h1"), "Montage"));
     }
 
     @Test
     public void isTestPresentInElementUsingElementTest() throws Exception {
-        getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("Starting test [{}]", testName.getMethodName());
 
         WebElement element = driver.findElement(By.tagName("h1"));
         assertTrue(WebDriverUtilities.isTextPresentInElement(element, "Header"));
@@ -78,7 +78,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 
     @Test
     public void reduceToOneWindowTest() throws Exception {
-        getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("Starting test [{}]", testName.getMethodName());
         String testUrl = "http://www.google.com/";
 
 
@@ -92,7 +92,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 
     @Test
     public void switchToNewPopUpTest() {
-        getLogger().info("Starting test [{}]", name.getMethodName());
+        getLogger().info("Starting test [{}]", testName.getMethodName());
         String testUrl = "http://www.google.com/";
 
         ((JavascriptExecutor)driver).executeScript("window.open(\"" + testUrl + "\")");
