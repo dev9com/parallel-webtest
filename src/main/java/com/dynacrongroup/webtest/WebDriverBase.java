@@ -89,7 +89,7 @@ public class WebDriverBase {
      */
     @ParameterCombinationRunner.Parameters
     public static <T extends ParameterCombination> List<T> configureParameters(Class testClass) throws IOException {
-        return new ParameterCombinationFactory(testClass).buildParameters();
+        return new ParameterCombinationFactory(testClass).make();
     }
 
     @Before

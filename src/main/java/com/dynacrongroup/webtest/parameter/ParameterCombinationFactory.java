@@ -40,7 +40,7 @@ public final class ParameterCombinationFactory {
         this.parameterCombinationClass = inferParameterCombinationClass();
     }
 
-    public <T extends ParameterCombination> List<T> buildParameters() {
+    public <T extends ParameterCombination> List<T> make() {
         return convertToParameterCombinations(config.getConfig(parametersKey));
     }
 

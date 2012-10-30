@@ -11,8 +11,8 @@ detailed examples.
 
 In addition, you'll want to add the following environment variables:
 
-* saucelabs.user: your sauce labs user name.
-* saucelabs.key: your sauce labs key.
+* SAUCELABS_USER: your sauce labs user name.
+* SAUCELABS_KEY: your sauce labs key.
 
 Tests run by default in Firefox, locally.
 
