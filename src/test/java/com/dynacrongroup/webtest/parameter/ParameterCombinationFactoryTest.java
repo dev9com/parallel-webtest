@@ -92,8 +92,8 @@ public class ParameterCombinationFactoryTest {
             driverConfigs.add(cloner.deepClone(driverConfigMap));
         }
         testConfigMap.put("webDriverConfig",driverConfigs);
-        List<String> languageList = Arrays.asList("en", "fr");
-        testConfigMap.put("language", languageList);
+        List<String> languageList = Arrays.asList("en-us", "fr-FR");
+        testConfigMap.put("browserLocale", languageList);
         testConfig = ConfigFactory.parseMap(testConfigMap);
 
         List<ParameterCombination> parameters = new ParameterCombinationFactory(TestClass.class).
