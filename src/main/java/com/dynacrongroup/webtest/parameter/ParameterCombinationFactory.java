@@ -119,9 +119,9 @@ public final class ParameterCombinationFactory {
 
         try {
             Class propertyType = PropertyUtils.getPropertyType(newParameterCombination, currentKey);
-            LOG.info(currentKey + ":" + configValue.render(ConfigRenderOptions.concise()));
+            LOG.trace(currentKey + ":" + configValue.render(ConfigRenderOptions.concise()));
             Object newProperty = mapper.readValue(configValue.render(ConfigRenderOptions.concise()), propertyType);
-            LOG.info("about to write to combination");
+            LOG.trace("about to write to combination");
 /*            PropertyUtils.getWriteMethod(PropertyUtils.getPropertyDescriptor(newParameterCombination, currentKey))
                     .invoke(newParameterCombination,newProperty);*/
             PropertyUtils.setProperty(newParameterCombination, currentKey, newProperty);

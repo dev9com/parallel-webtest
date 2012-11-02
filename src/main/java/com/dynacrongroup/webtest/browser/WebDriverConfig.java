@@ -3,8 +3,13 @@ package com.dynacrongroup.webtest.browser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.base.Joiner;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,32 +30,8 @@ public class WebDriverConfig {
 
     }
 
-    public enum Browser {
-        IEXPLORE(org.openqa.selenium.ie.InternetExplorerDriver.class),
-        FIREFOX(org.openqa.selenium.firefox.FirefoxDriver.class),
-        CHROME(org.openqa.selenium.chrome.ChromeDriver.class),
-        SAFARI(org.openqa.selenium.safari.SafariDriver.class),
-        OPERA(null),
-        HTMLUNIT(org.openqa.selenium.htmlunit.HtmlUnitDriver.class);
-
-        private Class driverClass;
-
-        public Class getDriverClass() {
-            return driverClass;
-        }
-
-        private Browser(Class driverClass) {
-            this.driverClass = driverClass;
-        }
-
-        @JsonCreator
-        public static Browser fromJson(String text) {
-            return valueOf(text.toUpperCase());
-        }
-    }
-
-    public Type type;
-    public Browser browser;
+    public Type type = Type.LOCAL;
+    public Browser browser = Browser.FIREFOX;
     public String version = "";
     public String browserLocale = "";
     public Platform platform = Platform.getCurrent();
@@ -144,6 +125,37 @@ public class WebDriverConfig {
 
     public void setBrowserLocale(String browserLocale) {
         this.browserLocale = browserLocale;
+        addBrowserLocaleToCustomCapabilities();
+    }
+
+    private void addBrowserLocaleToCustomCapabilities() {
+        switch(browser) {
+            case FIREFOX:   addBrowserLocaleForFirefox(); break;
+            case CHROME:    addBrowserLocaleForChrome();  break;
+        }
+    }
+
+    private void addBrowserLocaleForFirefox() {
+        FirefoxProfile profile;
+        if (customCapabilities.containsKey(FirefoxDriver.PROFILE)) {
+            profile = (FirefoxProfile)customCapabilities.get(FirefoxDriver.PROFILE);
+        }
+        else {
+            profile = new FirefoxProfile();
+        }
+        profile.setPreference("intl.accept_languages", browserLocale);
+        customCapabilities.put(FirefoxDriver.PROFILE, profile);
+    }
+
+    private void addBrowserLocaleForChrome() {
+        List<String> chromeSwitches = new ArrayList<String>();
+        chromeSwitches.add("--lang=" + browserLocale);
+        if (customCapabilities.containsKey("chrome.switches")) {
+            ((List<String>)customCapabilities.get("chrome.switches")).addAll(chromeSwitches);
+        }
+        else {
+            customCapabilities.put("chrome.switches", chromeSwitches);
+        }
     }
 
     @Override

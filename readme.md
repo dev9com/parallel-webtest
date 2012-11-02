@@ -1,4 +1,4 @@
-# What is parallel-webtest ?
+# What is parallel-webtest?
 
 parallel-webtest is a Java library Selenium.
 It makes running parallel tests with multiple browsers through Sauce Labs easy and fast.
@@ -16,7 +16,11 @@ In addition, you'll want to add the following environment variables:
 
 Tests run by default in Firefox, locally.
 
-# Changes from v1.X
+# Configuring Test Parameters
+
+
+
+# Changes from v1.x
 
 v2 of parallel-webtest brings lots of changes!
 

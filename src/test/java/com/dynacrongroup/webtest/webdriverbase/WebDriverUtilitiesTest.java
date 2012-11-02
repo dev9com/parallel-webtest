@@ -61,7 +61,7 @@ public class WebDriverUtilitiesTest extends WebDriverBase {
 	}
 
     @Test
-    public void isTestPresentInElementUsingDriverTest() throws Exception {
+    public void isTextPresentInElementUsingDriverTest() throws Exception {
         getLogger().info("Starting test [{}]", testName.getMethodName());
         assertTrue(WebDriverUtilities.isTextPresentInElement(driver, By.tagName("h1"), "Header"));
         assertFalse(WebDriverUtilities.isTextPresentInElement(driver, By.tagName("h1"), "Montage"));

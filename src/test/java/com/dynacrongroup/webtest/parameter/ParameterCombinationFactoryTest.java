@@ -1,6 +1,7 @@
 package com.dynacrongroup.webtest.parameter;
 
 import com.dynacrongroup.webtest.WebDriverBase;
+import com.dynacrongroup.webtest.browser.Browser;
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import com.rits.cloning.Cloner;
 import com.typesafe.config.Config;
@@ -60,7 +61,7 @@ public class ParameterCombinationFactoryTest {
 
         assertThat(parameters).hasSize(1);
         ParameterCombination parameterCombination = parameters.get(0);
-        assertThat(parameterCombination.getWebDriverConfig().getBrowser()).isEqualTo(WebDriverConfig.Browser.SAFARI);
+        assertThat(parameterCombination.getWebDriverConfig().getBrowser()).isEqualTo(Browser.SAFARI);
     }
 
     @Test

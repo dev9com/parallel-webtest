@@ -35,6 +35,7 @@ public class ParameterCombination {
     public void setWebDriverConfig(WebDriverConfig webDriverConfig) {
         this.webDriverConfig = webDriverConfig;
         webDriverConfig.customCapabilities.putAll(getGlobalCustomCapabilities());
+        webDriverConfig.setBrowserLocale(browserLocale);
     }
 
     public String getBrowserLocale() {
@@ -43,6 +44,7 @@ public class ParameterCombination {
 
     public void setBrowserLocale(String browserLocale) {
         this.browserLocale = browserLocale;
+        webDriverConfig.setBrowserLocale(browserLocale);
     }
 
     @Override

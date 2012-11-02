@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -96,14 +98,14 @@ public class WebDriverLauncher {
     /**
      * Returns a driver for a remote driver.
      * @param jobName   Name of the job as it will appear in the remote server
-     * @param target
+     * @param webDriverConfig
      * @return
      */
-    public WebDriver getRemoteDriver(String jobName, WebDriverConfig target) {
+    public WebDriver getRemoteDriver(String jobName, WebDriverConfig webDriverConfig) {
         verifyHostNameIsSpecified();
-        getRemoteDriverFromSauceLabs(jobName, target);
+        getRemoteDriverFromSauceLabs(jobName, webDriverConfig);
         verifyDriverNotNull(driver);
-        LOG.info("View on Sauce Labs at {}", getJobUrl(target, driver));
+        LOG.info("View on Sauce Labs at {}", getJobUrl(webDriverConfig, driver));
         return driver;
     }
 
@@ -121,11 +123,11 @@ public class WebDriverLauncher {
         }
     }
 
-    private void getRemoteDriverFromSauceLabs(String jobName, WebDriverConfig target) {
+    private void getRemoteDriverFromSauceLabs(String jobName, WebDriverConfig webDriverConfig) {
         for (int attempt = 1; attempt <= MAX_RETRIES && driver == null; attempt++) {
             LOG.trace("RemoteWebDriver provisioning attempt {} for job {}", attempt, jobName);
             try {
-                buildDriverWithCapabilities(jobName, target);
+                buildDriverWithCapabilities(jobName, webDriverConfig);
                 verifyDriverIsValid(driver);
             }
             catch (WebDriverException e) {
@@ -135,9 +137,9 @@ public class WebDriverLauncher {
         }
     }
 
-    private void buildDriverWithCapabilities(String jobName, WebDriverConfig target) {
-        DesiredCapabilities capabilities = constructDefaultCapabilities(jobName, target);
-        capabilities = mergeDefaultAndCustomCapabilities(capabilities, target.getCustomCapabilities());
+    private void buildDriverWithCapabilities(String jobName, WebDriverConfig webDriverConfig) {
+        DesiredCapabilities capabilities = constructDefaultCapabilities(jobName, webDriverConfig);
+        capabilities = mergeDefaultAndCustomCapabilities(capabilities, webDriverConfig.getCustomCapabilities());
         driver = new CapturingRemoteWebDriver(
                 SauceLabsCredentials.getConnectionString(),
                 capabilities);
@@ -159,9 +161,7 @@ public class WebDriverLauncher {
 
     private DesiredCapabilities mergeDefaultAndCustomCapabilities(DesiredCapabilities capabilities, Map<String, Object> customCapabilities) {
         if (customCapabilities != null) {
-            for (Map.Entry<String, Object> customCapability : customCapabilities.entrySet()) {
-                capabilities.setCapability(customCapability.getKey(), customCapability.getValue());
-            }
+            capabilities.merge(new DesiredCapabilities(customCapabilities));
         }
         return capabilities;
     }
