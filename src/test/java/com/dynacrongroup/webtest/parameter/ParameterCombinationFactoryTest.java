@@ -103,7 +103,7 @@ public class ParameterCombinationFactoryTest {
         assertThat(parameters).hasSize(4);
         for (ParameterCombination parameterCombination : parameters ) {
             assertThat(driverList).contains(parameterCombination.getWebDriverConfig().getBrowser().name().toLowerCase());
-            assertThat(languageList).contains(parameterCombination.getBrowserLocale());
+            assertThat(languageList).contains(parameterCombination.getBrowserLocale().toString());
         }
     }
 

@@ -33,7 +33,7 @@ public class WebDriverConfig {
     public Type type = Type.LOCAL;
     public Browser browser = Browser.FIREFOX;
     public String version = "";
-    public String browserLocale = "";
+    public BrowserLocale browserLocale = new BrowserLocale();
     public Platform platform = Platform.getCurrent();
     public Map<String, Object> customCapabilities = new HashMap<String, Object>();
 
@@ -119,11 +119,11 @@ public class WebDriverConfig {
         this.customCapabilities.putAll(customCapabilities);
     }
 
-    public String getBrowserLocale() {
+    public BrowserLocale getBrowserLocale() {
         return browserLocale;
     }
 
-    public void setBrowserLocale(String browserLocale) {
+    public void setBrowserLocale(BrowserLocale browserLocale) {
         this.browserLocale = browserLocale;
         addBrowserLocaleToCustomCapabilities();
     }
@@ -143,13 +143,13 @@ public class WebDriverConfig {
         else {
             profile = new FirefoxProfile();
         }
-        profile.setPreference("intl.accept_languages", browserLocale);
+        profile.setPreference("intl.accept_languages", browserLocale.toString());
         customCapabilities.put(FirefoxDriver.PROFILE, profile);
     }
 
     private void addBrowserLocaleForChrome() {
         List<String> chromeSwitches = new ArrayList<String>();
-        chromeSwitches.add("--lang=" + browserLocale);
+        chromeSwitches.add("--lang=" + browserLocale.toString());
         if (customCapabilities.containsKey("chrome.switches")) {
             ((List<String>)customCapabilities.get("chrome.switches")).addAll(chromeSwitches);
         }

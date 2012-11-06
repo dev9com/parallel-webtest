@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest.jtidy;
 
+import com.typesafe.config.Config;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
@@ -67,11 +68,11 @@ public abstract class AbstractTMListener implements TidyMessageListener {
         return tidyMessage.getLevel().compareTo(threshold) >= 0;
     }
 
-    public void setProperties(PropertiesConfiguration properties) {
-        addIgnoredCodes(getIgnoredCodesFromProps(properties));
-        addIgnoredMessages(getIgnoredMessagesFromProps(properties));
-        setDisplayErrorCodes(getErrorCodeDisplayFromProps(properties));
-        setThreshold(getThresholdLevelFromProps(properties));
+    public void setConfig(Config config) {
+        addIgnoredCodes(getIgnoredCodesFromConfig(config));
+        addIgnoredMessages(getIgnoredMessagesFromConfig(config));
+        setDisplayErrorCodes(getErrorCodeDisplayFromProps(config));
+        setThreshold(getThresholdLevelFromProps(config));
     }
 
     public void addIgnoredCodes(List<Integer> codes) {
@@ -113,31 +114,24 @@ public abstract class AbstractTMListener implements TidyMessageListener {
         return formattedString;
     }
 
-    private List<Integer> getIgnoredCodesFromProps(PropertiesConfiguration properties) {
+    private List<Integer> getIgnoredCodesFromConfig(Config config) {
         List<Integer> codes = new ArrayList<Integer>();
-
-        if (properties.containsKey(IGNORED_CODES_PROP)) {
-            String[] codeStrings = properties.getString(IGNORED_CODES_PROP).split(",");
-            if (codeStrings != null) {
-                for (String codeString : codeStrings) {
-                    codes.add(Integer.valueOf(codeString.trim()));
-                }
-            }
+        List<String> codeStrings = config.hasPath(IGNORED_CODES_PROP) ? config.getStringList(IGNORED_CODES_PROP) : new ArrayList<String>();
+        for (String code : codeStrings) {
+            codes.add(Integer.valueOf(code));
         }
-
         return codes;
     }
 
-    private List<String> getIgnoredMessagesFromProps(PropertiesConfiguration properties) {
-        return properties.getList(IGNORED_MESSAGES_PROP, new ArrayList<String>());
+    private List<String> getIgnoredMessagesFromConfig(Config config) {
+        return config.hasPath(IGNORED_MESSAGES_PROP) ? config.getStringList(IGNORED_MESSAGES_PROP) : new ArrayList<String>();
     }
 
-    private Boolean getErrorCodeDisplayFromProps(PropertiesConfiguration properties) {
-        return properties.getBoolean(DISPLAY_CODES_PROP, displayErrorCodes);
+    private Boolean getErrorCodeDisplayFromProps(Config config) {
+        return config.hasPath(DISPLAY_CODES_PROP) ? config.getBoolean(DISPLAY_CODES_PROP) : displayErrorCodes;
     }
 
-    private TidyMessage.Level getThresholdLevelFromProps(PropertiesConfiguration properties) {
-        Integer codeProperty = properties.getInteger(THRESHOLD_LEVEL_PROP, null);
-        return (codeProperty == null) ? threshold : TidyMessage.Level.fromCode(codeProperty);
+    private TidyMessage.Level getThresholdLevelFromProps(Config config) {
+        return config.hasPath(THRESHOLD_LEVEL_PROP) ? TidyMessage.Level.fromCode(config.getInt(THRESHOLD_LEVEL_PROP)) : threshold;
     }
 }

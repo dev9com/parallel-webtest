@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest.parameter;
 
+import com.dynacrongroup.webtest.browser.BrowserLocale;
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import com.google.common.base.Joiner;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class ParameterCombination {
     private WebDriverConfig webDriverConfig = new WebDriverConfig();
 
     @NotNull
-    private String browserLocale = DEFAULT_BROWSER_LOCALE;
+    private BrowserLocale browserLocale = new BrowserLocale();
 
     public Map<String, Object> globalCustomCapabilities = new HashMap<String, Object>();
 
@@ -38,11 +39,11 @@ public class ParameterCombination {
         webDriverConfig.setBrowserLocale(browserLocale);
     }
 
-    public String getBrowserLocale() {
+    public BrowserLocale getBrowserLocale() {
         return browserLocale;
     }
 
-    public void setBrowserLocale(String browserLocale) {
+    public void setBrowserLocale(BrowserLocale browserLocale) {
         this.browserLocale = browserLocale;
         webDriverConfig.setBrowserLocale(browserLocale);
     }

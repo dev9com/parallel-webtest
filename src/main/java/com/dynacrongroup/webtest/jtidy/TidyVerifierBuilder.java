@@ -1,6 +1,11 @@
 package com.dynacrongroup.webtest.jtidy;
 
+import com.dynacrongroup.webtest.util.Configuration;
 import com.google.common.io.NullOutputStream;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigValue;
+import com.typesafe.config.ConfigValueType;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.IOUtils;
@@ -11,10 +16,7 @@ import org.w3c.tidy.TidyMessage;
 
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Used to construct a TidyVerifier by building an instance of Tidy and an instance of a TidyMessageListener.
@@ -25,21 +27,23 @@ import java.util.TreeMap;
  */
 public class TidyVerifierBuilder {
 
-    /**
-     * By default, placed /src/test/resources/jtidy.properties
-     */
-    public static final String DEFAULT_PROP_FILE = "/jtidy.properties";
-
     private static final Logger LOG = LoggerFactory.getLogger(TidyVerifierBuilder.class);
 
     private TidyMessage.Level threshold = null;
-    private String propertyFileName = DEFAULT_PROP_FILE;
     private AbstractTMListener listener = new MapTMListener(new TreeMap<TidyMessage.Level, List<TidyMessage>>());
     private Tidy tidy = new Tidy();
-    private PropertiesConfiguration properties = null;
+    private Config config = null;
     private List<Integer> ignoredCodes = null;
     private List<String> ignoredMessages = null;
     private Boolean displayErrorCodes = null;
+
+    public TidyVerifierBuilder() {
+        config = Configuration.getConfig().getConfig("jtidy");
+    }
+
+    public TidyVerifierBuilder(Class testClass) {
+        config = Configuration.getConfigForClass(testClass).getConfig("jtidy");
+    }
 
     /**
      * Sets the minimum TidyMessage.Level that should generate an exception.
@@ -49,19 +53,6 @@ public class TidyVerifierBuilder {
      */
     public TidyVerifierBuilder setThreshold(TidyMessage.Level threshold) {
         this.threshold = threshold;
-        return this;
-    }
-
-    /**
-     * Sets the name of the property file (located in /src/test/resources/) that
-     * should be used to configure JTidy.  Used to override the default value:
-     * "jtidy.properties".
-     *
-     * @param propertyFileName
-     * @return
-     */
-    public TidyVerifierBuilder setPropertyFileName(String propertyFileName) {
-        this.propertyFileName = propertyFileName;
         return this;
     }
 
@@ -116,8 +107,6 @@ public class TidyVerifierBuilder {
      * @return
      */
     public TidyVerifier build() {
-        //Construct properties from file, if any, to be used in constructing the TidyVerifier
-        getPropertiesConfiguration();
         return new TidyVerifier(this);
     }
 
@@ -129,8 +118,8 @@ public class TidyVerifierBuilder {
      * @return
      */
     protected AbstractTMListener getListener() {
-        if (properties != null) {
-            listener.setProperties(properties);
+        if (config != null) {
+            listener.setConfig(config);
         }
         if (threshold != null) {
             listener.setThreshold(threshold);
@@ -153,7 +142,7 @@ public class TidyVerifierBuilder {
      * @return
      */
     protected Tidy getTidy() {
-        if (properties != null) {
+        if (config != null) {
             this.tidy.setConfigurationFromProps(getJTidyProperties());
         }
         this.tidy.setErrout(new PrintWriter(new NullOutputStream()));
@@ -161,35 +150,16 @@ public class TidyVerifierBuilder {
         return this.tidy;
     }
 
-    private void getPropertiesConfiguration() {
-        PropertiesConfiguration newProperties = new PropertiesConfiguration();
-        newProperties.setListDelimiter('\t');
-        InputStream stream = null;
-        try {
-            stream = this.getClass().getResourceAsStream(propertyFileName);
-            if (stream != null) {
-                newProperties.load(stream);
-            } else {
-                LOG.info("Property file [{}] not found.  Using default settings.", propertyFileName);
-            }
-        } catch (ConfigurationException e) {
-            LOG.warn("Unable to load property file [{}], using default settings.", propertyFileName);
-        } finally {
-            IOUtils.closeQuietly(stream);
-        }
-        properties = newProperties;
-    }
-
     private Properties getJTidyProperties() {
         Properties jtidyProperties = new Properties();
-        for ( Iterator iterator = properties.getKeys(); iterator.hasNext();) {
-            String key = (String) iterator.next();
-            if (notACustomKey(key)) {
-                jtidyProperties.put(key, properties.getString(key));
+        for (Map.Entry<String, ConfigValue> entry : config.entrySet()) {
+            if (notACustomKey(entry.getKey()) &&  entry.getValue().valueType().equals(ConfigValueType.STRING)) {
+                jtidyProperties.put(entry.getKey(), config.getString(entry.getKey()));
             }
         }
         return jtidyProperties;
     }
+
 
     private boolean notACustomKey(String key) {
         return !(AbstractTMListener.DISPLAY_CODES_PROP.equals(key) ||
