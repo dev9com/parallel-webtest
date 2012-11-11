@@ -1,5 +1,9 @@
 package com.dynacrongroup.webtest.browser;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Locale;
+
 /**
  * User: yurodivuie
  * Date: 11/4/12
@@ -13,17 +17,24 @@ public class BrowserLocale {
     private String language = defaultLanguage;
     private String country = defaultCountry;
 
-    public BrowserLocale() {}
+    public BrowserLocale() {
+    }
 
     public BrowserLocale(String rawBrowserLocale) {
-
         String[] localeParts = rawBrowserLocale.split("-");
         if (localeParts.length != 2) {
-            throw new ExceptionInInitializerError(String.format("Locale \"%s\" is not in lang-country format (\"en-us\", for example)."));
+            language = localeParts[0];
+            country = "";
         }
+        else {
+            language = localeParts[0];
+            country = localeParts[1];
+        }
+    }
 
-        language = localeParts[0];
-        country = localeParts[1];
+    public BrowserLocale(Locale locale) {
+        language = locale.getLanguage();
+        country = locale.getCountry();
     }
 
     public String getLanguage() {
@@ -34,8 +45,17 @@ public class BrowserLocale {
         return country;
     }
 
+    public Locale getLocale() {
+        return new Locale(language, country);
+    }
+
     @Override
     public String toString() {
-        return String.format("%s-%s", language, country);
+        if (StringUtils.isEmpty(country)) {
+            return language;
+        }
+        else {
+            return String.format("%s-%s", language, country);
+        }
     }
 }
