@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 
 public class TidyVerifierTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TidyVerifierTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger( TidyVerifierTest.class );
 
 /*    Tried using this to redirect output; didn't work.
         {
@@ -34,14 +34,15 @@ public class TidyVerifierTest {
                 "</html>";
 
         TidyVerifier tidyVerifier = new TidyVerifierBuilder().build();
-        tidyVerifier.verifyHtml(testHtml);
+        tidyVerifier.verifyHtml( testHtml );
     }
 
     @Test
     public void verifyDefaultBuildWithWarning() throws Throwable {
-        thrown.expect(AssertionError.class);
-        thrown.expectMessage(startsWith("JTidy has reported messages with level [WARNING] or greater"));
-        thrown.expectMessage(containsString("missing 'title' element"));
+        thrown.handleAssertionErrors();
+        thrown.expect( AssertionError.class );
+        thrown.expectMessage( startsWith( "JTidy has reported messages with level [WARNING] or greater" ) );
+        thrown.expectMessage( containsString( "missing 'title' element" ) );
 
         String testHtml = "<!DOCTYPE html>" +
                 "<head>" +
@@ -50,7 +51,7 @@ public class TidyVerifierTest {
                 "</html>";
 
         TidyVerifier tidyVerifier = new TidyVerifierBuilder().build();
-        tidyVerifier.verifyHtml(testHtml);
+        tidyVerifier.verifyHtml( testHtml );
     }
 
     @Test
@@ -61,8 +62,8 @@ public class TidyVerifierTest {
                 "<body></body>" +
                 "</html>";
 
-        TidyVerifier tidyVerifier = new TidyVerifierBuilder().setThreshold(TidyMessage.Level.ERROR).build();
-        tidyVerifier.verifyHtml(testHtml);
+        TidyVerifier tidyVerifier = new TidyVerifierBuilder().setThreshold( TidyMessage.Level.ERROR ).build();
+        tidyVerifier.verifyHtml( testHtml );
     }
 
     @Test
@@ -76,12 +77,12 @@ public class TidyVerifierTest {
                 "</body>" +
                 "</html>";
 
-        TidyVerifier tidyVerifier = new TidyVerifierBuilder().setThreshold(TidyMessage.Level.WARNING).build();
-        tidyVerifier.verifyHtml(testHtml);
+        TidyVerifier tidyVerifier = new TidyVerifierBuilder().setThreshold( TidyMessage.Level.WARNING ).build();
+        tidyVerifier.verifyHtml( testHtml );
     }
 
     @Test
-    public void verifyNotIgnoredMessageIsNotIgnored() throws Throwable {
+    public void verifyNotIgnoredMessageIsNotIgnored() {
         String testHtml = "<!DOCTYPE html>" +
                 "<head>" +
                 "<title>title</title>" +
@@ -91,12 +92,14 @@ public class TidyVerifierTest {
                 "</body>" +
                 "</html>";
 
-        thrown.expect(AssertionError.class);
-        thrown.expectMessage(startsWith("JTidy has reported messages with level [WARNING] or greater"));
-        thrown.expectMessage(containsString("attribute \"tabindex\" has invalid value \"-2\""));
 
-        TidyVerifier tidyVerifier = new TidyVerifierBuilder().setThreshold(TidyMessage.Level.WARNING).build();
-        tidyVerifier.verifyHtml(testHtml);
+        thrown.handleAssertionErrors();
+        thrown.expect( AssertionError.class );
+        thrown.expectMessage( startsWith( "JTidy has reported messages with level [WARNING] or greater" ) );
+        thrown.expectMessage( containsString( "attribute \"tabindex\" has invalid value \"-2\"" ) );
+
+        TidyVerifier tidyVerifier = new TidyVerifierBuilder().setThreshold( TidyMessage.Level.WARNING ).build();
+        tidyVerifier.verifyHtml( testHtml );
     }
 
 

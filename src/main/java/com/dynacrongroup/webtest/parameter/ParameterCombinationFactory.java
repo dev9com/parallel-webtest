@@ -9,7 +9,7 @@ import com.typesafe.config.ConfigList;
 import com.typesafe.config.ConfigRenderOptions;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
-import org.apache.commons.beanutils.PropertyUtils;
+//import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,13 +118,15 @@ public final class ParameterCombinationFactory {
         T newParameterCombination = cloner.deepClone(parameterCombination);
 
         try {
-            Class propertyType = PropertyUtils.getPropertyType(newParameterCombination, currentKey);
+            //Class propertyType = PropertyUtils.getPropertyType(newParameterCombination, currentKey);
             LOG.trace(currentKey + ":" + configValue.render(ConfigRenderOptions.concise()));
-            Object newProperty = mapper.readValue(configValue.render(ConfigRenderOptions.concise()), propertyType);
-            LOG.trace("about to write to combination");
+            final String valueJson = String.format( "{\"%s\":%s}", currentKey, configValue.render(ConfigRenderOptions.concise()));
+            newParameterCombination = mapper.readerForUpdating( newParameterCombination ).readValue( valueJson );
+            //Object newProperty = mapper.readValue(configValue.render(ConfigRenderOptions.concise()), propertyType);
+            //LOG.trace("about to write to combination");
 /*            PropertyUtils.getWriteMethod(PropertyUtils.getPropertyDescriptor(newParameterCombination, currentKey))
                     .invoke(newParameterCombination,newProperty);*/
-            PropertyUtils.setProperty(newParameterCombination, currentKey, newProperty);
+            //PropertyUtils.setProperty(newParameterCombination, currentKey, newProperty);
         } catch (Exception e) {
             LOG.warn("{} does not support writing to parameter \'{}\'", parameterCombinationClass.getSimpleName(), currentKey + ": " + e.getMessage());
         }
