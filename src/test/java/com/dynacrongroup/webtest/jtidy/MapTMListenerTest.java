@@ -24,7 +24,8 @@ public class MapTMListenerTest  {
 
     @Test
     public void verifyMapListenerCollectsErrors() throws Throwable {
-        
+
+        thrown.handleAssertionErrors();
         thrown.expect(AssertionError.class);
         thrown.expectMessage(startsWith("JTidy has reported messages with level [INFO] or greater"));
         String testHtml = "<!DOCTYPE html>" +
