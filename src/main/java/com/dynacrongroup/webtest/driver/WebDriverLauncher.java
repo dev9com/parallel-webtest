@@ -1,5 +1,6 @@
 package com.dynacrongroup.webtest.driver;
 
+import com.dynacrongroup.webtest.browser.Browser;
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import com.dynacrongroup.webtest.util.Configuration;
 import com.dynacrongroup.webtest.util.SauceLabsCredentials;
@@ -14,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -140,9 +139,16 @@ public class WebDriverLauncher {
     private void buildDriverWithCapabilities(String jobName, WebDriverConfig webDriverConfig) {
         DesiredCapabilities capabilities = constructDefaultCapabilities(jobName, webDriverConfig);
         capabilities = mergeDefaultAndCustomCapabilities(capabilities, webDriverConfig.getCustomCapabilities());
-        driver = new CapturingRemoteWebDriver(
-                SauceLabsCredentials.getConnectionString(),
-                capabilities);
+        if (Browser.SCROLL_SAFE) {
+            driver = new ScrollingRemoteWebDriver(
+                    SauceLabsCredentials.getConnectionString(),
+                    capabilities);
+        }
+        else {
+            driver = new CapturingRemoteWebDriver(
+                    SauceLabsCredentials.getConnectionString(),
+                    capabilities);
+        }
     }
 
     private DesiredCapabilities constructDefaultCapabilities(String jobName, WebDriverConfig target) {
