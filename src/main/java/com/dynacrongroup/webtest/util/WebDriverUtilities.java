@@ -68,8 +68,8 @@ public final class WebDriverUtilities {
         wait.until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(final WebDriver webDriver) {
-                webDriver.findElement(locator);
-                return true; }
+                return isElementPresent(webDriver, locator);
+            }
         });
     }
 

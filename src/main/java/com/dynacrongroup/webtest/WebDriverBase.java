@@ -71,10 +71,16 @@ public class WebDriverBase {
     private final WebDriverConfig webDriverConfig;
 
     /**
+     * Contains all parameters for the test
+     */
+    private final ParameterCombination parameterCombination;
+
+    /**
      *
      * @param parameterCombination
      */
     public WebDriverBase(ParameterCombination parameterCombination) {
+        this.parameterCombination = parameterCombination;
         this.webDriverConfig = parameterCombination.getWebDriverConfig();
         this.browserTestLog = createTestLogger();
         initializeJUnitRules();
@@ -157,7 +163,7 @@ public class WebDriverBase {
     private Logger createTestLogger() {
         String logName = String.format("%s-%s",
                 this.getClass().getName(),
-                getWebDriverConfig().humanReadable());
+                parameterCombination.toString());
         return LoggerFactory.getLogger(logName);
     }
 
