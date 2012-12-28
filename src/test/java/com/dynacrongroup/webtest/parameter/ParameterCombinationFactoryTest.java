@@ -210,4 +210,58 @@ public class ParameterCombinationFactoryTest {
         }
     }
 
+    @Test
+    public void testEachOnceFourParametersDifferentValueSizes() {
+        List<String> driverList = Arrays.asList("firefox", "chrome");
+        List<Map<String, Object>> driverConfigs = new ArrayList<Map<String, Object>>();
+        for( String browser : driverList) {
+            driverConfigMap.put("browser", browser);
+            driverConfigs.add(cloner.deepClone(driverConfigMap));
+        }
+        parameterMap.put("webDriverConfig",driverConfigs);
+        List<String> languageList = Arrays.asList("en-us", "fr-FR", "es-US", "lang");
+        parameterMap.put("browserLocale", languageList);
+        List<String> customParamList = Arrays.asList("p1", "p2", "p3");
+        parameterMap.put("param", customParamList);
+        List<String> customAnotherParamList = Arrays.asList("ap1", "ap2", "ap3", "ap4", "ap5");
+        parameterMap.put("anotherParam", customAnotherParamList);
+        testConfigMap.put("parameters", parameterMap);
+        testConfigMap.put("combination-strategy", "each-once");
+        testConfig = ConfigFactory.parseMap(testConfigMap);
+
+        ParameterCombinationFactory factory = new ParameterCombinationFactory(TestClass.class);
+        factory.setConfig(testConfig);
+        List<TestCombo> parameters = factory.make();
+
+        assertThat(parameters).hasSize(5);
+        int i = 1;
+        List<String> parameterBrowsers = new ArrayList<String>();
+        List<String> parameterLanguages = new ArrayList<String>();
+        List<String> parameterCustom = new ArrayList<String>();
+        List<String> parameterAnotherCustom = new ArrayList<String>();
+        for (TestCombo parameterCombination : parameters ) {
+
+
+            LOGGER.info("{}: {}",i, parameterCombination.toString());
+            if (!parameterBrowsers.contains(parameterCombination.getWebDriverConfig().getBrowser().name().toLowerCase())) {
+                parameterBrowsers.add(parameterCombination.getWebDriverConfig().getBrowser().name().toLowerCase());
+            }
+            if (!parameterLanguages.contains(parameterCombination.getBrowserLocale().toString())) {
+                parameterLanguages.add(parameterCombination.getBrowserLocale().toString());
+            }
+            if (!parameterCustom.contains(parameterCombination.getParam())) {
+                parameterCustom.add(parameterCombination.getParam());
+            }
+            if (!parameterAnotherCustom.contains(parameterCombination.getAnotherParam())) {
+                parameterAnotherCustom.add(parameterCombination.getAnotherParam());
+            }
+            i++;
+        }
+
+        assertThat(parameterBrowsers).containsOnly((String[])driverList.toArray());
+        assertThat(parameterLanguages).containsOnly((String[])languageList.toArray());
+        assertThat(parameterCustom).containsOnly((String[])customParamList.toArray());
+        assertThat(parameterAnotherCustom).containsOnly((String[])customAnotherParamList.toArray());
+    }
+
 }

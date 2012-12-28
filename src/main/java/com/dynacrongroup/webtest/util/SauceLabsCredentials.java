@@ -1,6 +1,5 @@
 package com.dynacrongroup.webtest.util;
 
-import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,7 @@ public final class SauceLabsCredentials {
 	private static final String SAUCELABS_KEY = "saucelabs.key";
 	private static final String SAUCELABS_SERVER = "saucelabs.server";
 
-	private static final Logger log = LoggerFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(SauceLabsCredentials.class);
 
 	private SauceLabsCredentials() {
@@ -49,21 +48,25 @@ public final class SauceLabsCredentials {
      * Gets the appropriate URL string for the configured credentials, as used by RemoteWebDriver.
      * @return
      */
-	public static URL getConnectionString() {
+	public static URL getConnectionLocation() {
         String user = getUser();
         String key = getKey();
+        URL url = null;
 
         if (user == null || key == null) {
-            throw new WebDriverException("saucelabs.user or saucelabs.key missing and required " +
-                    "for Sauce Labs connection.  See README.txt for parallel-webtest library.");
+            LOG.warn("saucelabs.user or saucelabs.key missing and required " +
+                    "for Sauce Labs connection.  See README.md for parallel-webtest library.");
+        }
+        else {
+
+            try {
+                url = new URL("http://" + getUser() + ":" + getKey() + "@"
+                        + getServer());
+            } catch (MalformedURLException e) {
+                LOG.error("Unable to parse remote selenium server connection information", e);
+            }
         }
 
-		try {
-			return new URL("http://" + getUser() + ":" + getKey() + "@"
-					+ getServer());
-		} catch (MalformedURLException e) {
-			log.error("Unable to parse remote selenium server connection information", e);
-            return null;
-		}
+        return url;
 	}
 }

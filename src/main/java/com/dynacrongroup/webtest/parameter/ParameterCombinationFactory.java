@@ -11,7 +11,6 @@ import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
 //import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.SetUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +24,7 @@ public final class ParameterCombinationFactory {
 
     private static final String ALL_COMBINATIONS_STRATEGY = "all";
     private static final String ALL_PAIRS_STRATEGY = "all-pairs";
+    private static final String EACH_ONCE_STRATEGY = "each-once";
     private static final Logger LOG = LoggerFactory.getLogger(ParameterCombinationFactory.class);
     private static final String parametersKey = "parameters";
     private static final Cloner cloner = new Cloner();
@@ -87,11 +87,35 @@ public final class ParameterCombinationFactory {
         List<T> combinations = new ArrayList<T>();
         if (ALL_PAIRS_STRATEGY.equalsIgnoreCase(combinationStrategy)) {
             combinations = getAllPairs(rawParameterLists);
-        } else {
+        }
+        else if (EACH_ONCE_STRATEGY.equalsIgnoreCase(combinationStrategy)) {
+            combinations = getEachOnce(rawParameterLists);
+        }
+        else {
             combinations = getAllCombinations(rawParameterLists);
         }
         return combinations;
     }
+
+
+
+    private <T extends ParameterCombination> List<T> getEachOnce(Map<String, List<ConfigValue>> rawParameterLists) {
+        List<T> combinations = new ArrayList<T>();
+        Integer largestListSize = rawParameterLists.get(getKeyForLargestList(rawParameterLists)).size();
+        Integer offset = Math.abs(new Random().nextInt());
+        for (int i = 0; i < largestListSize; i++) {
+            T parameterCombination = createParameterCombination(parameterCombinationClass);
+            for (String currentProperty : rawParameterLists.keySet()) {
+                List<ConfigValue> currentList = rawParameterLists.get(currentProperty);
+                Integer index = (i + offset) % currentList.size();
+                parameterCombination = addToParameters(currentProperty, currentList.get(index), parameterCombination);
+            }
+            combinations.add(parameterCombination);
+        }
+        return combinations;
+    }
+
+
 
     private <T extends ParameterCombination> List<T> getAllPairs(Map<String, List<ConfigValue>> rawParameterLists) {
         List<T> combinations = new ArrayList<T>();
@@ -107,15 +131,15 @@ public final class ParameterCombinationFactory {
             for (int i = 0; i < largestList.size(); i++) {
                 for (int j = 0; j < secondLargestList.size(); j++) {
                     T combination = createParameterCombination(parameterCombinationClass);
-                    combination = addParameterToParameterCombination(largestListKey, largestList.get(i), combination);
-                    combination = addParameterToParameterCombination(secondLargestListKey, secondLargestList.get(j), combination);
+                    combination = addToParameters(largestListKey, largestList.get(i), combination);
+                    combination = addToParameters(secondLargestListKey, secondLargestList.get(j), combination);
                     if (!rawParameterLists.isEmpty()) {
                         final Set<String> keys = rawParameterLists.keySet();
                         for (int depth = 0; depth < keys.size(); depth++) {
                             String currentKey = (String) SetUtils.orderedSet(keys).toArray()[depth];
                             List<ConfigValue> currentList = rawParameterLists.get(currentKey);
                             ConfigValue currentValue = currentList.get((j + i ^ depth) % currentList.size());
-                            combination = addParameterToParameterCombination(currentKey, currentValue, combination);
+                            combination = addToParameters(currentKey, currentValue, combination);
                         }
                     }
                     combinations.add(combination);
@@ -158,18 +182,18 @@ public final class ParameterCombinationFactory {
         List<T> newCombinations = new ArrayList<T>();
         if (combinations.size() > 0) {
             for (T parameterCombination : combinations) {
-                T newParameterCombination = addParameterToParameterCombination(currentKey, configValue, parameterCombination);
+                T newParameterCombination = addToParameters(currentKey, configValue, parameterCombination);
                 newCombinations.add(newParameterCombination);
             }
         } else {
             T newParameterCombination = createParameterCombination(parameterCombinationClass);
-            newParameterCombination = addParameterToParameterCombination(currentKey, configValue, newParameterCombination);
+            newParameterCombination = addToParameters(currentKey, configValue, newParameterCombination);
             newCombinations.add(newParameterCombination);
         }
         return newCombinations;
     }
 
-    private <T extends ParameterCombination> T addParameterToParameterCombination(String currentKey, ConfigValue configValue, T parameterCombination) {
+    private <T extends ParameterCombination> T addToParameters(String currentKey, ConfigValue configValue, T parameterCombination) {
         T newParameterCombination = cloner.deepClone(parameterCombination);
         try {
             final String valueJson = String.format("{\"%s\":%s}", currentKey, configValue.render(ConfigRenderOptions.concise()));

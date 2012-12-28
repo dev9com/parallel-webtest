@@ -49,7 +49,6 @@ public class CustomCapabilitiesTest extends WebDriverBase {
      */
     @Test
     public void capabilitySetTest() throws Exception {
-
         getLogger().info("Starting test [{}]", testName.getMethodName());
         assertThat(WebDriverUtilities.isElementPresent(driver,
                 By.tagName("h2"))).isTrue();

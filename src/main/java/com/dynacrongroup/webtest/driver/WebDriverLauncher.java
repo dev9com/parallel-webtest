@@ -141,12 +141,12 @@ public class WebDriverLauncher {
         capabilities = mergeDefaultAndCustomCapabilities(capabilities, webDriverConfig.getCustomCapabilities());
         if (Browser.SCROLL_SAFE) {
             driver = new ScrollingRemoteWebDriver(
-                    SauceLabsCredentials.getConnectionString(),
+                    SauceLabsCredentials.getConnectionLocation(),
                     capabilities);
         }
         else {
             driver = new CapturingRemoteWebDriver(
-                    SauceLabsCredentials.getConnectionString(),
+                    SauceLabsCredentials.getConnectionLocation(),
                     capabilities);
         }
     }

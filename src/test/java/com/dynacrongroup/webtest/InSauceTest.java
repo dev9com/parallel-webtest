@@ -29,7 +29,7 @@ public class InSauceTest {
 
 		log.info("capabilities: "
 				+ new BeanToJsonConverter().convert(capabillities));
- 		WebDriver driver = new RemoteWebDriver(SauceLabsCredentials.getConnectionString(), capabillities);
+ 		WebDriver driver = new RemoteWebDriver(SauceLabsCredentials.getConnectionLocation(), capabillities);
 		try {
 			String jobId = ((RemoteWebDriver) driver).getSessionId().toString();
 			log.info("Job ID: [{}]", jobId);
