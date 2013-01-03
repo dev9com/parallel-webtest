@@ -46,7 +46,7 @@
         <jul-to-slf4j.version>1.7.2</jul-to-slf4j.version>
         <logback.version>1.0.9</logback.version>
         <powermock.version>1.4.9</powermock.version>
-        <selenium.version>2.26.0</selenium.version>
+        <selenium.version>2.28.0</selenium.version>
         <slf4j.version>1.7.2</slf4j.version>
 
         <!-- JUnit parallel run configuration -->
@@ -153,6 +153,16 @@
             <version>${selenium.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>phantomjs</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.opera</groupId>
+            <artifactId>operadriver</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
             <groupId>net.sf.jtidy</groupId>
             <artifactId>jtidy</artifactId>
             <version>r938</version>
@@ -252,7 +262,6 @@
             <version>2.0M8</version>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
     <build>

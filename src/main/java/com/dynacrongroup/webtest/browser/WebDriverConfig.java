@@ -5,7 +5,6 @@ import com.google.common.base.Joiner;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +54,10 @@ public class WebDriverConfig {
 
     public boolean isOpera() {
         return this.browser.equals(Browser.OPERA);
+    }
+
+    public boolean isPhantomJS() {
+        return this.browser.equals(Browser.PHANTOMJS);
     }
 
     public boolean isClassLoaded() {

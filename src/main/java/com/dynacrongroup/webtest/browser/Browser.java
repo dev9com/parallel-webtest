@@ -6,15 +6,18 @@ import com.dynacrongroup.webtest.driver.ScrollingInternetExplorerDriver;
 import com.dynacrongroup.webtest.driver.ScrollingSafariDriver;
 import com.dynacrongroup.webtest.util.Configuration;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.opera.core.systems.OperaDriver;
 import com.typesafe.config.Config;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 public enum Browser {
-    IEXPLORE(org.openqa.selenium.ie.InternetExplorerDriver.class, ScrollingInternetExplorerDriver.class),
-    FIREFOX(org.openqa.selenium.firefox.FirefoxDriver.class, ScrollingFirefoxDriver.class),
     CHROME(org.openqa.selenium.chrome.ChromeDriver.class, ScrollingChromeDriver.class),
-    SAFARI(org.openqa.selenium.safari.SafariDriver.class, ScrollingSafariDriver.class),
-    OPERA(null, null),
-    HTMLUNIT(org.openqa.selenium.htmlunit.HtmlUnitDriver.class, org.openqa.selenium.htmlunit.HtmlUnitDriver.class);
+    FIREFOX(org.openqa.selenium.firefox.FirefoxDriver.class, ScrollingFirefoxDriver.class),
+    PHANTOMJS(PhantomJSDriver.class, PhantomJSDriver.class),
+    HTMLUNIT(org.openqa.selenium.htmlunit.HtmlUnitDriver.class, org.openqa.selenium.htmlunit.HtmlUnitDriver.class),
+    IEXPLORE(org.openqa.selenium.ie.InternetExplorerDriver.class, ScrollingInternetExplorerDriver.class),
+    OPERA(OperaDriver.class, OperaDriver.class),
+    SAFARI(org.openqa.selenium.safari.SafariDriver.class, ScrollingSafariDriver.class);
 
     private static final String SCROLL_SAFE_KEY = "scroll-safe";
     private static final Config CONF = Configuration.getConfig();
