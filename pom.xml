@@ -189,7 +189,7 @@
         <dependency>
             <groupId>com.dynacrongroup</groupId>
             <artifactId>sauce-rest</artifactId>
-            <version>0.1</version>
+            <version>0.2</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
