@@ -16,18 +16,19 @@ import java.util.List;
 
 /**
  * Sample of the order of execution of JUnit test cases.
- *
+ * <p/>
  * The order that various options in JUnit are executed can be confusing. For
  * example, are parameters generated before or after the BeforeClass options are
  * exercised?
- *
+ * <p/>
  * This class technically doesn't have a lot to do with Selenium, but I used it
  * to clarify things when developing the Selenium classes, and so here it is for
  * future reference.
  */
 @RunWith(value = Parameterized.class)
-public class SimpleTest {
-    private static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
+public class ParameterizedJUnitOrderTest {
+
+    private static final Logger log = LoggerFactory.getLogger(ParameterizedJUnitOrderTest.class);
 
     private static int count = 0;
 
@@ -38,7 +39,7 @@ public class SimpleTest {
     public TestWatcher testWatcher = new LogWatcher();
 
 
-    class LogWatcher extends TestWatcher{
+    class LogWatcher extends TestWatcher {
 
         LogWatcher() {
             log.info("rule: constructor");
@@ -68,48 +69,49 @@ public class SimpleTest {
         protected void finished(Description description) {
             log.info("rule: finished");
         }
-    };
+    }
+
+    ;
 
     @Rule
     public TestName name = new TestName();
     private final String parameter;
 
-    public SimpleTest(String paramter) {
-	this.parameter = paramter;
-	log.info("constructor / " + parameter);
+    public ParameterizedJUnitOrderTest(String paramter) {
+        this.parameter = paramter;
+        log.info("constructor: " + parameter);
 
     }
 
     @BeforeClass
     public static void beforeClass() {
-	log.info("beforeClass");
+        log.info("beforeClass");
     }
 
     @Before
     public void before() {
-	count++;
-	log.info("before [" + count + "]");
+        count++;
+        log.info("annotation: before method: " + count);
     }
 
     @After
     public void after() {
-	log.info("after");
-	count--;
+        log.info("annotation: after method: " + count);
     }
 
     @AfterClass
     static public void afterClass() {
-	log.info("afterClass (" + count + ")");
+        log.info("afterClass: test methods executed: " + count);
     }
 
     @Test
-    public void checkSomething() {
-	log.info("test / " + name.getMethodName() + " / " + parameter);
+    public void test1() {
+        log.info("test1: param: " + parameter);
     }
 
     @Test
-    public void secondCheckSomething() {
-	log.info("test2 / " + parameter);
+    public void test2() {
+        log.info("test2: param: " + parameter);
     }
 
     @Ignore
@@ -118,10 +120,10 @@ public class SimpleTest {
 
     @Parameters
     static public List<String[]> parameters() {
-	log.info("parameters");
-	List<String[]> result = new ArrayList<String[]>();
-	result.add(new String[] { "one" });
-	result.add(new String[] { "two" });
-	return result;
+        log.info("parameters constructed");
+        List<String[]> result = new ArrayList<String[]>();
+        result.add(new String[]{"one"});
+        result.add(new String[]{"two"});
+        return result;
     }
 }

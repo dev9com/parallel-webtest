@@ -58,7 +58,7 @@ public class ParameterCombination {
     }
 
     public void setGlobalCustomCapabilities(Map<String, Object> globalCustomCapabilities) {
-        this.globalCustomCapabilities = globalCustomCapabilities;
+        this.globalCustomCapabilities.putAll(globalCustomCapabilities);
         webDriverConfig.customCapabilities.putAll(globalCustomCapabilities);        //TODO: merge more sensibly.
     }
 }
