@@ -1,12 +1,14 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
+import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.parameter.ParallelRunner;
 import com.dynacrongroup.webtest.parameter.ParameterCombination;
-import com.dynacrongroup.webtest.WebDriverBase;
-import com.dynacrongroup.webtest.util.Path;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.junit.Assert.assertTrue;
 
@@ -16,20 +18,17 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(ParallelRunner.class)
 public class DefaultLocalSystemAccessTest extends WebDriverBase {
-	Path p = new Path("www.dynacrongroup.com", 80);
+    private final String url = "http://htmlpreview.github.io/?https://github.com/dynacron-group/parallel-webtest/blob/master/src/test/resources/webtest.html";
 
 	public DefaultLocalSystemAccessTest(ParameterCombination parameterCombination) {
         super(parameterCombination);
 	}
 
-	String _(String path) {
-		return p.translate(path);
-	}
-
     @Before
     public void getPage() {
         if (!driver.getCurrentUrl().contains("dynacrong")) {
-            driver.get(p._("/webtest.html"));
+            driver.get(url);
+            new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
         }
         driver.navigate().refresh();
     }
