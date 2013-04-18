@@ -3,7 +3,6 @@ package com.dynacrongroup.webtest.webdriverbase;
 import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.parameter.ParallelRunner;
 import com.dynacrongroup.webtest.parameter.ParameterCombination;
-import com.dynacrongroup.webtest.util.Path;
 import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import com.google.common.base.Function;
 import org.junit.Before;
@@ -13,7 +12,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,16 +29,18 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(ParallelRunner.class)
 public class WebDriverUtilitiesTest extends WebDriverBase {
-	Path p = new Path("www.dynacrongroup.com", 80);
+    private final String url = "http://htmlpreview.github.io/?https://github.com/dynacron-group/parallel-webtest/blob/master/src/test/resources/webtest.html";
 
-	public WebDriverUtilitiesTest(ParameterCombination parameterCombination) {
+
+    public WebDriverUtilitiesTest(ParameterCombination parameterCombination) {
 		super(parameterCombination);
 	}
 
     @Before
     public void loadPage() {
         if (!driver.getTitle().startsWith("Webtest")) {
-            driver.get(p._("/webtest.html"));
+            driver.get(url);
+            new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
         }
     }
 
