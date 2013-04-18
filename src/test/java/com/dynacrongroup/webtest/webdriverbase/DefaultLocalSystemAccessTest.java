@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Sample WebDriver test case.
@@ -26,6 +27,7 @@ public class DefaultLocalSystemAccessTest extends WebDriverBase {
 
     @Before
     public void getPage() {
+        assumeTrue(!getWebDriverConfig().isHtmlUnit());
         if (!driver.getCurrentUrl().contains("dynacrong")) {
             driver.get(url);
             new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
