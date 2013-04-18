@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<style type="text/css">
+	
+		body, h1, h2, p {
+			font-family: "Tahoma", "Lucida Grande", Verdana, Arial, sans-serif;
+		}
+		#fancy {
+			margin-right: auto;
+			margin-left: auto;
+			text-align: center;
+			background-color: #e9e9e9;
+			text-shadow: 1px 1px 1px #dadada;
+			width: 200px;
+			border-style: outset;
+			border-width: thin;
+			cursor: pointer;
+		}
+	
+		</style>
+		<title>Webtest Sample Test Page</title>
+	
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>          
+		 <script type="text/javascript">                                         
+			$(document).ready(function() {
+		     $("#fancy").click(function() {
+			     alert("You clicked a fancy bit of text!");
+			   });
+			 });
+		 </script>                                        		
+	</head>
+
+	<body>
+		<h1>Header</h1>
+		<p>This is body text.  Lorum ipsum dolor sit amet.</p>
+		<h2>Dynacron Group Can Help</h2>
+		<p>Learning web testing, Selenium and the rest can be hard.  Give <a href="http://www.dynacrongroup.com/">Dynacron Group</a> a shout if you want help.</p>
+		<p id="fancy">Click This Fancy Box</p>
+	</body>
+
+</html>
