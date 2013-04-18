@@ -1,10 +1,9 @@
 package com.dynacrongroup.webtest.webdriverbase;
 
+import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.parameter.ParallelRunner;
 import com.dynacrongroup.webtest.parameter.ParameterCombination;
-import com.dynacrongroup.webtest.WebDriverBase;
 import com.dynacrongroup.webtest.sauce.SauceREST;
-import com.dynacrongroup.webtest.util.Path;
 import com.dynacrongroup.webtest.util.SauceLabsCredentials;
 import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import org.json.simple.JSONObject;
@@ -12,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +27,7 @@ public class CustomCapabilitiesTest extends WebDriverBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomCapabilitiesTest.class);
 
-    Path p = new Path("www.dynacrongroup.com", 80);
-
+    private final String url = "http://htmlpreview.github.io/?https://github.com/dynacron-group/parallel-webtest/blob/master/src/test/resources/webtest.html";
 
     public CustomCapabilitiesTest(ParameterCombination parameterCombination) {
         super(parameterCombination);
@@ -38,7 +38,8 @@ public class CustomCapabilitiesTest extends WebDriverBase {
     public void loadPage() {
         assumeTrue(this.getWebDriverConfig().isRemote());
         if (!driver.getTitle().startsWith("Webtest")) {
-            driver.get(p._("/webtest.html"));
+            driver.get(url);
+            new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
         }
     }
 
