@@ -39,7 +39,7 @@ public class CustomCapabilitiesTest extends WebDriverBase {
         assumeTrue(this.getWebDriverConfig().isRemote());
         if (!driver.getTitle().startsWith("Webtest")) {
             driver.get(url);
-            new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
+            new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
         }
     }
 
