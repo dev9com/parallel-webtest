@@ -149,12 +149,6 @@ public class ParameterCombinationRunner extends Suite {
         }
 
         @Override
-        protected String testName(final FrameworkMethod method) {
-            return String.format("%s[%s]", method.getName(),
-                    fParameterDescription);
-        }
-
-        @Override
         protected void validateConstructor(List<Throwable> errors) {
             validateOnlyOneConstructor(errors);
         }
