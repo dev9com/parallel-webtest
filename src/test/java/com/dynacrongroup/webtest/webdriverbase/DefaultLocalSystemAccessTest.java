@@ -30,9 +30,11 @@ public class DefaultLocalSystemAccessTest extends WebDriverBase {
         assumeTrue(!getWebDriverConfig().isHtmlUnit());
         if (!driver.getCurrentUrl().contains("dynacrong")) {
             driver.get(url);
-            new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
         }
-        driver.navigate().refresh();
+        else {
+            driver.navigate().refresh();
+        }
+        new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
     }
 
 	@Test
