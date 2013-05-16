@@ -18,7 +18,14 @@ Tests run by default in Firefox, locally.
 
 # Configuring Test Parameters
 
+The application.conf file in src/test/resources is used to configure parameters that will be fed into each test.  By
+default this includes the browser and the target language.
 
+# Parameter Logging
+
+As each test method finishes, the com.dynacrongroup.webtest.rule.ParameterResultReport rule will log out the full name
+of the test, including class, method, and parameters, pass/fail, and the url of the test in Sauce Labs (if applicable).
+Using logback, one can configure this rule to print to a single file for tracking purposes.
 
 # Changes from v1.x
 
