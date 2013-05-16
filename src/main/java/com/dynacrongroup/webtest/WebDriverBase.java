@@ -5,11 +5,7 @@ import com.dynacrongroup.webtest.driver.WebDriverWrapper;
 import com.dynacrongroup.webtest.parameter.ParameterCombination;
 import com.dynacrongroup.webtest.parameter.ParameterCombinationFactory;
 import com.dynacrongroup.webtest.parameter.ParameterCombinationRunner;
-import com.dynacrongroup.webtest.rule.ClassFinishDriverCloser;
-import com.dynacrongroup.webtest.rule.CrashedBrowserChecker;
-import com.dynacrongroup.webtest.rule.MethodTimer;
-import com.dynacrongroup.webtest.rule.SauceLabsFinalStatusReporter;
-import com.dynacrongroup.webtest.rule.SauceLabsLogger;
+import com.dynacrongroup.webtest.rule.*;
 import com.dynacrongroup.webtest.util.SauceLabsCredentials;
 import com.dynacrongroup.webtest.util.WebDriverUtilities;
 import org.junit.After;
@@ -233,7 +229,8 @@ public class WebDriverBase {
 
         RuleChain ruleChain = RuleChain.outerRule(new MethodTimer())      //Timer is wrapped around all other rules
                 .around(new CrashedBrowserChecker(getDriverWrapper()))   //After all rules using the driver are run, check if the browser has crashed.
-                .around(new ClassFinishDriverCloser(getDriverWrapper()));
+                .around(new ClassFinishDriverCloser(getDriverWrapper()))
+                .around(new ParameterResultReport(webDriverConfig, getDriverWrapper()));
 
         return ruleChain;
     }

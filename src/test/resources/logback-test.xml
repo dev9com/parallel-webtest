@@ -24,7 +24,6 @@
 		<appender-ref ref="TIMINGFILE" />
 	</logger>
 
-    <logger name="com.dynacrongroup.webtest.WebDriverStorage" level="TRACE" />
 	<logger name="com.dynacrongroup.webtest" level="DEBUG" />
 
     <!-- By default, HTMLUnit will complain about a LOT of CSS and JS rules. Set to
