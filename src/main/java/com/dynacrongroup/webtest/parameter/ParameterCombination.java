@@ -37,6 +37,7 @@ public class ParameterCombination {
         this.webDriverConfig = webDriverConfig;
         webDriverConfig.customCapabilities.putAll(getGlobalCustomCapabilities());
         webDriverConfig.setBrowserLocale(browserLocale);
+        webDriverConfig.setEnableNativeEvents();
     }
 
     public BrowserLocale getBrowserLocale() {

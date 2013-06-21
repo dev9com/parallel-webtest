@@ -26,16 +26,16 @@ public class WebDriverConfig {
             return valueOf(text.toUpperCase());
         }
 
-
     }
 
+
     public Type type = Type.LOCAL;
+
     public Browser browser = Browser.FIREFOX;
     public String version = "";
     public BrowserLocale browserLocale = new BrowserLocale();
     public Platform platform = Platform.getCurrent();
     public Map<String, Object> customCapabilities = new HashMap<String, Object>();
-
     public boolean isInternetExplorer() {
         return (this.browser.equals(Browser.IEXPLORE));
     }
@@ -117,10 +117,10 @@ public class WebDriverConfig {
         return customCapabilities;
     }
 
-
     public void setCustomCapabilities(Map<String,Object> customCapabilities) { //TODO: worry about merging.
         this.customCapabilities.putAll(customCapabilities);
     }
+
 
     public BrowserLocale getBrowserLocale() {
         return browserLocale;
@@ -129,6 +129,15 @@ public class WebDriverConfig {
     public void setBrowserLocale(BrowserLocale browserLocale) {
         this.browserLocale = browserLocale;
         addBrowserLocaleToCustomCapabilities();
+    }
+
+    public void setEnableNativeEvents() {
+
+        if (customCapabilities.containsKey(FirefoxDriver.PROFILE)) {
+            FirefoxProfile profile = (FirefoxProfile)customCapabilities.get(FirefoxDriver.PROFILE);
+            profile.setEnableNativeEvents(true);
+            customCapabilities.put(FirefoxDriver.PROFILE, profile);
+        }
     }
 
     private void addBrowserLocaleToCustomCapabilities() {
