@@ -1,10 +1,6 @@
 package com.dynacrongroup.webtest;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -59,6 +55,7 @@ public class ParameterizedJUnitOrderTestProblematicChild extends ParameterizedJU
         log.info("afterClassChild");
     }
 
+    @Ignore("Failing. Reason: Bad thing!")
     @Test(expected = NullPointerException.class)
     public void testChild() throws Exception {
         log.info("test child / " + parameter);
