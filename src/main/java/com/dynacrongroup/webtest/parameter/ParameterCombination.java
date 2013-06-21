@@ -37,7 +37,7 @@ public class ParameterCombination {
         this.webDriverConfig = webDriverConfig;
         webDriverConfig.customCapabilities.putAll(getGlobalCustomCapabilities());
         webDriverConfig.setBrowserLocale(browserLocale);
-        webDriverConfig.setEnableNativeEvents();
+        webDriverConfig.setEnableNativeEventsForFirefox();
     }
 
     public BrowserLocale getBrowserLocale() {

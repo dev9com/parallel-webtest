@@ -131,13 +131,18 @@ public class WebDriverConfig {
         addBrowserLocaleToCustomCapabilities();
     }
 
-    public void setEnableNativeEvents() {
+    public void setEnableNativeEventsForFirefox() {
+
+        FirefoxProfile profile;
 
         if (customCapabilities.containsKey(FirefoxDriver.PROFILE)) {
-            FirefoxProfile profile = (FirefoxProfile)customCapabilities.get(FirefoxDriver.PROFILE);
+            profile = (FirefoxProfile)customCapabilities.get(FirefoxDriver.PROFILE);
             profile.setEnableNativeEvents(true);
-            customCapabilities.put(FirefoxDriver.PROFILE, profile);
         }
+        else {
+            profile = new FirefoxProfile();
+        }
+        customCapabilities.put(FirefoxDriver.PROFILE, profile);
     }
 
     private void addBrowserLocaleToCustomCapabilities() {
