@@ -5,7 +5,7 @@
     <artifactId>parallel-webtest</artifactId>
     <packaging>jar</packaging>
     <name>parallel-webtest</name>
-    <version>2.0.14-SNAPSHOT</version>
+    <version>2.0.18-SNAPSHOT</version>
     <description>Parallel execution and numerous other utilities intended for web testing support. For basic
         information on usage, see the tutorial listed in the site's documentation
     </description>
