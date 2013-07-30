@@ -160,7 +160,7 @@ public class WebDriverLauncher {
         capabilities.setCapability("tags", SystemName.getSystemName());
         capabilities.setCapability("build", uniqueId);
         //capabilities.setCapability("selenium-version", seleniumVersion);
-        capabilities.setCapability("command-timeout", "60");    //default is 300 - may need to revisit.
+        //capabilities.setCapability("command-timeout", "60");    //default is 300 - may need to revisit.
 
         return capabilities;
     }
