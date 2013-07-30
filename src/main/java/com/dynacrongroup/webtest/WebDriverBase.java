@@ -228,7 +228,7 @@ public class WebDriverBase {
     private RuleChain createStandardRuleChain() {
 
         RuleChain ruleChain = RuleChain.outerRule(new MethodTimer())      //Timer is wrapped around all other rules
-                //.around(new CrashedBrowserChecker(getDriverWrapper()))   //After all rules using the driver are run, check if the browser has crashed.
+                .around(new CrashedBrowserChecker(getDriverWrapper()))   //After all rules using the driver are run, check if the browser has crashed.
                 .around(new ClassFinishDriverCloser(getDriverWrapper()))
                 .around(new ParameterResultReport(webDriverConfig, getDriverWrapper()));
 

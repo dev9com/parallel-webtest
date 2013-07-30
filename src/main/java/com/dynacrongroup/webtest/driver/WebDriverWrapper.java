@@ -96,11 +96,11 @@ public class WebDriverWrapper {
     }
 
     private void getNewDriver() {
-        if (!tooManyCrashes()) {
+    //    if (!tooManyCrashes()) {
             driver = WebDriverFactory.getDriver(jobName, webDriverConfig);
-        } else {
-            throw new WebDriverException("Giving up on provisioning driver; crashed [" + crashCount + "] times.");
-        }
+    //    } else {
+    //      throw new WebDriverException("Giving up on provisioning driver; crashed [" + crashCount + "] times.");
+    //    }
     }
 
     private void recordCrash() {
