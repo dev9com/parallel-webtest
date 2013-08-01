@@ -161,6 +161,7 @@ public class WebDriverLauncher {
         capabilities.setCapability("build", uniqueId);
         //capabilities.setCapability("selenium-version", seleniumVersion);
         //capabilities.setCapability("command-timeout", "60");    //default is 300 - may need to revisit.
+        capabilities.setCapability("idle-timeout", "300");    //default is 90. Increasing to allow time for parallelization.
 
         return capabilities;
     }
