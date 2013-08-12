@@ -3,22 +3,18 @@ package com.dynacrongroup.webtest.parameter;
 import com.dynacrongroup.webtest.browser.BrowserLocale;
 import com.dynacrongroup.webtest.browser.WebDriverConfig;
 import com.google.common.base.Joiner;
+import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.ConfigurationException;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * User: yurodivuie
- * Date: 10/22/12
- * Time: 12:34 PM
- */
 public class ParameterCombination {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParameterCombination.class);
-    private static final String DEFAULT_BROWSER_LOCALE = "en-us";
 
     @NotNull
     private WebDriverConfig webDriverConfig = new WebDriverConfig();
@@ -38,6 +34,11 @@ public class ParameterCombination {
         webDriverConfig.customCapabilities.putAll(getGlobalCustomCapabilities());
         webDriverConfig.setBrowserLocale(browserLocale);
         webDriverConfig.setEnableNativeEventsForFirefox();
+        try {
+            webDriverConfig.configureProxySettings(webDriverConfig);
+        } catch (ConfigurationException e) {
+            LOG.error("Problem configuring proxy: {}", Throwables.getStackTraceAsString(e));
+        }
     }
 
     public BrowserLocale getBrowserLocale() {

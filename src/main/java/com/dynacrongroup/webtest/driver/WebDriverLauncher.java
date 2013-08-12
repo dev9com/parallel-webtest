@@ -71,7 +71,7 @@ public class WebDriverLauncher {
      * @return
      */
     public WebDriver getClassLoadedDriver(WebDriverConfig webDriverConfig) {
-        LOG.trace("Initializing WebDriver by specified class: {}", webDriverConfig.humanReadable());
+        LOG.trace("Initializing WebDriver by specified class: {}", webDriverConfig);
 
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (webDriverConfig.getCustomCapabilities() != null) {

@@ -54,7 +54,7 @@ public class DefaultLocalSystemAccessTest extends WebDriverBase {
 
 	@Test
 	public void browserCheck() throws Exception {
-		getLogger().info("Browser: " + getWebDriverConfig().humanReadable());
+		getLogger().info("Browser: " + getWebDriverConfig());
 	}
 
 	@Test

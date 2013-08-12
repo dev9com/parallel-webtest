@@ -24,6 +24,7 @@ import java.util.List;
 import static com.dynacrongroup.webtest.util.WebDriverUtilities.createJobName;
 import static com.dynacrongroup.webtest.util.WebDriverUtilities.reduceToOneWindow;
 
+
 /**
  * This is the base class for interfacing with WebDriver. It handles the
  * parallel execution of single or multiple browsers, running locally or in

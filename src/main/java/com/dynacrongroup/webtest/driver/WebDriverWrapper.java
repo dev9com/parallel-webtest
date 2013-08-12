@@ -30,7 +30,7 @@ public class WebDriverWrapper {
         this.jobName = jobName;
         this.webDriverConfig = webDriverConfig;
 
-        LOG.debug("Created WebDriverWrapper for {} - {}", jobName, webDriverConfig.humanReadable());
+        LOG.debug("Created WebDriverWrapper for {} - {}", jobName, webDriverConfig);
     }
 
     public WebDriver getDriver() {
@@ -60,7 +60,7 @@ public class WebDriverWrapper {
             try {
                 crashed = driver.getCurrentUrl() == null;
             } catch (Exception exception) {
-                LOG.debug("Driver crashed - {}:{}.", jobName, webDriverConfig.humanReadable());
+                LOG.debug("Driver crashed - {}:{}.", jobName, webDriverConfig);
                 crashed = true;
             }
         }
@@ -85,7 +85,7 @@ public class WebDriverWrapper {
      */
     public void killDriver() {
         if (driver != null) {
-            LOG.debug("Killing driver for {}:{}.", jobName, webDriverConfig.humanReadable());
+            LOG.debug("Killing driver for {}:{}.", jobName, webDriverConfig);
             try {
                 driver.quit();
             } catch (WebDriverException exception) {
@@ -96,11 +96,11 @@ public class WebDriverWrapper {
     }
 
     private void getNewDriver() {
-    //    if (!tooManyCrashes()) {
-            driver = WebDriverFactory.getDriver(jobName, webDriverConfig);
-    //    } else {
-    //      throw new WebDriverException("Giving up on provisioning driver; crashed [" + crashCount + "] times.");
-    //    }
+        //    if (!tooManyCrashes()) {
+        driver = WebDriverFactory.getDriver(jobName, webDriverConfig);
+        //    } else {
+        //      throw new WebDriverException("Giving up on provisioning driver; crashed [" + crashCount + "] times.");
+        //    }
     }
 
     private void recordCrash() {

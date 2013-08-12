@@ -6,8 +6,6 @@ import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.dynacrongroup.webtest.util.WebDriverUtilities.getJobUrl;
-
 /**
  * User: yurodivuie
  * Date: 3/13/12
@@ -23,7 +21,7 @@ public class WebDriverFactory {
 
     public static WebDriver getDriver(String jobName, WebDriverConfig webDriverConfig) {
 
-        LOG.debug("initializing {}", webDriverConfig.humanReadable());
+        LOG.debug("initializing {}", webDriverConfig);
 
         WebDriverLauncher launcher = new WebDriverLauncher();
         WebDriver driver;
@@ -38,7 +36,7 @@ public class WebDriverFactory {
             driver = launcher.getRemoteDriver(jobName, webDriverConfig);
         }
         else {
-            throw new WebDriverException(webDriverConfig.humanReadable() + " not a valid driver.");
+            throw new WebDriverException(webDriverConfig + " not a valid driver.");
         }
 
         return driver;
