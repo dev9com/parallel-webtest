@@ -203,7 +203,14 @@ public class WebDriverConfig {
             proxy = new Proxy();
         }
 
-        proxy.setProxyAutoconfigUrl("http://".concat(proxyHost).concat(":").concat(proxyPort));
+        String proxyAddress = proxyHost.concat(":").concat(proxyPort);
+        proxy.setProxyType(Proxy.ProxyType.MANUAL);
+        proxy.setHttpProxy(proxyAddress);
+        proxy.setHttpsProxy(proxyAddress);
+
+        // Only works for proxies supplying a .pac file
+        //proxy.setProxyAutoconfigUrl("http://".concat(proxyHost).concat(":").concat(proxyPort));
+
         customCapabilities.put(CapabilityType.BROWSER_NAME,DesiredCapabilities.chrome().getBrowserName());
         customCapabilities.put(CapabilityType.PROXY,proxy);
     }
