@@ -34,11 +34,11 @@ public class ParameterCombination {
         webDriverConfig.customCapabilities.putAll(getGlobalCustomCapabilities());
         webDriverConfig.setBrowserLocale(browserLocale);
         webDriverConfig.setEnableNativeEventsForFirefox();
-        try {
-            webDriverConfig.configureProxySettings(webDriverConfig);
-        } catch (ConfigurationException e) {
-            LOG.error("Problem configuring proxy: {}", Throwables.getStackTraceAsString(e));
-        }
+//        try {
+//            webDriverConfig.configureProxySettings(webDriverConfig);
+//        } catch (ConfigurationException e) {
+//            LOG.error("Problem configuring proxy: {}", Throwables.getStackTraceAsString(e));
+//        }
     }
 
     public BrowserLocale getBrowserLocale() {
