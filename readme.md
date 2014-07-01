@@ -1,6 +1,8 @@
 Parallel Webtest
 ==================
 
+**NOTE: This project has been *deprecated*. Use at your own risk!**
+
 parallel-webtest is a Java library for Selenium written and maintained by [Dynacron Group](http://www.dynacrongroup.com)
 It makes running parallel tests with multiple browsers through [Sauce Labs](http://www.saucelabs.com) easy and fast.
 While you're developing your tests, you can use a local browser, but switching to running multiple remote browsers is
