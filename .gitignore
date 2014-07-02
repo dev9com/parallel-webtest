@@ -15,10 +15,10 @@ parallel-webtest.iws
 
 target
 
-src/test/java/com/dynacrongroup/webtest/DemoTest.java
+src/test/java/com/dev9/webtest/DemoTest.java
 
-src/test/java/com/dynacrongroup/webtest/image/ImageTest.java
+src/test/java/com/dev9/webtest/image/ImageTest.java
 
-src/test/java/com/dynacrongroup/webtest/webdriverbase/LocalCustomCapabilitiesIT.java
+src/test/java/com/dev9/webtest/webdriverbase/LocalCustomCapabilitiesIT.java
 
 .idea

@@ -3,7 +3,7 @@ Parallel Webtest
 
 **NOTE: This project has been *deprecated*. Use at your own risk!**
 
-parallel-webtest is a Java library for Selenium written and maintained by [Dynacron Group](http://www.dynacrongroup.com)
+parallel-webtest is a Java library for Selenium written and maintained by [Dev9](http://www.dev9.com)
 It makes running parallel tests with multiple browsers through [Sauce Labs](http://www.saucelabs.com) easy and fast.
 While you're developing your tests, you can use a local browser, but switching to running multiple remote browsers is
 as easy as using a single system parameter.
@@ -12,9 +12,9 @@ Getting Started
 ------------------
 
 The easiest way to get started adding tests to an existing project is to add parallel-webtest as a dependency, and
-create a new JUnit test using package com.dynacrongroup.webtest.webdriverbase.WebDriverUtilitiesTest as your pattern.
+create a new JUnit test using package com.dev9.webtest.webdriverbase.WebDriverUtilitiesTest as your pattern.
 
-A more detailed example can be found in our [webtest quickstart](https://github.com/dynacron-group/webtest-quickstart).
+A more detailed example can be found in our [webtest quickstart](https://github.com/dev9com/webtest-quickstart).
 
 Tests are run by default in Firefox, locally, as configured in src/main/resources/reference.conf.
 
@@ -86,7 +86,7 @@ you can extend this object for your own tests with new parameters, as necessary.
 Parameter Logging
 -------------------
 
-As each test method finishes, the com.dynacrongroup.webtest.rule.ParameterResultReport rule will log out the full name
+As each test method finishes, the com.dev9.webtest.rule.ParameterResultReport rule will log out the full name
 of the test, including class, method, and parameters, pass/fail, and the url of the test in Sauce Labs (if applicable).
 Using logback, one can configure this rule to print to a single file for tracking purposes.
 

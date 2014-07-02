@@ -37,7 +37,7 @@ Overview
  Tests can be driven in serial using a single browser per suite.  This method
  is not intended for use with multiple browsers simultaneously, but can be useful
  for running acceptance tests against a single reference browser locally or
- in Sauce Labs.  See com.dynacrongroup.webtest.webdriverbase.SampleSingleBrowserSuite
+ in Sauce Labs.  See com.dev9.webtest.webdriverbase.SampleSingleBrowserSuite
  for an example of a suite exercising this capability.  Suites should extend
  WebDriverSuite.
 

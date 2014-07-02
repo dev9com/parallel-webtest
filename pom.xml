@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.dynacrongroup</groupId>
+    <groupId>com.dev9</groupId>
     <artifactId>parallel-webtest</artifactId>
     <packaging>jar</packaging>
     <name>parallel-webtest</name>
@@ -9,7 +9,7 @@
     <description>Parallel execution and numerous other utilities intended for web testing support. For basic
         information on usage, see the tutorial listed in the site's documentation
     </description>
-    <url>https://github.com/dynacron-group/parallel-webtest</url>
+    <url>https://github.com/dev9com/parallel-webtest</url>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -20,16 +20,16 @@
     <developers>
         <developer>
             <name>Will Iverson</name>
-            <email>will DOT iverson AT dynacrongroup DOT com</email>
-            <organization>Dynacron Group</organization>
+            <email>will DOT iverson AT dev9 DOT com</email>
+            <organization>Dev9</organization>
             <roles>
                 <role>Architect</role>
             </roles>
         </developer>
         <developer>
             <name>David Drake</name>
-            <email>david DOT drake AT dynacrongroup DOT com</email>
-            <organization>Dynacron Group</organization>
+            <email>david DOT drake AT dev9 DOT com</email>
+            <organization>Dev9</organization>
             <roles>
                 <role>SDET</role>
             </roles>
@@ -67,27 +67,27 @@
         <repository>
             <id>cloudbees-private-release-repository</id>
             <name>CloudBees Repository</name>
-            <url>dav:https://repository-dynacrongroup.forge.cloudbees.com/release/</url>
+            <url>dav:https://repository-dev9.forge.cloudbees.com/release/</url>
         </repository>
         <site>
             <id>cloudbees-private-release-repository</id>
             <name>CloudBees Repository</name>
-            <url>dav:https://repository-dynacrongroup.forge.cloudbees.com/release/sites/${project.artifactId}</url>
+            <url>dav:https://repository-dev9.forge.cloudbees.com/release/sites/${project.artifactId}</url>
         </site>
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</developerConnection>
-        <url>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</url>
+        <connection>scm:git:git@github.com:dev9com/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:git@github.com:dev9com/${project.artifactId}.git</developerConnection>
+        <url>scm:git:git@github.com:dev9com/${project.artifactId}.git</url>
     </scm>
 
     <repositories>
         <!-- needed for sauce-rest -->
         <repository>
-            <id>dynacrongroup-repository</id>
-            <name>dynacrongroup repository</name>
-            <url>https://repository-dynacrongroup.forge.cloudbees.com/release</url>
+            <id>dev9-repository</id>
+            <name>dev9 repository</name>
+            <url>https://repository-dev9.forge.cloudbees.com/release</url>
         </repository>
     </repositories>
 
@@ -189,9 +189,9 @@
 
         <!-- provides SauceREST -->
         <dependency>
-            <groupId>com.dynacrongroup</groupId>
+            <groupId>com.dev9</groupId>
             <artifactId>sauce-rest</artifactId>
-            <version>0.2</version>
+            <version>1.0.2</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -279,7 +279,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.2</version>
+                    <version>3.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

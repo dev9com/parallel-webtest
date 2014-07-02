@@ -19,12 +19,12 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.dynacrongroup.webtest.rule.Timing" level="TRACE"
+	<logger name="com.dev9.webtest.rule.Timing" level="TRACE"
 		additivity="false">
 		<appender-ref ref="TIMINGFILE" />
 	</logger>
 
-	<logger name="com.dynacrongroup.webtest" level="DEBUG" />
+	<logger name="com.dev9.webtest" level="DEBUG" />
 
     <!-- By default, HTMLUnit will complain about a LOT of CSS rules. Set to
          WARN or disable to see these warnings. -->

@@ -1,7 +1,7 @@
 The full tutorial and documentation for parallel-webtest can be found in the
 generated site:
 
-http://repository-dynacrongroup.forge.cloudbees.com/release/sites/parallel-webtest/tutorial.html
+http://repository-dev9.forge.cloudbees.com/release/sites/parallel-webtest/tutorial.html
 
 Configuring parallel-webtest
 
